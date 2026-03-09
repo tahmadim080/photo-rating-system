@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PixelRate — Photo Rating System</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f; --surface:#13131a; --border:#2a2a3a;
+  --accent:#e8ff47; --text:#f0f0f5; --muted:#6b6b8a; --card:#1a1a24;
+  --ds-color:#e8ff47;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Syne',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.page { display:none; min-height:100vh; }
+.page.active { display:block; }
+#page-login { display:none; align-items:center; justify-content:center; min-height:100vh; }
+#page-login.active { display:flex; }
+.grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px; opacity:0.2; }
+.glow { position:fixed; width:500px; height:500px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle,rgba(232,255,71,0.07) 0%,transparent 70%);
+  top:-150px; left:-150px; animation:gfloat 8s ease-in-out infinite; }
+.glow2 { position:fixed; width:400px; height:400px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle,rgba(255,107,107,0.05) 0%,transparent 70%);
+  bottom:-100px; right:-100px; animation:gfloat 6s ease-in-out infinite reverse; }
+@keyframes gfloat { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,20px)} }
+nav { position:sticky; top:0; z-index:100; background:rgba(10,10,15,0.94); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between; }
+.nav-logo { font-size:1.3rem; font-weight:800; cursor:pointer; }
+.nav-logo span { color:var(--accent); }
+.nav-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.nav-user { font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--muted); }
+.nbtn { font-family:'Space Mono',monospace; font-size:0.68rem; padding:6px 14px; background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+.nbtn:hover { border-color:var(--accent); color:var(--accent); }
+.nbtn.primary { background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:700; }
+.nbtn.primary:hover { background:#d4e83e; }
+
+/* ---- LOGIN ---- */
+.login-wrap { position:relative; z-index:1; width:100%; max-width:420px; padding:20px; }
+.logo-big { text-align:center; margin-bottom:36px; }
+.logo-big h1 { font-size:2.8rem; font-weight:800; letter-spacing:-0.03em; }
+.logo-big h1 span { color:var(--accent); }
+.logo-big p { font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:6px; letter-spacing:0.1em; text-transform:uppercase; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:32px; }
+.tabs { display:grid; grid-template-columns:1fr 1fr; background:var(--surface); border-radius:8px; padding:4px; margin-bottom:26px; }
+.tab { padding:9px; text-align:center; font-family:'Space Mono',monospace; font-size:0.78rem; cursor:pointer; border-radius:6px; color:var(--muted); transition:all 0.2s; border:none; background:none; }
+.tab.active { background:var(--accent); color:var(--bg); font-weight:700; }
+.fg { margin-bottom:16px; }
+label { display:block; font-family:'Space Mono',monospace; font-size:0.68rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:7px; }
+input { width:100%; padding:11px 15px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'Space Mono',monospace; font-size:0.88rem; outline:none; transition:border-color 0.2s; }
+input:focus { border-color:var(--accent); }
+input::placeholder { color:var(--muted); }
+.btn-full { width:100%; padding:13px; background:var(--accent); color:var(--bg); border:none; border-radius:8px; font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; cursor:pointer; margin-top:6px; transition:all 0.2s; }
+.btn-full:hover { background:#d4e83e; transform:translateY(-1px); }
+.msg { margin-top:12px; padding:9px 13px; border-radius:6px; font-family:'Space Mono',monospace; font-size:0.75rem; display:none; }
+.msg.err { background:rgba(255,107,107,0.12); border:1px solid rgba(255,107,107,0.3); color:#ff6b6b; }
+.msg.ok  { background:rgba(232,255,71,0.08);  border:1px solid rgba(232,255,71,0.25);  color:var(--accent); }
+
+/* ---- DASHBOARD ---- */
+.dash-z { position:relative; z-index:1; }
+.hero { padding:48px 24px 28px; max-width:1100px; margin:0 auto; }
+.hero-tag { font-family:'Space Mono',monospace; font-size:0.7rem; color:var(--accent); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:10px; }
+.hero h2 { font-size:2.2rem; font-weight:800; letter-spacing:-0.03em; }
+.hero p { color:var(--muted); margin-top:8px; font-size:0.92rem; }
+.stats-row { max-width:1100px; margin:0 auto 32px; padding:0 24px; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; }
+.stat-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.stat-card .num { font-size:1.7rem; font-weight:800; color:var(--accent); font-family:'Space Mono',monospace; }
+.stat-card .lbl { font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:3px; }
+.section { max-width:1100px; margin:0 auto; padding:0 24px 60px; }
+.section-title { font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:16px; }
+.ds-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.ds-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; cursor:pointer; transition:all 0.22s; position:relative; overflow:hidden; }
+.ds-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--dsc); transform:scaleX(0); transform-origin:left; transition:transform 0.3s; }
+.ds-card:hover { transform:translateY(-3px); box-shadow:0 12px 36px rgba(0,0,0,0.4); }
+.ds-card:hover::before { transform:scaleX(1); }
+.ds-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.ds-em { font-size:1.7rem; }
+.ds-nm { font-size:1.05rem; font-weight:700; }
+.ds-de { font-size:0.8rem; color:var(--muted); margin-bottom:16px; line-height:1.5; }
+.pb { height:5px; background:var(--surface); border-radius:3px; overflow:hidden; }
+.pf { height:100%; border-radius:3px; transition:width 0.5s; }
+.pl { display:flex; justify-content:space-between; font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--muted); margin-top:5px; }
+.bdg { display:inline-block; padding:4px 11px; border-radius:20px; font-family:'Space Mono',monospace; font-size:0.62rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; margin-top:9px; }
+.bs { background:rgba(232,255,71,0.1); color:var(--accent); border:1px solid rgba(232,255,71,0.25); }
+.br { background:rgba(96,165,250,0.1); color:#60a5fa; border:1px solid rgba(96,165,250,0.25); }
+.bd { background:rgba(74,222,128,0.1); color:#4ade80; border:1px solid rgba(74,222,128,0.25); }
+
+/* ---- RATING ---- */
+.rate-z { position:relative; z-index:1; }
+.rate-layout { max-width:800px; margin:0 auto; padding:24px 16px 60px; display:flex; flex-direction:column; gap:18px; }
+.rh { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+.ri { display:flex; align-items:center; gap:10px; }
+.r-em { font-size:1.6rem; }
+.r-nm { font-size:1.1rem; font-weight:700; }
+.r-de { font-family:'Space Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:2px; }
+.ic { font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--muted); }
+.ic strong { color:var(--text); font-size:1rem; }
+.image-card { background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.iw { position:relative; width:100%; aspect-ratio:4/3; background:var(--surface); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.iw img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity 0.3s; }
+.iw img.loading { opacity:0; }
+.spin { width:34px; height:34px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; position:absolute; z-index:2; }
+.spin.h { display:none; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.ibadge { position:absolute; top:10px; left:10px; z-index:3; background:rgba(10,10,15,0.78); backdrop-filter:blur(8px); padding:3px 9px; border-radius:5px; font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--muted); }
+.rov { position:absolute; inset:0; z-index:4; background:rgba(10,10,15,0.7); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; flex-direction:column; gap:6px; }
+.rov.show { display:flex; }
+.rov .bs2 { font-size:2rem; }
+.rov .rt { font-family:'Space Mono',monospace; font-size:0.75rem; color:var(--accent); }
+.rp { padding:22px 26px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+.rl { font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:9px; }
+.stars { display:flex; gap:5px; }
+.star { font-size:1.9rem; cursor:pointer; user-select:none; line-height:1; filter:grayscale(1) brightness(0.35); transition:transform 0.12s, filter 0.12s; }
+.star.lit { filter:none; }
+.star:hover { transform:scale(1.18); }
+.kh { font-family:'Space Mono',monospace; font-size:0.6rem; color:var(--muted); margin-top:7px; }
+kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1px solid var(--border); border-radius:3px; font-size:0.6rem; }
+.btn-rate { padding:12px 26px; background:var(--ds-color); color:var(--bg); border:none; border-radius:9px; font-family:'Syne',sans-serif; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.2s; opacity:0.3; pointer-events:none; }
+.btn-rate.on { opacity:1; pointer-events:auto; }
+.btn-rate.on:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(232,255,71,0.2); }
+.btn-skip { font-family:'Space Mono',monospace; font-size:0.68rem; padding:8px 16px; background:transparent; border:1px solid var(--border); border-radius:7px; color:var(--muted); cursor:pointer; transition:all 0.2s; margin-top:7px; display:block; }
+.btn-skip:hover { border-color:var(--muted); color:var(--text); }
+.hw { background:var(--card); border:1px solid var(--border); border-radius:11px; padding:16px; }
+.ht { font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:11px; }
+.hg { display:flex; flex-wrap:wrap; gap:4px; }
+.hdot { width:25px; height:25px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.56rem; font-family:'Space Mono',monospace; cursor:pointer; transition:transform 0.12s; background:var(--surface); border:1px solid var(--border); color:var(--muted); }
+.hdot.rated { background:rgba(232,255,71,0.1); border-color:rgba(232,255,71,0.3); color:var(--accent); }
+.hdot.cur { outline:2px solid var(--ds-color); outline-offset:1px; }
+.hdot:hover { transform:scale(1.2); }
+#done-screen { display:none; text-align:center; padding:80px 20px; }
+#done-screen .tr { font-size:4rem; margin-bottom:16px; }
+#done-screen h2 { font-size:1.9rem; font-weight:800; margin-bottom:10px; }
+#done-screen p { color:var(--muted); margin-bottom:26px; }
+.btn-back { display:inline-block; padding:12px 28px; background:var(--accent); color:var(--bg); border:none; border-radius:9px; font-family:'Syne',sans-serif; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.btn-back:hover { background:#d4e83e; transform:translateY(-2px); }
+@keyframes slin { from{opacity:0;transform:translateX(22px)} to{opacity:1;transform:translateX(0)} }
+.slin { animation:slin 0.26s ease; }
+
+/* ---- RESULTS ---- */
+.res-z { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:40px 24px 80px; }
+.res-z h1 { font-size:1.9rem; font-weight:800; margin-bottom:4px; }
+.res-sub { font-family:'Space Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:32px; }
+.rtabs { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:13px; }
+.rtab { font-family:'Space Mono',monospace; font-size:0.68rem; padding:6px 13px; background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+.rtab.active { background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:700; }
+.tb { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+.cb { font-family:'Space Mono',monospace; font-size:0.68rem; color:var(--muted); padding:5px 11px; background:var(--surface); border:1px solid var(--border); border-radius:6px; }
+.cb strong { color:var(--accent); }
+.fr { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.fl { font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--muted); }
+.fb { font-family:'Space Mono',monospace; font-size:0.62rem; padding:5px 9px; background:transparent; border:1px solid var(--border); border-radius:4px; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+.fb.active { border-color:var(--accent); color:var(--accent); background:rgba(232,255,71,0.08); }
+.pg { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:11px; }
+.pc { background:var(--card); border:1px solid var(--border); border-radius:11px; overflow:hidden; transition:transform 0.18s, box-shadow 0.18s; }
+.pc:hover { transform:translateY(-3px); box-shadow:0 10px 28px rgba(0,0,0,0.4); }
+.pc img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; background:var(--surface); }
+.pi { padding:8px 11px; display:flex; align-items:center; justify-content:space-between; }
+.ps { color:var(--accent); font-size:0.8rem; }
+.pid { font-family:'Space Mono',monospace; font-size:0.6rem; color:var(--muted); }
+.emp { grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted); font-family:'Space Mono',monospace; font-size:0.8rem; }
+.emp a { color:var(--accent); cursor:pointer; }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="glow"></div>
+<div class="glow2"></div>
+
+<!-- ===== LOGIN ===== -->
+<div id="page-login" class="page">
+  <div class="login-wrap">
+    <div class="logo-big"><h1>Pixel<span>Rate</span></h1><p>Photo Rating System // DSA Project</p></div>
+    <div class="card">
+      <div class="tabs">
+        <button class="tab active" id="tabL" onclick="switchTab('login')">Login</button>
+        <button class="tab" id="tabR" onclick="switchTab('register')">Register</button>
+      </div>
+      <div id="loginForm">
+        <div class="fg"><label>Email</label><input type="email" id="lEmail" placeholder="you@example.com"/></div>
+        <div class="fg"><label>Password</label><input type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+        <button class="btn-full" onclick="doLogin()">Enter System →</button>
+        <div class="msg" id="lMsg"></div>
+      </div>
+      <div id="regForm" style="display:none">
+        <div class="fg"><label>Full Name</label><input type="text" id="rName" placeholder="Your Name"/></div>
+        <div class="fg"><label>Email</label><input type="email" id="rEmail" placeholder="you@example.com"/></div>
+        <div class="fg"><label>Password</label><input type="password" id="rPass" placeholder="Min. 6 characters" onkeydown="if(event.key==='Enter')doRegister()"/></div>
+        <button class="btn-full" onclick="doRegister()">Create Account →</button>
+        <div class="msg" id="rMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="page-dashboard" class="page">
+  <nav>
+    <div class="nav-logo" onclick="showPage('dashboard')">Pixel<span>Rate</span></div>
+    <div class="nav-right">
+      <span class="nav-user" id="navUser"></span>
+      <button class="nbtn" onclick="showPage('results')">My Results</button>
+      <button class="nbtn" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+  <div class="dash-z">
+    <div class="hero">
+      <div class="hero-tag">Welcome back</div>
+      <h2 id="heroName">Hello!</h2>
+      <p>Rate photos across 5 curated datasets. Progress saves automatically.</p>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+    <div class="section">
+      <div class="section-title">// Choose a Dataset to Rate</div>
+      <div class="ds-grid" id="dsGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RATING ===== -->
+<div id="page-rate" class="page">
+  <nav>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="nbtn" onclick="showPage('dashboard')">← Back</button>
+      <div class="nav-logo">Pixel<span>Rate</span></div>
+    </div>
+    <span style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--muted)">
+      Image <span id="navCur" style="color:var(--accent);font-weight:700">—</span> / 100
+    </span>
+  </nav>
+  <div class="rate-z">
+    <div class="rate-layout" id="rateLayout">
+      <div class="rh">
+        <div class="ri"><span class="r-em" id="rEm"></span><div><div class="r-nm" id="rNm"></div><div class="r-de" id="rDe"></div></div></div>
+        <div class="ic">Image <strong id="imgNum">1</strong> / 100</div>
+      </div>
+      <div style="height:4px;background:var(--surface);border-radius:2px;overflow:hidden;">
+        <div id="rProg" style="height:100%;width:0%;background:var(--ds-color);border-radius:2px;transition:width 0.4s;"></div>
+      </div>
+      <div class="image-card slin" id="imgCard">
+        <div class="iw">
+          <img id="mainImg" src="" alt="Photo" class="loading"/>
+          <div class="spin" id="spin"></div>
+          <div class="ibadge" id="ibadge">#—</div>
+          <div class="rov" id="rov"><div class="bs2" id="bigS"></div><div class="rt">Already rated — choose new or skip</div></div>
+        </div>
+        <div class="rp">
+          <div>
+            <div class="rl">Your Rating</div>
+            <div class="stars" id="starsRow">
+              <span class="star" data-v="1">⭐</span>
+              <span class="star" data-v="2">⭐</span>
+              <span class="star" data-v="3">⭐</span>
+              <span class="star" data-v="4">⭐</span>
+              <span class="star" data-v="5">⭐</span>
+            </div>
+            <div class="kh"><kbd>1</kbd>–<kbd>5</kbd> rate &nbsp;·&nbsp; <kbd>Enter</kbd> confirm &nbsp;·&nbsp; <kbd>→</kbd> skip</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;">
+            <button class="btn-rate" id="btnRate" onclick="submitRating()">Rate &amp; Next →</button>
+            <button class="btn-skip" onclick="skipImg()">Skip for now</button>
+          </div>
+        </div>
+      </div>
+      <div class="hw"><div class="ht">// Progress — click any image to jump</div><div class="hg" id="hg"></div></div>
+    </div>
+    <div id="done-screen">
+      <div class="tr">🏆</div>
+      <h2>Dataset Complete!</h2>
+      <p id="doneMsg"></p>
+      <button class="btn-back" onclick="showPage('dashboard')">← Back to Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULTS ===== -->
+<div id="page-results" class="page">
+  <nav>
+    <div class="nav-logo" onclick="showPage('dashboard')">Pixel<span>Rate</span></div>
+    <div class="nav-right">
+      <button class="nbtn" onclick="showPage('dashboard')">← Dashboard</button>
+      <button class="nbtn primary" onclick="exportCSV()">Export CSV</button>
+    </div>
+  </nav>
+  <div class="res-z">
+    <h1>My Ratings</h1>
+    <div class="res-sub">// All your photo ratings across all datasets</div>
+    <div class="rtabs" id="rtabs"></div>
+    <div class="tb">
+      <div class="cb" id="rcnt"><strong>0</strong> photos</div>
+      <div class="fr">
+        <span class="fl">Filter:</span>
+        <button class="fb active" onclick="setFilter(0,this)">All</button>
+        <button class="fb" onclick="setFilter(1,this)">1★</button>
+        <button class="fb" onclick="setFilter(2,this)">2★</button>
+        <button class="fb" onclick="setFilter(3,this)">3★</button>
+        <button class="fb" onclick="setFilter(4,this)">4★</button>
+        <button class="fb" onclick="setFilter(5,this)">5★</button>
+      </div>
+    </div>
+    <div class="pg" id="photoGrid"></div>
+  </div>
+</div>
+
+<script>
+/* === DATABASE === */
+const DB={
+  gu(){return JSON.parse(localStorage.getItem('pr_users')||'{}')},
+  su(u){localStorage.setItem('pr_users',JSON.stringify(u))},
+  getUser(e){return this.gu()[e]||null},
+  exists(e){return!!this.gu()[e]},
+  create(e,n,h){const u=this.gu();u[e]={email:e,name:n,passHash:h};this.su(u)},
+  getSess(){return localStorage.getItem('pr_sess')},
+  setSess(e){localStorage.setItem('pr_sess',e)},
+  clrSess(){localStorage.removeItem('pr_sess')},
+  getProg(e){return JSON.parse(localStorage.getItem('pr_p_'+e)||'{}')},
+  saveProg(e,p){localStorage.setItem('pr_p_'+e,JSON.stringify(p))},
+  getDP(e,d){return this.getProg(e)[d]||null},
+  initDP(e,d,order){const p=this.getProg(e);if(!p[d]){p[d]={order,ratings:{}};this.saveProg(e,p)}return this.getProg(e)[d]},
+  rate(e,d,i,s){const p=this.getProg(e);if(!p[d])return;p[d].ratings[i]={stars:s,at:Date.now()};this.saveProg(e,p)},
+  getRatings(e,d){const dp=this.getDP(e,d);return dp?dp.ratings:{}},
+  hash(s){let h=0;for(let i=0;i<s.length;i++)h=Math.imul(31,h)+s.charCodeAt(i)|0;return h.toString(16)},
+  shuffle(arr,seed){const a=[...arr];let s=Math.abs(seed)||9999;for(let i=a.length-1;i>0;i--){s=(s*1664525+1013904223)&0xffffffff;const j=Math.abs(s)%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+};
+
+/* === DATASETS === */
+const DS=[
+  {id:'nature',name:'Nature & Landscapes',emoji:'🌿',desc:'Mountains, forests, oceans, and natural wonders',color:'#4ade80',
+   ids:[10,15,17,18,19,29,37,39,41,42,43,44,47,51,53,55,57,63,67,68,75,76,80,82,83,84,87,88,91,93,96,98,100,103,104,106,107,110,112,113,114,116,119,121,124,125,126,127,128,130,131,134,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183]},
+  {id:'architecture',name:'Architecture & Cities',emoji:'🏛️',desc:'Buildings, bridges, streets, and urban landscapes',color:'#60a5fa',
+   ids:[1,2,3,4,5,6,7,8,9,11,12,13,14,16,20,21,22,23,24,25,26,27,28,30,31,32,33,34,35,36,38,40,45,46,48,49,50,52,54,56,58,59,60,61,62,64,65,66,69,70,71,72,73,74,77,78,79,81,85,86,89,90,92,94,95,97,99,101,102,105,108,109,111,115,117,118,120,122,123,129,132,133,135,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200]},
+  {id:'people',name:'People & Portraits',emoji:'👤',desc:'Human expressions, cultures, and everyday moments',color:'#f472b6',
+   ids:[201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300]},
+  {id:'abstract',name:'Abstract & Textures',emoji:'🎨',desc:'Colors, patterns, textures, and visual art',color:'#a78bfa',
+   ids:[301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400]},
+  {id:'animals',name:'Animals & Wildlife',emoji:'🦁',desc:'Wildlife, pets, and creatures from around the world',color:'#fb923c',
+   ids:[401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500]}
+];
+
+/* === ROUTER === */
+let CU=null;
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');
+  window.scrollTo(0,0);
+  if(n==='dashboard')renderDash();
+  if(n==='results')renderResults();
+}
+
+/* === AUTH === */
+function switchTab(t){
+  document.getElementById('tabL').classList.toggle('active',t==='login');
+  document.getElementById('tabR').classList.toggle('active',t==='register');
+  document.getElementById('loginForm').style.display=t==='login'?'block':'none';
+  document.getElementById('regForm').style.display=t==='register'?'block':'none';
+}
+function msg(id,txt,type){const el=document.getElementById(id);el.textContent=txt;el.className='msg '+type;el.style.display='block';setTimeout(()=>el.style.display='none',4000)}
+function doLogin(){
+  const e=document.getElementById('lEmail').value.trim().toLowerCase();
+  const p=document.getElementById('lPass').value;
+  if(!e||!p)return msg('lMsg','Please fill all fields.','err');
+  if(!DB.exists(e))return msg('lMsg','No account with this email.','err');
+  const u=DB.getUser(e);
+  if(u.passHash!==DB.hash(p))return msg('lMsg','Incorrect password.','err');
+  DB.setSess(e);CU=u;enterApp();
+}
+function doRegister(){
+  const n=document.getElementById('rName').value.trim();
+  const e=document.getElementById('rEmail').value.trim().toLowerCase();
+  const p=document.getElementById('rPass').value;
+  if(!n||!e||!p)return msg('rMsg','Please fill all fields.','err');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return msg('rMsg','Invalid email.','err');
+  if(p.length<6)return msg('rMsg','Password must be at least 6 characters.','err');
+  if(DB.exists(e))return msg('rMsg','Account already exists. Please login.','err');
+  DB.create(e,n,DB.hash(p));
+  msg('rMsg','✓ Account created! Please login.','ok');
+  setTimeout(()=>switchTab('login'),1500);
+}
+function doLogout(){DB.clrSess();CU=null;showPage('login')}
+function enterApp(){document.getElementById('navUser').textContent=CU.email;showPage('dashboard')}
+
+/* === DASHBOARD === */
+function renderDash(){
+  if(!CU)return;
+  document.getElementById('heroName').textContent='Hello, '+CU.name.split(' ')[0]+' 👋';
+  document.getElementById('navUser').textContent=CU.email;
+  let total=0;
+  const grid=document.getElementById('dsGrid');grid.innerHTML='';
+  DS.forEach(ds=>{
+    const dp=DB.getDP(CU.email,ds.id);
+    const rated=dp?Object.keys(dp.ratings).length:0;
+    total+=rated;
+    const pct=Math.round(rated/100*100);
+    const isDone=rated>=100,started=rated>0;
+    const badge=isDone?'<span class="bdg bd">✓ Complete</span>':started?'<span class="bdg br">▶ Resume — '+rated+'/100</span>':'<span class="bdg bs">▷ Start Rating</span>';
+    const c=document.createElement('div');c.className='ds-card';
+    c.innerHTML='<div class="ds-head"><span class="ds-em">'+ds.emoji+'</span><div class="ds-nm">'+ds.name+'</div></div>'+
+      '<div class="ds-de">'+ds.desc+'</div>'+
+      '<div class="pb"><div class="pf" style="width:'+pct+'%;background:'+ds.color+'"></div></div>'+
+      '<div class="pl"><span>'+rated+' rated</span><span>'+pct+'%</span></div>'+badge;
+    c.onclick=()=>openDS(ds.id);
+    grid.appendChild(c);
+  });
+  const done=DS.filter(ds=>{const dp=DB.getDP(CU.email,ds.id);return dp&&Object.keys(dp.ratings).length>=100}).length;
+  document.getElementById('statsRow').innerHTML=
+    '<div class="stat-card"><div class="num">'+total+'</div><div class="lbl">Rated</div></div>'+
+    '<div class="stat-card"><div class="num">'+(500-total)+'</div><div class="lbl">Remaining</div></div>'+
+    '<div class="stat-card"><div class="num">'+Math.round(total/500*100)+'%</div><div class="lbl">Progress</div></div>'+
+    '<div class="stat-card"><div class="num">'+done+'/5</div><div class="lbl">Complete</div></div>';
+}
+
+/* === RATING === */
+let ADS=null,ord=[],rat={},pos=0,sel=0,bz=false;
+function openDS(dsId){
+  ADS=DS.find(d=>d.id===dsId);
+  document.documentElement.style.setProperty('--ds-color',ADS.color);
+  document.getElementById('rEm').textContent=ADS.emoji;
+  document.getElementById('rNm').textContent=ADS.name;
+  document.getElementById('rDe').textContent=ADS.desc;
+  document.getElementById('rateLayout').style.display='flex';
+  document.getElementById('done-screen').style.display='none';
+  const seed=Math.abs(DB.hash(CU.email+ADS.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0))||12345;
+  const shuf=DB.shuffle(Array.from({length:100},(_,i)=>i),seed);
+  let dp=DB.getDP(CU.email,ADS.id);
+  if(!dp){DB.initDP(CU.email,ADS.id,shuf);dp=DB.getDP(CU.email,ADS.id)}
+  ord=dp.order;rat=dp.ratings;pos=nextUnrated(0);
+  showPage('rate');renderHist();loadImg();
+}
+function nextUnrated(f){for(let i=f;i<ord.length;i++)if(!rat[ord[i]])return i;return ord.length}
+function loadImg(){
+  const rated=Object.keys(rat).length;
+  if(pos>=ord.length||rated>=100){showDone();return}
+  const idx=ord[pos],imgId=ADS.ids[idx];
+  sel=0;updStars(0);document.getElementById('btnRate').classList.remove('on');
+  if(rat[idx]){document.getElementById('bigS').textContent='⭐'.repeat(rat[idx].stars);document.getElementById('rov').classList.add('show')}
+  else document.getElementById('rov').classList.remove('show');
+  const img=document.getElementById('mainImg'),sp=document.getElementById('spin');
+  img.className='loading';sp.classList.remove('h');
+  document.getElementById('ibadge').textContent='#'+imgId;
+  img.onload=()=>{img.className='';sp.classList.add('h')};
+  img.onerror=()=>{img.src='https://picsum.photos/seed/'+imgId+'/800/600';sp.classList.add('h')};
+  img.src='https://picsum.photos/id/'+imgId+'/800/600';
+  document.getElementById('imgNum').textContent=pos+1;
+  document.getElementById('navCur').textContent=pos+1;
+  document.getElementById('rProg').style.width=(rated/100*100)+'%';
+  renderHist();
+  const card=document.getElementById('imgCard');card.classList.remove('slin');void card.offsetWidth;card.classList.add('slin');
+}
+document.querySelectorAll('.star').forEach(s=>{
+  s.addEventListener('mouseover',()=>updStars(+s.dataset.v));
+  s.addEventListener('mouseout',()=>updStars(sel));
+  s.addEventListener('click',()=>{sel=+s.dataset.v;updStars(sel);document.getElementById('btnRate').classList.add('on')});
+});
+function updStars(v){document.querySelectorAll('.star').forEach(s=>s.classList.toggle('lit',+s.dataset.v<=v))}
+function submitRating(){
+  if(!sel||bz)return;bz=true;
+  const idx=ord[pos];
+  DB.rate(CU.email,ADS.id,idx,sel);
+  rat=DB.getDP(CU.email,ADS.id).ratings;
+  pos=nextUnrated(pos+1);
+  if(pos>=ord.length)pos=nextUnrated(0);
+  setTimeout(()=>{bz=false;loadImg()},120);
+}
+function skipImg(){
+  if(bz)return;
+  let n=pos+1;if(n>=ord.length)n=0;
+  const f=nextUnrated(n);pos=(f<ord.length)?f:nextUnrated(0);loadImg();
+}
+function renderHist(){
+  const g=document.getElementById('hg');g.innerHTML='';
+  for(let i=0;i<ord.length;i++){
+    const r=rat[ord[i]];
+    const d=document.createElement('div');
+    d.className='hdot'+(r?' rated':'')+(i===pos?' cur':'');
+    d.title=r?'Image '+(i+1)+' — '+r.stars+'★':'Image '+(i+1)+' — not rated';
+    d.textContent=r?r.stars+'★':(i+1);
+    d.onclick=()=>{pos=i;sel=0;loadImg()};
+    g.appendChild(d);
+  }
+}
+function showDone(){
+  document.getElementById('rateLayout').style.display='none';
+  document.getElementById('done-screen').style.display='block';
+  const all=Object.values(rat);
+  const avg=all.length?(all.reduce((s,r)=>s+r.stars,0)/all.length).toFixed(1):'—';
+  document.getElementById('doneMsg').innerHTML='You rated all 100 photos in <strong style="color:var(--ds-color)">'+ADS.name+'</strong>.<br>Average: <strong style="color:var(--ds-color)">'+avg+' ★</strong>';
+}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('page-rate').classList.contains('active'))return;
+  if(e.key>='1'&&e.key<='5'){sel=+e.key;updStars(sel);document.getElementById('btnRate').classList.add('on')}
+  else if(e.key==='Enter'&&sel)submitRating();
+  else if(e.key==='ArrowRight')skipImg();
+});
+
+/* === RESULTS === */
+let rDS='all',rStar=0;
+function renderResults(){
+  if(!CU)return;
+  buildRTabs();renderResGrid();
+}
+function buildRTabs(){
+  const bar=document.getElementById('rtabs');
+  if(bar.dataset.b)return;bar.dataset.b='1';
+  const a=document.createElement('button');a.className='rtab active';a.textContent='All Datasets';
+  a.onclick=()=>{rDS='all';setRTab(a);renderResGrid()};bar.appendChild(a);
+  DS.forEach(ds=>{const b=document.createElement('button');b.className='rtab';b.textContent=ds.emoji+' '+ds.name;
+    b.onclick=()=>{rDS=ds.id;setRTab(b);renderResGrid()};bar.appendChild(b)});
+}
+function setRTab(el){document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));el.classList.add('active')}
+function setFilter(s,el){rStar=s;document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderResGrid()}
+function renderResGrid(){
+  if(!CU)return;
+  const g=document.getElementById('photoGrid');g.innerHTML='';
+  let items=[];
+  const dsList=rDS==='all'?DS:DS.filter(d=>d.id===rDS);
+  dsList.forEach(ds=>{
+    const ratings=DB.getRatings(CU.email,ds.id);
+    const dp=DB.getDP(CU.email,ds.id);if(!dp)return;
+    for(const idx in ratings){const r=ratings[idx];if(rStar&&r.stars!==rStar)continue;items.push({ds,idx:+idx,stars:r.stars,imgId:ds.ids[+idx],at:r.at})}
+  });
+  items.sort((a,b)=>b.at-a.at);
+  document.getElementById('rcnt').innerHTML='<strong>'+items.length+'</strong> photos';
+  if(!items.length){g.innerHTML='<div class="emp">No ratings yet. <a onclick="showPage(\'dashboard\')">Start rating →</a></div>';return}
+  items.forEach(item=>{
+    const c=document.createElement('div');c.className='pc';
+    c.innerHTML='<img src="https://picsum.photos/id/'+item.imgId+'/300/225" loading="lazy" alt="Photo"/>'+
+      '<div class="pi"><span class="ps">'+'⭐'.repeat(item.stars)+'</span><span class="pid">'+item.ds.emoji+' #'+item.imgId+'</span></div>';
+    g.appendChild(c);
+  });
+}
+function exportCSV(){
+  if(!CU)return;
+  let csv='Dataset,ID,ImgIndex,ImgID,Stars,Date\n';
+  DS.forEach(ds=>{const r=DB.getRatings(CU.email,ds.id);for(const i in r)csv+='"'+ds.name+'","'+ds.id+'",'+i+','+ds.ids[+i]+','+r[i].stars+',"'+new Date(r[i].at).toISOString()+'"\n'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='pixelrate_ratings.csv';a.click();
+}
+
+/* === BOOT === */
+(function(){
+  const s=DB.getSess();
+  if(s&&DB.exists(s)){CU=DB.getUser(s);enterApp()}
+  else showPage('login');
+})();
+</script>
+</body>
+</html>
