@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PixelRate — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#2d353b; --surface:#343f44; --border:#4a555b; --card:#3d484d;
+  --accent:#a7c080; --yellow:#dbbc7f; --red:#e67e80; --blue:#7fbbb3;
+  --purple:#d699b6; --orange:#e69875;
+  --text:#d3c6aa; --text2:#e8d5b0; --muted:#859289;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+#adminLogin{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.login-box h1{font-size:1.5rem;font-weight:700;color:var(--text2);margin-bottom:4px;}
+.login-box p{font-family:'Roboto Mono',monospace;font-size:0.7rem;color:var(--muted);margin-bottom:28px;}
+.fg{margin-bottom:16px;}
+label{display:block;font-family:'Roboto Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
+input{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'Roboto',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+input:focus{border-color:var(--accent);}
+.btn{width:100%;padding:12px;background:var(--accent);color:#2d353b;border:none;border-radius:8px;font-family:'Roboto',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn:hover{background:#8faa6a;transform:translateY(-1px);}
+.err-msg{margin-top:10px;padding:9px 12px;background:rgba(230,126,128,0.15);border:1px solid rgba(230,126,128,0.4);color:var(--red);border-radius:6px;font-family:'Roboto Mono',monospace;font-size:0.75rem;display:none;}
+#adminPanel{display:none;}
+nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-size:1.2rem;font-weight:700;color:var(--text2);}
+.nav-logo span{color:var(--accent);}
+.nav-tag{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--accent);background:rgba(167,192,128,0.15);border:1px solid rgba(167,192,128,0.3);padding:3px 10px;border-radius:20px;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nbtn{font-family:'Roboto Mono',monospace;font-size:0.68rem;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.nbtn:hover{border-color:var(--accent);color:var(--accent);}
+.nbtn.danger{border-color:rgba(230,126,128,0.4);color:var(--red);}
+.nbtn.danger:hover{background:rgba(230,126,128,0.1);}
+.wrap{max-width:1200px;margin:0 auto;padding:36px 24px 80px;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:32px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.stat .n{font-size:2rem;font-weight:700;font-family:'Roboto Mono',monospace;color:var(--accent);}
+.stat .l{font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:3px;}
+.sec{margin-bottom:36px;}
+.sec-title{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.sec-title .xbtn{font-size:0.62rem;padding:4px 10px;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.sec-title .xbtn:hover{border-color:var(--accent);color:var(--accent);}
+.tbl{width:100%;border-collapse:collapse;font-size:0.85rem;}
+.tbl th{font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+.tbl td{padding:12px 14px;border-bottom:1px solid rgba(74,85,91,0.4);vertical-align:middle;}
+.tbl tr:hover td{background:rgba(167,192,128,0.04);}
+.nm{color:var(--text2);font-weight:500;}
+.em{font-family:'Roboto Mono',monospace;font-size:0.75rem;color:var(--muted);}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-family:'Roboto Mono',monospace;font-size:0.6rem;font-weight:700;text-transform:uppercase;}
+.badge.done{background:rgba(167,192,128,0.15);color:var(--accent);border:1px solid rgba(167,192,128,0.35);}
+.badge.part{background:rgba(219,188,127,0.15);color:var(--yellow);border:1px solid rgba(219,188,127,0.35);}
+.badge.none{background:rgba(133,146,137,0.15);color:var(--muted);border:1px solid rgba(133,146,137,0.35);}
+.mpb{height:4px;background:var(--surface);border-radius:2px;overflow:hidden;width:72px;display:inline-block;vertical-align:middle;margin-right:5px;}
+.mpf{height:100%;border-radius:2px;}
+.ds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+.ds-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden;}
+.ds-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--dsc);}
+.ds-title{font-size:1rem;font-weight:700;color:var(--text2);margin-bottom:3px;}
+.ds-sub{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--muted);margin-bottom:12px;}
+.ds-bar{height:5px;background:var(--surface);border-radius:3px;overflow:hidden;margin-bottom:6px;}
+.ds-fill{height:100%;border-radius:3px;transition:width 0.5s;}
+.ds-stats{display:flex;justify-content:space-between;font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted);}
+.rf{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.rf-lbl{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--muted);}
+.rf-btn{font-family:'Roboto Mono',monospace;font-size:0.65rem;padding:5px 11px;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.rf-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(167,192,128,0.1);}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;}
+.pc{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.pc img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--surface);}
+.pi{padding:8px 10px;}
+.ps{color:var(--yellow);font-size:0.78rem;}
+.pu{font-family:'Roboto Mono',monospace;font-size:0.58rem;color:var(--muted);margin-top:2px;}
+.loading-wrap{text-align:center;padding:80px 20px;color:var(--muted);font-family:'Roboto Mono',monospace;font-size:0.8rem;}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:40px;color:var(--muted);font-family:'Roboto Mono',monospace;font-size:0.78rem;}
+.last-sync{font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div id="adminLogin">
+  <div class="login-box">
+    <h1>PixelRate <span style="color:var(--accent)">Admin</span></h1>
+    <p>// Restricted — group members only</p>
+    <div class="fg">
+      <label>Admin Password</label>
+      <input type="password" id="adminPass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')checkAdmin()"/>
+    </div>
+    <button class="btn" onclick="checkAdmin()">Enter Admin Panel</button>
+    <div class="err-msg" id="adminErr">Incorrect password.</div>
+  </div>
+</div>
+
+<div id="adminPanel">
+  <nav>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="nav-logo">Pixel<span>Rate</span></div>
+      <div class="nav-tag">Admin Panel</div>
+    </div>
+    <div class="nav-right">
+      <span class="last-sync" id="lastSync"></span>
+      <button class="nbtn" onclick="loadData()">Refresh</button>
+      <button class="nbtn" onclick="exportAllCSV()">Export CSV</button>
+      <button class="nbtn danger" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div id="loadingWrap" class="loading-wrap">
+      <div class="spinner"></div>
+      Loading from Firebase...
+    </div>
+    <div id="content" style="display:none">
+      <div class="stats-row" id="globalStats"></div>
+      <div class="sec">
+        <div class="sec-title">Dataset Overview</div>
+        <div class="ds-grid" id="dsSummary"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-title">
+          <span>All Users</span>
+          <button class="xbtn" onclick="exportUsersCSV()">Export Users CSV</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr>
+              <th>Name</th><th>Email</th>
+              <th>Tanvir</th><th>Alvi</th><th>Provat</th><th>Mim</th><th>Nadim</th>
+              <th>Total</th><th>Status</th>
+            </tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-title">
+          <span>All Ratings</span>
+          <button class="xbtn" onclick="exportAllCSV()">Export CSV</button>
+        </div>
+        <div class="rf" id="rf">
+          <span class="rf-lbl">Filter by user:</span>
+          <button class="rf-btn active" onclick="filterUser('all',this)">All</button>
+        </div>
+        <div class="pg" id="pg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   CONFIG — paste same values as in index.html
+================================================================ */
+const ADMIN_PASSWORD = 'pixelrate2024';       // ← CHANGE THIS
+
+const FIREBASE_URL = 'https://pixelrate-cd325-default-rtdb.asia-southeast1.firebasedatabase.app/'; // ← SAME AS index.html
+
+const DS = [
+  { id:'tanvir', member:'Tanvir', color:'#a7c080' },
+  { id:'alvi',   member:'Alvi',   color:'#7fbbb3' },
+  { id:'provat', member:'Provat', color:'#d699b6' },
+  { id:'mim',    member:'Mim',    color:'#dbbc7f' },
+  { id:'nadim',  member:'Nadim',  color:'#e69875' }
+];
+
+const FB = {
+  url(p){ return FIREBASE_URL + p + '.json'; },
+  async get(p){
+    try{ const r=await fetch(this.url(p)); return await r.json(); }
+    catch(e){ return null; }
+  }
+};
+
+/* ---- Auth ---- */
+function checkAdmin(){
+  if(document.getElementById('adminPass').value === ADMIN_PASSWORD){
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    sessionStorage.setItem('adminOk','1');
+    loadData();
+  } else {
+    const e=document.getElementById('adminErr');
+    e.style.display='block';
+    setTimeout(()=>e.style.display='none',3000);
+  }
+}
+function doLogout(){
+  sessionStorage.removeItem('adminOk');
+  document.getElementById('adminPanel').style.display='none';
+  document.getElementById('adminLogin').style.display='flex';
+  document.getElementById('adminPass').value='';
+}
+
+/* ---- Load all data from Firebase ---- */
+let allUsers={}, allRatings={}, filterEmail='all';
+
+async function loadData(){
+  document.getElementById('loadingWrap').style.display='block';
+  document.getElementById('content').style.display='none';
+  try {
+    // Fetch raw Firebase data
+    const rawUsers   = await FB.get('/users');
+    const rawRatings = await FB.get('/ratings');
+
+    // Decode base64 keys back to emails
+    allUsers={};
+    if(rawUsers) for(const k in rawUsers){
+      try{ const email=atob(k); allUsers[email]=rawUsers[k]; }catch(e){}
+    }
+    allRatings={};
+    if(rawRatings) for(const k in rawRatings){
+      try{ const email=atob(k); allRatings[email]=rawRatings[k]; }catch(e){}
+    }
+
+    document.getElementById('lastSync').textContent='Synced '+new Date().toLocaleTimeString();
+    renderAll();
+    document.getElementById('loadingWrap').style.display='none';
+    document.getElementById('content').style.display='block';
+  } catch(err) {
+    document.getElementById('loadingWrap').innerHTML=
+      '<div style="color:var(--red);font-family:Roboto Mono,monospace;font-size:0.8rem;max-width:400px;margin:0 auto">'+
+      '<strong>Failed to load data.</strong><br><br>'+
+      'Make sure FIREBASE_URL is correctly set in admin.html<br><br>'+
+      'Also check Firebase Realtime Database rules are set to TEST MODE (allow read/write)<br><br>'+
+      '<button onclick="loadData()" style="padding:8px 16px;background:var(--accent);color:#2d353b;border:none;border-radius:6px;cursor:pointer;font-weight:700;margin-top:8px">Retry</button></div>';
+  }
+}
+
+function renderAll(){
+  const userList=Object.values(allUsers);
+  let totalRatings=0, completedUsers=0;
+  const byDs={};
+  DS.forEach(ds=>byDs[ds.id]=0);
+
+  for(const email in allRatings){
+    let ut=0;
+    for(const dsId in allRatings[email]){
+      const cnt=Object.keys((allRatings[email][dsId]||{}).ratings||{}).length;
+      ut+=cnt;
+      byDs[dsId]=(byDs[dsId]||0)+cnt;
+    }
+    totalRatings+=ut;
+    if(ut>=500) completedUsers++;
+  }
+
+  // Stats
+  document.getElementById('globalStats').innerHTML=
+    s(userList.length,'Total Users')+
+    s(totalRatings,'Total Ratings')+
+    s(completedUsers,'Fully Done')+
+    s(userList.length?(totalRatings/userList.length).toFixed(0):0,'Avg / User')+
+    s(userList.length?(totalRatings/(userList.length*500)*100).toFixed(1)+'%':'0%','Overall');
+
+  // Dataset overview
+  const dg=document.getElementById('dsSummary'); dg.innerHTML='';
+  DS.forEach(ds=>{
+    const tot=byDs[ds.id]||0;
+    const max=userList.length*100;
+    const pct=max?Math.round(tot/max*100):0;
+    const d=document.createElement('div'); d.className='ds-card';
+    d.style.setProperty('--dsc',ds.color);
+    d.innerHTML=
+      '<div class="ds-title">'+ds.member+"'s Dataset"+'</div>'+
+      '<div class="ds-sub">'+tot+' ratings · '+userList.length+' users</div>'+
+      '<div class="ds-bar"><div class="ds-fill" style="width:'+pct+'%;background:'+ds.color+'"></div></div>'+
+      '<div class="ds-stats"><span>'+pct+'% complete</span><span>'+(userList.length?(tot/userList.length).toFixed(1):0)+' avg</span></div>';
+    dg.appendChild(d);
+  });
+
+  // Users table
+  const tbody=document.getElementById('usersBody'); tbody.innerHTML='';
+  if(!userList.length){
+    tbody.innerHTML='<tr><td colspan="9" class="empty">No users yet.</td></tr>';
+  } else {
+    userList.forEach(u=>{
+      const r=allRatings[u.email]||{};
+      let ut=0;
+      const cells=DS.map(ds=>{
+        const cnt=Object.keys((r[ds.id]||{}).ratings||{}).length;
+        ut+=cnt;
+        const pct=Math.round(cnt/100*100);
+        return '<td><div class="mpb"><div class="mpf" style="width:'+pct+'%;background:'+ds.color+'"></div></div>'+
+               '<span style="font-family:Roboto Mono,monospace;font-size:0.72rem;color:var(--muted)">'+cnt+'</span></td>';
+      }).join('');
+      const badge=ut>=500?'<span class="badge done">Complete</span>':
+                  ut>0?'<span class="badge part">In Progress</span>':
+                  '<span class="badge none">Not Started</span>';
+      const tr=document.createElement('tr');
+      tr.innerHTML='<td><span class="nm">'+u.name+'</span></td>'+
+                   '<td><span class="em">'+u.email+'</span></td>'+
+                   cells+
+                   '<td style="font-family:Roboto Mono,monospace;font-size:0.8rem;color:var(--accent);font-weight:600">'+ut+'</td>'+
+                   '<td>'+badge+'</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  // User filter buttons
+  const rf=document.getElementById('rf');
+  rf.innerHTML='<span class="rf-lbl">Filter by user:</span><button class="rf-btn active" onclick="filterUser(\'all\',this)">All</button>';
+  userList.forEach(u=>{
+    const b=document.createElement('button'); b.className='rf-btn';
+    b.textContent=u.name;
+    b.onclick=()=>filterUser(u.email,b);
+    rf.appendChild(b);
+  });
+
+  renderRatings();
+}
+
+function filterUser(email,el){
+  filterEmail=email;
+  document.querySelectorAll('.rf-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderRatings();
+}
+
+function renderRatings(){
+  const g=document.getElementById('pg'); g.innerHTML='';
+  let items=[];
+  const emails=filterEmail==='all'?Object.keys(allRatings):[filterEmail];
+  emails.forEach(email=>{
+    const uName=(allUsers[email]||{}).name||email;
+    DS.forEach(ds=>{
+      const dr=((allRatings[email]||{})[ds.id]||{}).ratings||{};
+      for(let ci=0;ci<20;ci++){
+        for(let pi=1;pi<=5;pi++){
+          const idx=ci*5+(pi-1);
+          const r=dr[idx];
+          if(r) items.push({email,uName,ds,celebId:'cele'+(ci+1),photoNum:pi,stars:r.stars,at:r.at});
+        }
+      }
+    });
+  });
+  items.sort((a,b)=>b.at-a.at);
+  if(!items.length){ g.innerHTML='<div class="empty" style="grid-column:1/-1">No ratings yet.</div>'; return; }
+  items.slice(0,120).forEach(item=>{
+    const path='https://picsum.photos/seed/'+item.ds.id+'_'+item.celebId+'_'+item.photoNum+'/400/300';
+    const c=document.createElement('div'); c.className='pc';
+    c.innerHTML='<img src="'+path+'" loading="lazy"/>'+
+      '<div class="pi">'+
+        '<div class="ps">'+'★'.repeat(item.stars)+'<span style="color:var(--muted);font-size:0.65rem"> '+item.stars+'/5</span></div>'+
+        '<div class="pu">'+item.uName+' · '+item.ds.member+'</div>'+
+        '<div class="pu" style="color:var(--border)">'+new Date(item.at).toLocaleDateString()+'</div>'+
+      '</div>';
+    g.appendChild(c);
+  });
+  if(items.length>120){
+    const n=document.createElement('div');
+    n.style.cssText='grid-column:1/-1;text-align:center;padding:16px;font-family:Roboto Mono,monospace;font-size:0.7rem;color:var(--muted)';
+    n.textContent='Showing latest 120 of '+items.length+'. Export CSV for full data.';
+    g.appendChild(n);
+  }
+}
+
+function s(val,label){ return '<div class="stat"><div class="n">'+val+'</div><div class="l">'+label+'</div></div>'; }
+
+/* ---- Exports ---- */
+function exportAllCSV(){
+  let csv='User Name,User Email,Member,Dataset ID,Celebrity ID,Photo Number,Stars,Date\n';
+  for(const email in allRatings){
+    const name=(allUsers[email]||{}).name||email;
+    DS.forEach(ds=>{
+      const dr=((allRatings[email]||{})[ds.id]||{}).ratings||{};
+      for(let ci=0;ci<20;ci++){
+        for(let pi=1;pi<=5;pi++){
+          const idx=ci*5+(pi-1);
+          const r=dr[idx];
+          if(r) csv+='"'+name+'","'+email+'","'+ds.member+'","'+ds.id+'","cele'+(ci+1)+'",'+pi+','+r.stars+',"'+new Date(r.at).toISOString()+'"\n';
+        }
+      }
+    });
+  }
+  dl(csv,'pixelrate_all_ratings.csv');
+}
+
+function exportUsersCSV(){
+  let csv='Name,Email,Tanvir,Alvi,Provat,Mim,Nadim,Total\n';
+  Object.values(allUsers).forEach(u=>{
+    const r=allRatings[u.email]||{};
+    const counts=DS.map(ds=>Object.keys((r[ds.id]||{}).ratings||{}).length);
+    csv+='"'+u.name+'","'+u.email+'",'+counts.join(',')+','+counts.reduce((a,b)=>a+b,0)+'\n';
+  });
+  dl(csv,'pixelrate_users.csv');
+}
+
+function dl(csv,name){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=name; a.click();
+}
+
+/* ---- Boot ---- */
+if(sessionStorage.getItem('adminOk')==='1'){
+  document.getElementById('adminLogin').style.display='none';
+  document.getElementById('adminPanel').style.display='block';
+  loadData();
+}
+</script>
+</body>
+</html>
