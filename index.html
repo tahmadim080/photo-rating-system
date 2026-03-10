@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PixelRate — Photo Rating System</title>
+<title>PixelRate — Nature Photo Rating</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -79,24 +79,59 @@ input::placeholder { color:var(--muted); }
 .stat-card .num { font-size:1.7rem; font-weight:800; color:var(--accent); font-family:'Roboto Mono',monospace; }
 .stat-card .lbl { font-family:'Roboto Mono',monospace; font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:3px; }
 .section { max-width:1100px; margin:0 auto; padding:0 24px 60px; }
-.section-title { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:16px; }
-.ds-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
-.ds-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; cursor:pointer; transition:all 0.22s; position:relative; overflow:hidden; }
-.ds-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--dsc); transform:scaleX(0); transform-origin:left; transition:transform 0.3s; }
-.ds-card:hover { transform:translateY(-3px); box-shadow:0 12px 36px rgba(0,0,0,0.3); }
-.ds-card:hover::before { transform:scaleX(1); }
-.ds-head { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-.ds-em { font-size:1.7rem; }
-.ds-nm { font-size:1.1rem; font-weight:700; }
-.ds-member { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); margin-bottom:6px; }
-.ds-de { font-size:0.8rem; color:var(--muted); margin-bottom:16px; line-height:1.5; }
-.pb { height:5px; background:var(--surface); border-radius:3px; overflow:hidden; }
-.pf { height:100%; border-radius:3px; transition:width 0.5s; }
-.pl { display:flex; justify-content:space-between; font-family:'Roboto Mono',monospace; font-size:0.62rem; color:var(--muted); margin-top:5px; }
-.bdg { display:inline-block; padding:4px 11px; border-radius:20px; font-family:'Roboto Mono',monospace; font-size:0.62rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; margin-top:9px; }
+.section-title { font-family:'Roboto',sans-serif; font-size:0.78rem; font-weight:600; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:20px; }
+/* Symmetrical 5-card layout: row of 2 centered, row of 3 */
+.ds-grid {
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:16px;
+}
+.ds-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:0;
+  cursor:pointer;
+  transition:all 0.25s;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+/* Top row: 2 equal cards, centered using 6-col grid */
+.ds-grid .ds-card:nth-child(1) { grid-column:1/4; }
+.ds-grid .ds-card:nth-child(2) { grid-column:4/7; }
+/* Bottom row: 3 equal cards */
+.ds-grid .ds-card:nth-child(3) { grid-column:1/3; }
+.ds-grid .ds-card:nth-child(4) { grid-column:3/5; }
+.ds-grid .ds-card:nth-child(5) { grid-column:5/7; }
+/* Card color bar top */
+.ds-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:4px;
+  background:var(--dsc,var(--accent));
+  opacity:1;
+}
+.ds-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,0.35); }
+.ds-card-inner { padding:28px 20px 24px; flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px; }
+.ds-nm { font-size:1.2rem; font-weight:700; color:var(--text2); letter-spacing:0.01em; }
+.ds-num { font-family:'Roboto Mono',monospace; font-size:0.75rem; color:var(--accent); font-weight:600; }
+.ds-member { display:none; }
+.ds-de { display:none; }
+.ds-footer { display:none; }
+.pb { height:4px; background:var(--surface); border-radius:2px; overflow:hidden; width:100%; }
+.pf { height:100%; border-radius:2px; transition:width 0.5s; }
+.pl { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); }
+.bdg { display:inline-block; padding:4px 11px; border-radius:20px; font-family:'Roboto Mono',monospace; font-size:0.62rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
 .bs { background:rgba(167,192,128,0.15); color:var(--accent); border:1px solid rgba(167,192,128,0.4); }
 .br { background:rgba(127,187,179,0.15); color:var(--blue); border:1px solid rgba(127,187,179,0.4); }
 .bd { background:rgba(219,188,127,0.15); color:var(--yellow); border:1px solid rgba(219,188,127,0.4); }
+@media(max-width:700px){
+  .ds-grid { grid-template-columns:1fr; }
+  .ds-grid .ds-card:nth-child(n) { grid-column:1/2; }
+}
 /* RATING */
 .rate-z { position:relative; z-index:1; }
 .rate-layout { max-width:820px; margin:0 auto; padding:24px 16px 60px; display:flex; flex-direction:column; gap:18px; }
@@ -143,7 +178,7 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
 /* Celebrity grid in history */
 .cele-grid { display:flex; flex-direction:column; gap:8px; }
 .cele-row { display:flex; align-items:center; gap:8px; }
-.cele-label { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); width:80px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cele-label { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); width:90px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .cele-dots { display:flex; gap:3px; }
 .hdot { width:28px; height:28px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.55rem; font-family:'Roboto Mono',monospace; cursor:pointer; transition:transform 0.12s; background:var(--surface); border:1px solid var(--border); color:var(--muted); }
 .hdot.rated { background:rgba(167,192,128,0.18); border-color:rgba(167,192,128,0.5); color:var(--accent); }
@@ -191,7 +226,7 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
 <!-- ===== LOGIN ===== -->
 <div id="page-login" class="page">
   <div class="login-wrap">
-    <div class="logo-big"><h1>Pixel<span>Rate</span></h1><p>Celebrity Photo Rating // DSA Project</p></div>
+    <div class="logo-big"><h1>Pixel<span>Rate</span></h1></div>
     <div class="card">
       <div class="tabs">
         <button class="tab active" id="tabL" onclick="switchTab('login')">Login</button>
@@ -228,11 +263,11 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
     <div class="hero">
       <div class="hero-tag">Welcome back</div>
       <h2 id="heroName">Hello!</h2>
-      <p>Rate celebrity photos across 5 datasets — 20 celebrities × 5 photos each.</p>
+
     </div>
     <div class="stats-row" id="statsRow"></div>
     <div class="section">
-      <div class="section-title">// Choose a Dataset to Rate</div>
+      <div class="section-title">Choose a Dataset</div>
       <div class="ds-grid" id="dsGrid"></div>
     </div>
   </div>
@@ -262,7 +297,7 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
       <div class="cele-banner">
         <div>
           <div class="cele-name" id="celeName">—</div>
-          <div class="cele-sub" id="celeSub">Celebrity</div>
+          <div class="cele-sub" id="celeSub">Nature Scene</div>
         </div>
         <div class="cele-count" id="celeCount">Photo — / 5</div>
       </div>
@@ -292,7 +327,7 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
         </div>
       </div>
       <div class="hw">
-        <div class="ht">// Progress by Celebrity — click any photo to jump</div>
+        <div class="ht">// Progress by Scene — click any photo to jump</div>
         <div class="cele-grid" id="hg"></div>
       </div>
     </div>
@@ -316,7 +351,7 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
   </nav>
   <div class="res-z">
     <h1>My Ratings</h1>
-    <div class="res-sub">// All your celebrity photo ratings</div>
+    <div class="res-sub">// All your nature photo ratings</div>
     <div class="rtabs" id="rtabs"></div>
     <div class="tb">
       <div class="cb" id="rcnt"><strong>0</strong> photos</div>
@@ -350,148 +385,148 @@ const DS = [
     id: 'tanvir',                    // ← CHANGE: folder name (lowercase, no spaces)
     member: 'Tanvir',                // ← CHANGE: group member display name
     emoji: '',                     // ← CHANGE: any emoji you like
-    desc: 'Tanvir\'s celebrity dataset — 20 celebrities × 5 photos',
+    desc: 'Tanvir\'s Collection',
     color: '#a7c080',
     // ↓↓↓ CHANGE THESE 20 CELEBRITY NAMES ↓↓↓
     // id must be lowercase, no spaces (used for folder & filename)
     // name is the display name shown on screen
     celebrities: [
-      { id: 'cele1',  name: 'Celebrity 1'  },
-      { id: 'cele2',  name: 'Celebrity 2'  },
-      { id: 'cele3',  name: 'Celebrity 3'  },
-      { id: 'cele4',  name: 'Celebrity 4'  },
-      { id: 'cele5',  name: 'Celebrity 5'  },
-      { id: 'cele6',  name: 'Celebrity 6'  },
-      { id: 'cele7',  name: 'Celebrity 7'  },
-      { id: 'cele8',  name: 'Celebrity 8'  },
-      { id: 'cele9',  name: 'Celebrity 9'  },
-      { id: 'cele10', name: 'Celebrity 10' },
-      { id: 'cele11', name: 'Celebrity 11' },
-      { id: 'cele12', name: 'Celebrity 12' },
-      { id: 'cele13', name: 'Celebrity 13' },
-      { id: 'cele14', name: 'Celebrity 14' },
-      { id: 'cele15', name: 'Celebrity 15' },
-      { id: 'cele16', name: 'Celebrity 16' },
-      { id: 'cele17', name: 'Celebrity 17' },
-      { id: 'cele18', name: 'Celebrity 18' },
-      { id: 'cele19', name: 'Celebrity 19' },
-      { id: 'cele20', name: 'Celebrity 20' }
+      { id: 'pine_grove', name: 'Pine Grove' },
+      { id: 'oak_woodland', name: 'Oak Woodland' },
+      { id: 'bamboo_path', name: 'Bamboo Path' },
+      { id: 'misty_forest', name: 'Misty Forest' },
+      { id: 'fern_valley', name: 'Fern Valley' },
+      { id: 'birch_stand', name: 'Birch Stand' },
+      { id: 'maple_trail', name: 'Maple Trail' },
+      { id: 'cedar_ridge', name: 'Cedar Ridge' },
+      { id: 'redwood_walk', name: 'Redwood Walk' },
+      { id: 'willow_creek', name: 'Willow Creek' },
+      { id: 'jungle_canopy', name: 'Jungle Canopy' },
+      { id: 'moss_garden', name: 'Moss Garden' },
+      { id: 'autumn_forest', name: 'Autumn Forest' },
+      { id: 'dawn_trees', name: 'Dawn Trees' },
+      { id: 'spruce_hill', name: 'Spruce Hill' },
+      { id: 'forest_lake', name: 'Forest Lake' },
+      { id: 'tree_hollow', name: 'Tree Hollow' },
+      { id: 'woodland_fog', name: 'Woodland Fog' },
+      { id: 'ancient_grove', name: 'Ancient Grove' },
+      { id: 'leaf_canopy', name: 'Leaf Canopy' }
     ]
   },
   {
     id: 'alvi',
     member: 'Alvi',
     emoji: '',
-    desc: 'Alvi\'s celebrity dataset — 20 celebrities × 5 photos',
+    desc: 'Alvi\'s Collection',
     color: '#7fbbb3',
     celebrities: [
-      { id: 'cele1',  name: 'Celebrity 1'  },
-      { id: 'cele2',  name: 'Celebrity 2'  },
-      { id: 'cele3',  name: 'Celebrity 3'  },
-      { id: 'cele4',  name: 'Celebrity 4'  },
-      { id: 'cele5',  name: 'Celebrity 5'  },
-      { id: 'cele6',  name: 'Celebrity 6'  },
-      { id: 'cele7',  name: 'Celebrity 7'  },
-      { id: 'cele8',  name: 'Celebrity 8'  },
-      { id: 'cele9',  name: 'Celebrity 9'  },
-      { id: 'cele10', name: 'Celebrity 10' },
-      { id: 'cele11', name: 'Celebrity 11' },
-      { id: 'cele12', name: 'Celebrity 12' },
-      { id: 'cele13', name: 'Celebrity 13' },
-      { id: 'cele14', name: 'Celebrity 14' },
-      { id: 'cele15', name: 'Celebrity 15' },
-      { id: 'cele16', name: 'Celebrity 16' },
-      { id: 'cele17', name: 'Celebrity 17' },
-      { id: 'cele18', name: 'Celebrity 18' },
-      { id: 'cele19', name: 'Celebrity 19' },
-      { id: 'cele20', name: 'Celebrity 20' }
+      { id: 'summit_peak', name: 'Summit Peak' },
+      { id: 'alpine_meadow', name: 'Alpine Meadow' },
+      { id: 'rocky_ridge', name: 'Rocky Ridge' },
+      { id: 'snow_cap', name: 'Snow Cap' },
+      { id: 'glacier_view', name: 'Glacier View' },
+      { id: 'highland_moor', name: 'Highland Moor' },
+      { id: 'cliff_face', name: 'Cliff Face' },
+      { id: 'mountain_pass', name: 'Mountain Pass' },
+      { id: 'valley_below', name: 'Valley Below' },
+      { id: 'eagle_nest', name: 'Eagle Nest' },
+      { id: 'stone_path', name: 'Stone Path' },
+      { id: 'fog_ridge', name: 'Fog Ridge' },
+      { id: 'sunrise_peak', name: 'Sunrise Peak' },
+      { id: 'boulder_field', name: 'Boulder Field' },
+      { id: 'mountain_lake', name: 'Mountain Lake' },
+      { id: 'cascade_falls', name: 'Cascade Falls' },
+      { id: 'icy_summit', name: 'Icy Summit' },
+      { id: 'alpine_bloom', name: 'Alpine Bloom' },
+      { id: 'shepherd_trail', name: 'Shepherd Trail' },
+      { id: 'sky_ridge', name: 'Sky Ridge' }
     ]
   },
   {
     id: 'provat',
     member: 'Provat',
     emoji: '',
-    desc: 'Provat\'s celebrity dataset — 20 celebrities × 5 photos',
+    desc: 'Provat\'s Collection',
     color: '#d699b6',
     celebrities: [
-      { id: 'cele1',  name: 'Celebrity 1'  },
-      { id: 'cele2',  name: 'Celebrity 2'  },
-      { id: 'cele3',  name: 'Celebrity 3'  },
-      { id: 'cele4',  name: 'Celebrity 4'  },
-      { id: 'cele5',  name: 'Celebrity 5'  },
-      { id: 'cele6',  name: 'Celebrity 6'  },
-      { id: 'cele7',  name: 'Celebrity 7'  },
-      { id: 'cele8',  name: 'Celebrity 8'  },
-      { id: 'cele9',  name: 'Celebrity 9'  },
-      { id: 'cele10', name: 'Celebrity 10' },
-      { id: 'cele11', name: 'Celebrity 11' },
-      { id: 'cele12', name: 'Celebrity 12' },
-      { id: 'cele13', name: 'Celebrity 13' },
-      { id: 'cele14', name: 'Celebrity 14' },
-      { id: 'cele15', name: 'Celebrity 15' },
-      { id: 'cele16', name: 'Celebrity 16' },
-      { id: 'cele17', name: 'Celebrity 17' },
-      { id: 'cele18', name: 'Celebrity 18' },
-      { id: 'cele19', name: 'Celebrity 19' },
-      { id: 'cele20', name: 'Celebrity 20' }
+      { id: 'sandy_shore', name: 'Sandy Shore' },
+      { id: 'coral_bay', name: 'Coral Bay' },
+      { id: 'wave_break', name: 'Wave Break' },
+      { id: 'tidal_pool', name: 'Tidal Pool' },
+      { id: 'sea_cliff', name: 'Sea Cliff' },
+      { id: 'ocean_horizon', name: 'Ocean Horizon' },
+      { id: 'rocky_coast', name: 'Rocky Coast' },
+      { id: 'calm_cove', name: 'Calm Cove' },
+      { id: 'sea_cave', name: 'Sea Cave' },
+      { id: 'dune_field', name: 'Dune Field' },
+      { id: 'mangrove_edge', name: 'Mangrove Edge' },
+      { id: 'blue_lagoon', name: 'Blue Lagoon' },
+      { id: 'surf_line', name: 'Surf Line' },
+      { id: 'storm_coast', name: 'Storm Coast' },
+      { id: 'pebble_beach', name: 'Pebble Beach' },
+      { id: 'sea_arch', name: 'Sea Arch' },
+      { id: 'coastal_path', name: 'Coastal Path' },
+      { id: 'salt_marsh', name: 'Salt Marsh' },
+      { id: 'kelp_forest', name: 'Kelp Forest' },
+      { id: 'open_water', name: 'Open Water' }
     ]
   },
   {
     id: 'mim',
     member: 'Mim',
     emoji: '',
-    desc: 'Mim\'s celebrity dataset — 20 celebrities × 5 photos',
+    desc: 'Mim\'s Collection',
     color: '#dbbc7f',
     celebrities: [
-      { id: 'cele1',  name: 'Celebrity 1'  },
-      { id: 'cele2',  name: 'Celebrity 2'  },
-      { id: 'cele3',  name: 'Celebrity 3'  },
-      { id: 'cele4',  name: 'Celebrity 4'  },
-      { id: 'cele5',  name: 'Celebrity 5'  },
-      { id: 'cele6',  name: 'Celebrity 6'  },
-      { id: 'cele7',  name: 'Celebrity 7'  },
-      { id: 'cele8',  name: 'Celebrity 8'  },
-      { id: 'cele9',  name: 'Celebrity 9'  },
-      { id: 'cele10', name: 'Celebrity 10' },
-      { id: 'cele11', name: 'Celebrity 11' },
-      { id: 'cele12', name: 'Celebrity 12' },
-      { id: 'cele13', name: 'Celebrity 13' },
-      { id: 'cele14', name: 'Celebrity 14' },
-      { id: 'cele15', name: 'Celebrity 15' },
-      { id: 'cele16', name: 'Celebrity 16' },
-      { id: 'cele17', name: 'Celebrity 17' },
-      { id: 'cele18', name: 'Celebrity 18' },
-      { id: 'cele19', name: 'Celebrity 19' },
-      { id: 'cele20', name: 'Celebrity 20' }
+      { id: 'golden_hour', name: 'Golden Hour' },
+      { id: 'dusk_glow', name: 'Dusk Glow' },
+      { id: 'crimson_sky', name: 'Crimson Sky' },
+      { id: 'twilight_calm', name: 'Twilight Calm' },
+      { id: 'fiery_horizon', name: 'Fiery Horizon' },
+      { id: 'cloud_blaze', name: 'Cloud Blaze' },
+      { id: 'pink_dusk', name: 'Pink Dusk' },
+      { id: 'last_light', name: 'Last Light' },
+      { id: 'evening_haze', name: 'Evening Haze' },
+      { id: 'amber_field', name: 'Amber Field' },
+      { id: 'warm_valley', name: 'Warm Valley' },
+      { id: 'silhouette_hill', name: 'Silhouette Hill' },
+      { id: 'purple_dusk', name: 'Purple Dusk' },
+      { id: 'sunrise_mist', name: 'Sunrise Mist' },
+      { id: 'bronze_sky', name: 'Bronze Sky' },
+      { id: 'desert_dusk', name: 'Desert Dusk' },
+      { id: 'prairie_glow', name: 'Prairie Glow' },
+      { id: 'horizon_fire', name: 'Horizon Fire' },
+      { id: 'night_edge', name: 'Night Edge' },
+      { id: 'fading_light', name: 'Fading Light' }
     ]
   },
   {
     id: 'nadim',
     member: 'Nadim',
     emoji: '',
-    desc: 'Nadim\'s celebrity dataset — 20 celebrities × 5 photos',
+    desc: 'Nadim\'s Collection',
     color: '#e69875',
     celebrities: [
-      { id: 'cele1',  name: 'Celebrity 1'  },
-      { id: 'cele2',  name: 'Celebrity 2'  },
-      { id: 'cele3',  name: 'Celebrity 3'  },
-      { id: 'cele4',  name: 'Celebrity 4'  },
-      { id: 'cele5',  name: 'Celebrity 5'  },
-      { id: 'cele6',  name: 'Celebrity 6'  },
-      { id: 'cele7',  name: 'Celebrity 7'  },
-      { id: 'cele8',  name: 'Celebrity 8'  },
-      { id: 'cele9',  name: 'Celebrity 9'  },
-      { id: 'cele10', name: 'Celebrity 10' },
-      { id: 'cele11', name: 'Celebrity 11' },
-      { id: 'cele12', name: 'Celebrity 12' },
-      { id: 'cele13', name: 'Celebrity 13' },
-      { id: 'cele14', name: 'Celebrity 14' },
-      { id: 'cele15', name: 'Celebrity 15' },
-      { id: 'cele16', name: 'Celebrity 16' },
-      { id: 'cele17', name: 'Celebrity 17' },
-      { id: 'cele18', name: 'Celebrity 18' },
-      { id: 'cele19', name: 'Celebrity 19' },
-      { id: 'cele20', name: 'Celebrity 20' }
+      { id: 'river_bend', name: 'River Bend' },
+      { id: 'waterfall_mist', name: 'Waterfall Mist' },
+      { id: 'stream_stones', name: 'Stream Stones' },
+      { id: 'rapid_current', name: 'Rapid Current' },
+      { id: 'still_pool', name: 'Still Pool' },
+      { id: 'river_delta', name: 'River Delta' },
+      { id: 'canyon_stream', name: 'Canyon Stream' },
+      { id: 'cascade_drop', name: 'Cascade Drop' },
+      { id: 'brook_path', name: 'Brook Path' },
+      { id: 'wetland_view', name: 'Wetland View' },
+      { id: 'river_mouth', name: 'River Mouth' },
+      { id: 'highland_beck', name: 'Highland Beck' },
+      { id: 'gorge_run', name: 'Gorge Run' },
+      { id: 'pebble_stream', name: 'Pebble Stream' },
+      { id: 'hidden_falls', name: 'Hidden Falls' },
+      { id: 'jungle_river', name: 'Jungle River' },
+      { id: 'slow_meander', name: 'Slow Meander' },
+      { id: 'ice_melt', name: 'Ice Melt' },
+      { id: 'spring_source', name: 'Spring Source' },
+      { id: 'river_dusk', name: 'River Dusk' }
     ]
   }
 ];
@@ -523,18 +558,35 @@ const DS = [
 ================================================================
 */
 
-/* Build flat photo list from datasets — 20 celebs × 5 photos = 100 per dataset */
+/* Build flat photo list — uses Unsplash for showcase photos */
+// Each dataset has a unique seed offset so photos differ per dataset
+const DS_SEEDS = {
+  tanvir: 100, alvi: 200, provat: 300, mim: 400, nadim: 500
+};
+// Nature keywords per dataset for variety
+const DS_NATURE = {
+  tanvir: 'forest',
+  alvi:   'mountain',
+  provat: 'ocean',
+  mim:    'sunset',
+  nadim:  'river'
+};
+
 function buildPhotoList(ds) {
   const photos = [];
-  ds.celebrities.forEach(cele => {
+  const keyword = DS_NATURE[ds.id] || 'nature';
+  const seedBase = DS_SEEDS[ds.id] || 0;
+  ds.celebrities.forEach((cele, ci) => {
     for (let i = 1; i <= 5; i++) {
-      const num = String(i).padStart(2, '0'); // 01, 02, 03, 04, 05
+      const num = String(i).padStart(2, '0');
+      // Unsplash source: unique image per celeb+photo using seed
+      const seed = seedBase + ci * 5 + i;
       photos.push({
         celebId:   cele.id,
         celebName: cele.name,
         photoNum:  i,
         filename:  cele.id + '_' + num + '.jpg',
-        path:      'photos/' + ds.id + '/' + cele.id + '/' + cele.id + '_' + num + '.jpg'
+        path:      'https://picsum.photos/seed/' + ds.id + '_' + cele.id + '_' + i + '/800/600'
       });
     }
   });
@@ -648,12 +700,15 @@ function renderDash() {
       :'<span class="bdg bs">▷ Start Rating</span>';
     const c=document.createElement('div');
     c.className='ds-card';
+    c.style.setProperty('--dsc', ds.color);
     c.innerHTML=
-      '<div class="ds-head"><div class="ds-nm">'+ds.member+'\'s Dataset</div></div>'+
-      '<div class="ds-member">// by '+ds.member+' &nbsp;·&nbsp; 20 celebrities × 5 photos</div>'+
-      '<div class="ds-de">'+ds.desc+'</div>'+
-      '<div class="pb"><div class="pf" style="width:'+pct+'%;background:'+ds.color+'"></div></div>'+
-      '<div class="pl"><span>'+rated+' / 100 rated</span><span>'+pct+'%</span></div>'+badge;
+      '<div class="ds-card-inner">'+
+        '<div class="ds-nm">'+(ds.member+"'s Dataset")+'</div>'+
+        '<div class="ds-num">'+pct+'%</div>'+
+        '<div class="pb"><div class="pf" style="width:'+pct+'%;background:'+ds.color+'"></div></div>'+
+        '<div class="pl">'+rated+' / 100</div>'+
+        badge+
+      '</div>';
     c.onclick=()=>openDS(ds.id);
     grid.appendChild(c);
   });
@@ -707,7 +762,7 @@ function loadImg() {
 
   // Update celebrity banner
   document.getElementById('celeName').textContent = photo.celebName;
-  document.getElementById('celeSub').textContent  = ADS.member+"'s Dataset";
+  document.getElementById('celeSub').textContent  = ADS.member+"'s Collection";
   document.getElementById('celeCount').textContent = 'Photo '+photo.photoNum+' / 5';
   document.getElementById('ibadge').textContent    = photo.celebName+' #'+photo.photoNum;
 
@@ -790,7 +845,7 @@ function showDone() {
   const all=Object.values(rat);
   const avg=all.length?(all.reduce((s,r)=>s+r.stars,0)/all.length).toFixed(1):'—';
   document.getElementById('doneMsg').innerHTML=
-    'You rated all 100 photos in <strong style="color:var(--ds-color)">'+ADS.member+'\'s Dataset</strong>.<br>'+
+    'You rated all 100 photos in <strong style="color:var(--ds-color)">'+ADS.member+'\'s Collection</strong>.<br>'+
     'Average rating: <strong style="color:var(--ds-color)">'+avg+' ★</strong>';
 }
 
