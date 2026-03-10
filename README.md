@@ -1,86 +1,158 @@
 # PixelRate — Photo Rating System
-### DSA Group Project
-
-A full-stack photo rating web application built as a **single HTML file**. No backend, no server, no installation needed. Runs entirely in the browser using `localStorage` as the database.
+> DSA Group Project | HTML + CSS + JavaScript + Firebase Realtime Database
 
 ---
 
-## Table of Contents
+## What is this?
 
-- [Live Demo Setup](#live-demo-setup)
-- [How It Works](#how-it-works)
-- [Project Structure](#project-structure)
-- [Adding Your Photos](#adding-your-photos)
-- [Changing Names & Celebrities](#changing-names--celebrities)
-- [Login & Account System](#login--account-system)
-- [DSA Concepts Used](#dsa-concepts-used)
-- [Deploying to GitHub Pages](#deploying-to-github-pages)
-- [Group Member Responsibilities](#group-member-responsibilities)
-- [FAQ](#faq)
+PixelRate is a photo rating web app. Users register, log in, and rate photos 1 to 5 stars across 5 datasets (one per group member). All ratings sync to Firebase so the admin can see everyone's data in real time from any device.
+
+No server needed. No installation. Just two HTML files on GitHub Pages.
 
 ---
 
-## Live Demo Setup
-
-To run the project locally, just **double-click** `index.html` — it opens in your browser.
-
-To run it online for everyone, deploy to **GitHub Pages** (free). See [Deploying to GitHub Pages](#deploying-to-github-pages).
-
----
-
-## How It Works
-
-```
-User registers / logs in
-        ↓
-Picks a dataset (one per group member)
-        ↓
-Rates photos 1–5 stars (100 photos per dataset)
-        ↓
-All ratings saved to browser localStorage
-        ↓
-Results page shows all rated photos + Export CSV
-```
-
-- **No internet needed** to run (except for loading photos from Picsum)
-- **Data is saved per browser** — each device/browser has its own data
-- **Multiple users** can register on the same device
-- **Resume anytime** — your progress is saved automatically
-
----
-
-## Project Structure
+## Files in this repo
 
 ```
 your-repo/
-│
-├── index.html              ← THE ENTIRE APP (only file you need)
-│
-└── photos/                 ← YOUR PHOTO FOLDER (when using local photos)
+├── index.html      ← Main app (login, rating, results)
+├── admin.html      ← Admin dashboard (see all users and ratings)
+├── README.md       ← This file
+└── photos/         ← Your own photos (optional)
     ├── tanvir/
-    │   ├── celebrity_name/
-    │   │   ├── celebrity_name_01.jpg
-    │   │   ├── celebrity_name_02.jpg
-    │   │   ├── celebrity_name_03.jpg
-    │   │   ├── celebrity_name_04.jpg
-    │   │   └── celebrity_name_05.jpg
-    │   └── ... (20 celebrity folders)
     ├── alvi/
     ├── provat/
     ├── mim/
     └── nadim/
 ```
 
-> **Note:** The current version uses online photos from [Lorem Picsum](https://picsum.photos) for the showcase. If you want to use real celebrity photos, follow the [Adding Your Photos](#adding-your-photos) section.
+---
+
+## Setup Guide — From Zero to Live
+
+### Step 1 — Create a Firebase project
+
+1. Go to https://console.firebase.google.com
+2. Sign in with your Google account
+3. Click **Add project**
+4. Enter project name: `pixelrate` → click **Continue**
+5. Disable Google Analytics (not needed) → click **Create project**
+6. Wait for it to create → click **Continue**
+
+### Step 2 — Create a Realtime Database
+
+1. In your Firebase project, look at the left sidebar
+2. Click **Build** → **Realtime Database**
+3. Click **Create Database**
+4. Choose any location (closest to you) → click **Next**
+5. Select **Start in test mode** → click **Enable**
+6. You will see your database URL at the top — it looks like:
+   ```
+   https://pixelrate-abc12-default-rtdb.firebaseio.com
+   ```
+7. Copy this URL — you will need it in the next step
+
+### Step 3 — Paste the URL into both files
+
+Open `index.html` in any text editor (Notepad, VS Code) and find this line:
+
+```javascript
+const FIREBASE_URL = 'PASTE_YOUR_DATABASE_URL_HERE';
+```
+
+Replace it with your actual URL:
+
+```javascript
+const FIREBASE_URL = 'https://pixelrate-abc12-default-rtdb.firebaseio.com';
+```
+
+Do the exact same thing in `admin.html`.
+
+Also in `admin.html`, change the admin password:
+
+```javascript
+const ADMIN_PASSWORD = 'pixelrate2024';   // change this to something secret
+```
+
+Save both files.
+
+### Step 4 — Create a GitHub repository
+
+1. Go to https://github.com and sign in (or create a free account)
+2. Click the **+** icon (top right) → **New repository**
+3. Repository name: `pixelrate` (or anything you like)
+4. Set visibility to **Public** (required for free GitHub Pages)
+5. Leave all checkboxes unchecked
+6. Click **Create repository**
+
+### Step 5 — Upload your files
+
+1. On your new empty repo page, click **uploading an existing file**
+2. Drag and drop these three files:
+   - `index.html`
+   - `admin.html`
+   - `README.md`
+3. Scroll down and click **Commit changes**
+
+### Step 6 — Enable GitHub Pages
+
+1. In your repo, click **Settings** (top menu)
+2. In the left sidebar, click **Pages**
+3. Under Source, select branch **main** and folder **/ (root)**
+4. Click **Save**
+5. Wait 2 to 3 minutes
+
+Your site is now live at:
+```
+https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/
+```
+
+Admin panel is at:
+```
+https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/admin.html
+```
+
+### Step 7 — Test it
+
+1. Open your live URL
+2. Register an account
+3. Pick a dataset and rate a few photos
+4. Open admin.html URL and enter your admin password
+5. Click Refresh — you should see your account and ratings
+
+If everything works, share the main URL with your group and classmates.
 
 ---
 
-## Adding Your Photos
+## How to Update Files Later
 
-### Step 1 — Name your photo files
+**Small changes (editing code):**
+1. Go to your repo on GitHub
+2. Click on the file (e.g. `index.html`)
+3. Click the pencil icon to edit
+4. Make changes → click **Commit changes**
+5. Wait 1 minute → live
 
-Each celebrity needs **exactly 5 photos**, named like this:
+**Uploading photo folders (use GitHub Desktop):**
+1. Download GitHub Desktop from https://desktop.github.com
+2. Sign in and clone your repo to your computer
+3. Add your files to the repo folder on your computer
+4. Open GitHub Desktop → it shows your new files
+5. Write a commit message → click **Commit to main** → **Push origin**
+6. Wait 1 minute → live
 
+---
+
+## Adding Your Own Photos
+
+Currently the site uses random online photos. To use real celebrity photos:
+
+**Naming rules:**
+- Filename must be lowercase with underscores, no spaces
+- Must match the `id` field in the code exactly
+- Each celebrity needs exactly 5 photos numbered `_01` to `_05`
+
+Example for celebrity with id `ronaldo`:
 ```
 ronaldo_01.jpg
 ronaldo_02.jpg
@@ -89,16 +161,11 @@ ronaldo_04.jpg
 ronaldo_05.jpg
 ```
 
-The name must be **lowercase**, **no spaces** (use underscores). This name must **exactly match** the `id` field in the code.
-
-### Step 2 — Create the folder structure
-
-Inside the `photos/` folder, create subfolders like this:
-
+**Folder structure:**
 ```
 photos/
-└── tanvir/              ← member folder (must match id in code)
-    └── ronaldo/         ← celebrity folder (must match id in code)
+└── tanvir/
+    └── ronaldo/
         ├── ronaldo_01.jpg
         ├── ronaldo_02.jpg
         ├── ronaldo_03.jpg
@@ -106,227 +173,160 @@ photos/
         └── ronaldo_05.jpg
 ```
 
-### Step 3 — Update the code
+**Update the code in index.html:**
 
-Open `index.html`, find this comment near the top of the `<script>` section:
-
+Find this comment:
 ```
-⚠️  CHANGE NAMES HERE — THIS IS THE ONLY PLACE YOU NEED TO EDIT
+CHANGE NAMES HERE — THIS IS THE ONLY PLACE YOU NEED TO EDIT
 ```
 
-Change the `id` and `name` for each celebrity:
-
+Change each celebrity id and name:
 ```javascript
-// BEFORE:
+// Before:
 { id: 'cele1', name: 'Celebrity 1' },
 
-// AFTER:
+// After:
 { id: 'ronaldo', name: 'Ronaldo' },
 ```
 
-The `id` = folder name + file prefix (must be lowercase, no spaces)  
-The `name` = display name shown on screen (can be anything)
+Then find the `buildPhotoList` function and change the photo path:
+```javascript
+// Before (online placeholder):
+path: 'https://picsum.photos/seed/' + ds.id + '_' + cele.id + '_' + i + '/800/600'
+
+// After (your own photos):
+path: 'photos/' + ds.id + '/' + cele.id + '/' + cele.id + '_' + num + '.jpg'
+```
 
 ---
 
-## Changing Names & Celebrities
+## Changing Dataset Names and Colors
 
-### Where exactly to edit
-
-Open `index.html` in any text editor (Notepad, VS Code, etc.) and search for:
-
-```
-CHANGE NAMES HERE
-```
-
-You will see 5 blocks like this — one per group member:
+Find the `const DS = [...]` block in `index.html`:
 
 ```javascript
 {
-  id: 'tanvir',         // ← folder name on GitHub (keep lowercase, no spaces)
-  member: 'Tanvir',     // ← display name shown on the website
-  color: '#a7c080',     // ← card accent color (you can change this)
-  celebrities: [
-    { id: 'cele1',  name: 'Celebrity 1'  },   // ← change these
-    { id: 'cele2',  name: 'Celebrity 2'  },   // ← change these
-    // ... 20 total
-  ]
+  id: 'tanvir',       // folder name — lowercase, no spaces
+  member: 'Tanvir',   // display name on the website
+  color: '#a7c080',   // card accent color
+  celebrities: [ ... ]
 },
 ```
 
-**Rules:**
-| Field | Rule | Example |
-|-------|------|---------|
-| `id` (dataset) | lowercase, no spaces | `'tanvir'` |
-| `member` | any display name | `'Tanvir'` |
-| `id` (celebrity) | lowercase, no spaces, matches folder & filename | `'ronaldo'` |
-| `name` (celebrity) | any display name | `'Ronaldo'` |
+Dataset colors:
 
-### Dataset colors (optional)
-
-Each member has a color for their card. You can change it:
-
-```javascript
-color: '#a7c080',   // Tanvir  — green
-color: '#7fbbb3',   // Alvi    — teal
-color: '#d699b6',   // Provat  — purple
-color: '#dbbc7f',   // Mim     — gold
-color: '#e69875',   // Nadim   — orange
-```
-
-Use any hex color code you like.
+| Member | Color   | Name         |
+|--------|---------|--------------|
+| Tanvir | #a7c080 | Forest Green |
+| Alvi   | #7fbbb3 | Teal         |
+| Provat | #d699b6 | Purple       |
+| Mim    | #dbbc7f | Gold         |
+| Nadim  | #e69875 | Orange       |
 
 ---
 
-## Login & Account System
+## Admin Panel
 
-### How accounts work
+Open `admin.html` on your live site. Features:
 
-- Users **register** with name, email, and password
-- Passwords are **hashed** using a polynomial rolling hash (a DSA concept!)
-- All accounts stored in `localStorage` under the key `pr_users`
-- Session stored under `pr_sess` — stays logged in until you click Logout
-- Each user's ratings stored separately under `pr_p_EMAIL`
+| Section | What it shows |
+|---------|---------------|
+| Global Stats | Total users, total ratings, completion % |
+| Dataset Overview | Progress bars per member across all users |
+| Users Table | Every user and their rating count per dataset |
+| All Ratings | Every rated photo with stars, username, date |
+| Export All CSV | Full ratings data download |
+| Export Users CSV | User progress summary download |
 
-### Data storage keys
+---
 
-| Key | What it stores |
-|-----|----------------|
-| `pr_users` | All registered accounts (email, name, hashed password) |
-| `pr_sess` | Currently logged-in user's email |
-| `pr_p_tanvir@email.com` | That user's ratings & progress for all datasets |
+## How the Sync Works
 
-### Important notes
+```
+User rates a photo
+        |
+        v
+Saved to localStorage instantly (works offline)
+        |
+        v
+Pushed to Firebase Realtime Database
+        |
+        v
+Admin panel reads Firebase and sees everyone's data
+```
 
-- **Data is stored per browser** — registering on Chrome does not carry over to Firefox
-- **Clearing browser data** (cookies/cache) will delete all accounts and ratings
-- **Different devices** = different data (this is expected for a DSA project demo)
-- There is **no admin account** — everyone registers as a normal user
+A small spinning indicator appears bottom-right when syncing.
 
-### How to view raw data (for demo/presentation)
+---
 
-1. Open the site in browser
-2. Press `F12` → go to **Application** tab
-3. Click **Local Storage** → click the site URL
-4. You can see all raw JSON data stored — great to show the teacher!
+## Login and Accounts
+
+- Users register with name, email, and password
+- Passwords are hashed using polynomial rolling hash (a DSA concept)
+- On login, user data is pulled from Firebase and merged with local cache
+- After every rating, data is pushed to Firebase automatically
+- Multiple users can use the site from different devices — all data syncs
 
 ---
 
 ## DSA Concepts Used
 
-| Concept | Where used |
+| Concept | Where Used |
 |---------|-----------|
-| **Hash Map** | User storage (`pr_users` object), ratings storage |
-| **Hashing** | Password hashing via polynomial rolling hash |
-| **Fisher-Yates Shuffle** | Randomizing photo order per user |
-| **Seeded PRNG** | Same photo order every login for same user (reproducible shuffle) |
-| **Array** | Photo list, dataset structure, rating order |
+| Hash Map | User storage object, ratings object |
+| Polynomial Rolling Hash | Password hashing |
+| Fisher-Yates Shuffle | Randomizing photo order per user |
+| Seeded PRNG | Same photo order every login for same user |
+| Array | Photo list, dataset structure |
+| Merge Algorithm | Sync conflict resolution — latest timestamp wins |
 
-### Password hashing function (polynomial rolling hash)
+---
 
-```javascript
-hash(s) {
-  let h = 0;
-  for (let i = 0; i < s.length; i++)
-    h = Math.imul(31, h) + s.charCodeAt(i) | 0;
-  return h.toString(16);
-}
-```
+## Troubleshooting
 
-### Seeded Fisher-Yates shuffle
+**Ratings not saving / syncing**
+Check that FIREBASE_URL is correctly pasted in both files. Make sure your Firebase database is in test mode (allows read and write without authentication).
 
-```javascript
-shuffle(arr, seed) {
-  const a = [...arr];
-  let s = Math.abs(seed) || 9999;
-  for (let i = a.length - 1; i > 0; i--) {
-    s = (s * 1664525 + 1013904223) & 0xffffffff;
-    const j = Math.abs(s) % (i + 1);
-    [a[i], a[j]] = [a[j], a[i]];
+**Admin panel shows Failed to load**
+The FIREBASE_URL in admin.html is wrong or missing. Also check the Firebase console — make sure Realtime Database is created and rules allow read access.
+
+**Photos not loading**
+Folder names and file names must exactly match the `id` in the code. All lowercase, underscores not spaces.
+
+**Site shows blank page**
+Press F12, open the Console tab, read the error message. Usually a quote or syntax issue in the code.
+
+**Firebase test mode warning**
+Firebase test mode expires after 30 days. To keep it open, go to Firebase Console → Realtime Database → Rules and set:
+```json
+{
+  "rules": {
+    ".read": true,
+    ".write": true
   }
-  return a;
 }
 ```
 
 ---
 
-## Deploying to GitHub Pages
+## Group Member Checklist
 
-### First time setup
+**One person does once:**
+- [ ] Create Firebase project and Realtime Database
+- [ ] Copy database URL into index.html and admin.html
+- [ ] Change admin password in admin.html
+- [ ] Create GitHub repo and upload all files
+- [ ] Enable GitHub Pages
+- [ ] Test the full flow (register, rate, check admin panel)
+- [ ] Share live URL with the group
 
-1. Go to [github.com](https://github.com) and sign in
-2. Click **+** → **New repository**
-3. Name it anything (e.g. `pixelrate`)
-4. Set it to **Public**
-5. Do NOT add README or .gitignore
-6. Click **Create repository**
-7. On the next page, click **uploading an existing file**
-8. Drag and drop `index.html` (and the `photos/` folder if using local photos)
-9. Click **Commit changes**
-10. Go to **Settings** → **Pages**
-11. Under Source, select **main** branch → **/ (root)** → **Save**
-12. Wait 2–3 minutes
-13. Your site is live at: `https://YOUR-USERNAME.github.io/REPO-NAME/`
-
-### Updating the site
-
-1. Make changes to `index.html` locally
-2. Go to your repo on GitHub
-3. Click on `index.html` → click the **pencil icon** (Edit)
-4. Paste your new code → **Commit changes**
-5. Changes go live in ~1 minute
-
-### Adding photos to GitHub
-
-1. In your repo, click **Add file** → **Upload files**
-2. You cannot upload whole folders directly — create the folder path by naming files like: `photos/tanvir/ronaldo/ronaldo_01.jpg` in the file name field
-3. Or use [GitHub Desktop](https://desktop.github.com/) to drag and drop entire folder structures
-
----
-
-## Group Member Responsibilities
-
-| Member | Dataset ID | Folder | Their job |
-|--------|-----------|--------|-----------|
-| Tanvir | `tanvir` | `photos/tanvir/` | Collect 20 celebrities × 5 photos, rename files correctly |
-| Alvi | `alvi` | `photos/alvi/` | Collect 20 celebrities × 5 photos, rename files correctly |
-| Provat | `provat` | `photos/provat/` | Collect 20 celebrities × 5 photos, rename files correctly |
-| Mim | `mim` | `photos/mim/` | Collect 20 celebrities × 5 photos, rename files correctly |
-| Nadim | `nadim` | `photos/nadim/` | Collect 20 celebrities × 5 photos, rename files correctly |
-
-### Photo checklist for each member
-
-- [ ] Chose 20 celebrities
-- [ ] Collected 5 photos per celebrity (100 photos total)
-- [ ] Renamed all photos to `celebid_01.jpg` format
-- [ ] Created correct folder structure `photos/memberid/celebid/`
-- [ ] Updated `id` and `name` in `index.html` for all 20 celebrities
-- [ ] Uploaded photos to GitHub repo
-
----
-
-## FAQ
-
-**Q: The photos aren't loading**  
-A: Make sure the folder names and file names exactly match the `id` fields in the code. Everything must be lowercase with underscores, no spaces.
-
-**Q: I cleared my browser and lost all data**  
-A: Yes — data lives in `localStorage`. Always export your CSV before clearing browser data. Go to Results page → **Export CSV**.
-
-**Q: Can two people share ratings across devices?**  
-A: No — each browser has its own localStorage. This is by design for the project demo. Everyone rates independently.
-
-**Q: How do I reset all data for a fresh demo?**  
-A: Press `F12` → Application → Local Storage → right-click the site → **Clear**. Or open browser Settings → Clear browsing data → Cookies and site data.
-
-**Q: The site shows a blank page / error**  
-A: Open `F12` → Console tab and check the error message. Most likely a typo in a celebrity `id` or a missing quote in the code.
-
-**Q: How do I change the site title?**  
-A: Search for `<title>PixelRate` in `index.html` and change it.
-
-**Q: Can I add more than 20 celebrities?**  
-A: Yes — add more `{ id: '...', name: '...' }` entries to the celebrities array and add the corresponding photos. The progress bar automatically adjusts (it counts total photos = celebrities × 5).
+**Each member does for their dataset:**
+- [ ] Choose 20 celebrities
+- [ ] Collect 5 photos per celebrity (100 photos total)
+- [ ] Rename all photos to the correct format (celebid_01.jpg)
+- [ ] Create correct folder structure (photos/memberid/celebid/)
+- [ ] Update celebrity names in index.html
+- [ ] Upload photos to GitHub repo
 
 ---
 
@@ -334,13 +334,13 @@ A: Yes — add more `{ id: '...', name: '...' }` entries to the celebrities arra
 
 | Technology | Purpose |
 |-----------|---------|
-| HTML5 | Structure |
-| CSS3 | Styling (Everforest dark theme) |
+| HTML5 / CSS3 | Structure and Everforest dark theme |
 | Vanilla JavaScript | All logic, no frameworks |
-| localStorage | Database |
-| Google Fonts (Roboto) | Typography |
-| Lorem Picsum | Placeholder photos (showcase mode) |
+| localStorage | Local cache for instant offline access |
+| Firebase Realtime Database | Cloud database, syncs all users in real time |
+| Google Fonts Roboto | Typography |
+| Lorem Picsum | Placeholder photos for showcase mode |
 
 ---
 
-*Built for DSA course project. Single-file architecture — everything in `index.html`.*
+*PixelRate — DSA Group Project*
