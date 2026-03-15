@@ -216,6 +216,51 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
 .pid { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); margin-top:2px; }
 .emp { grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted); font-family:'Roboto Mono',monospace; font-size:0.8rem; }
 .emp a { color:var(--accent); cursor:pointer; }
+
+/* ── ABOUT US MODAL ── */
+.modal-overlay { display:none; position:fixed; inset:0; z-index:9000; background:rgba(10,12,14,0.85); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.show { display:flex; }
+.modal-box { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:36px; max-width:700px; width:100%; box-shadow:0 24px 60px rgba(0,0,0,0.5); animation:mfade 0.22s ease; }
+@keyframes mfade { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+.modal-title { font-size:1.4rem; font-weight:700; color:var(--text2); margin-bottom:4px; }
+.modal-sub { font-family:'Roboto Mono',monospace; font-size:0.68rem; color:var(--muted); margin-bottom:28px; letter-spacing:0.08em; }
+.modal-close { float:right; background:none; border:1px solid var(--border); color:var(--muted); font-size:0.8rem; padding:5px 12px; border-radius:6px; cursor:pointer; font-family:'Roboto Mono',monospace; transition:all 0.2s; }
+.modal-close:hover { border-color:var(--red); color:var(--red); }
+.team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; }
+.team-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px 14px; text-align:center; transition:transform 0.2s, box-shadow 0.2s; }
+.team-card:hover { transform:translateY(-3px); box-shadow:0 10px 28px rgba(0,0,0,0.3); }
+.team-avatar { width:68px; height:68px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; font-weight:700; color:#2d353b; position:relative; overflow:hidden; }
+.team-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.team-name { font-size:1rem; font-weight:700; color:var(--text2); margin-bottom:4px; }
+.team-id { font-family:'Roboto Mono',monospace; font-size:0.68rem; color:var(--muted); }
+/* ── ENGINEERING TEAM PENTAGON ── */
+.about-modal-box { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:36px 36px 28px; max-width:780px; width:100%; box-shadow:0 24px 60px rgba(0,0,0,0.5); animation:mfade 0.22s ease; }
+.about-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:6px; }
+.about-tag { font-family:'Roboto Mono',monospace; font-size:0.62rem; color:var(--accent); letter-spacing:0.14em; text-transform:uppercase; background:rgba(167,192,128,0.1); border:1px solid rgba(167,192,128,0.25); padding:3px 10px; border-radius:20px; }
+.about-title { font-size:1.5rem; font-weight:700; color:var(--text2); margin-bottom:3px; position:relative; z-index:2; }
+.about-sub { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); margin-bottom:24px; position:relative; z-index:2; }
+.pentagon-wrap { position:relative; width:100%; padding-bottom:62%; z-index:1; }
+.pentagon-svg { position:absolute; inset:0; width:100%; height:100%; }
+.node-wrap { position:absolute; transform:translate(-50%,-50%); text-align:center; cursor:default; z-index:2; }
+.node-circle { width:72px; height:72px; border-radius:50%; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; font-weight:800; color:#2d353b; border:3px solid transparent; transition:transform 0.2s, box-shadow 0.2s; box-shadow:0 4px 18px rgba(0,0,0,0.3); }
+.node-wrap:hover .node-circle { transform:scale(1.12); box-shadow:0 8px 28px rgba(0,0,0,0.4); }
+.node-name { font-size:0.88rem; font-weight:700; color:var(--text2); line-height:1.2; }
+.node-id { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); margin-top:2px; }
+.node-role { font-family:'Roboto Mono',monospace; font-size:0.58rem; color:var(--accent); margin-top:3px; letter-spacing:0.06em; }
+.about-footer { display:flex; align-items:center; justify-content:space-between; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+.about-footer-left { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); }
+.about-footer-left span { color:var(--accent); }
+/* ── PROFILE MODAL ── */
+.profile-avatar-big { width:90px; height:90px; border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:2.2rem; font-weight:700; color:#2d353b; background:var(--accent); border:3px solid var(--accent); overflow:hidden; }
+.profile-avatar-big img { width:100%; height:100%; object-fit:cover; }
+.profile-info { text-align:center; margin-bottom:24px; }
+.profile-info h3 { font-size:1.3rem; font-weight:700; color:var(--text2); }
+.profile-info p { font-family:'Roboto Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:4px; }
+.divider { height:1px; background:var(--border); margin:20px 0; }
+.profile-section-title { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:14px; }
+/* ── LOGIN FOOTER ── */
+.login-dev { text-align:center; margin-top:18px; font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.06em; }
+.login-dev span { color:var(--accent); }
 </style>
 </head>
 <body>
@@ -246,6 +291,50 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
         <div class="msg" id="rMsg"></div>
       </div>
     </div>
+    <div class="login-dev">Developed by <span>Group 3 · Daffodil International University</span></div>
+  </div>
+</div>
+
+<!-- ===== ABOUT US MODAL ===== -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="about-modal-box">
+    <div class="about-header">
+      <div class="about-tag">Group 3</div>
+      <button class="modal-close" onclick="closeAbout()">✕ Close</button>
+    </div>
+    <div class="about-title">The Engineering Team</div>
+    <div class="about-sub">DAFFODIL INTERNATIONAL UNIVERSITY</div>
+    <div class="pentagon-wrap">
+      <svg class="pentagon-svg" id="pentagonSvg" viewBox="0 0 700 430" preserveAspectRatio="xMidYMid meet">
+        <!-- connection lines drawn by JS -->
+      </svg>
+      <div id="pentagonNodes"></div>
+    </div>
+    <div class="about-footer">
+      <div class="about-footer-left">Built with <span>Firebase · Vanilla JS · GitHub Pages</span></div>
+      <div style="font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted)">5 members · 500 photos · 5 DSA concepts</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROFILE MODAL ===== -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-box" style="max-width:420px">
+    <button class="modal-close" onclick="closeProfile()">✕ Close</button>
+    <div class="modal-title">My Profile</div>
+    <div style="height:8px"></div>
+    <div class="profile-avatar-big" id="profAvatar"></div>
+    <div class="profile-info">
+      <h3 id="profName"></h3>
+      <p id="profEmail"></p>
+    </div>
+    <div class="divider"></div>
+    <div class="profile-section-title">Change Password</div>
+    <div class="fg"><label>Current Password</label><input type="password" id="cpOld" placeholder="Enter current password"/></div>
+    <div class="fg"><label>New Password</label><input type="password" id="cpNew" placeholder="Min. 6 characters"/></div>
+    <div class="fg"><label>Confirm New Password</label><input type="password" id="cpCon" placeholder="Repeat new password"/></div>
+    <button class="btn-full" onclick="doChangePass()">Update Password</button>
+    <div class="msg" id="cpMsg"></div>
   </div>
 </div>
 
@@ -256,6 +345,8 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
     <div class="nav-right">
       <span class="nav-user" id="navUser"></span>
       <button class="nbtn" onclick="showPage('results')">My Results</button>
+      <button class="nbtn" onclick="openAbout()">About Us</button>
+      <button class="nbtn" onclick="openProfile()">Profile</button>
       <button class="nbtn" onclick="doLogout()">Logout</button>
     </div>
   </nav>
@@ -318,16 +409,13 @@ kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1
               <span class="star" data-v="4">★</span>
               <span class="star" data-v="5">★</span>
             </div>
-            <div class="kh"><kbd>1</kbd>–<kbd>5</kbd> rate &nbsp;·&nbsp; <kbd>Enter</kbd> confirm &nbsp;·&nbsp; <kbd>→</kbd> skip</div>
+            <div class="kh"><kbd>1</kbd>–<kbd>5</kbd> to rate &nbsp;·&nbsp; auto advances to next photo</div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;">
-            <button class="btn-rate" id="btnRate" onclick="submitRating()">Rate &amp; Next →</button>
-            <button class="btn-skip" onclick="skipImg()">Skip for now</button>
-          </div>
+
         </div>
       </div>
       <div class="hw">
-        <div class="ht">// Progress by Scene — click any photo to jump</div>
+        <div class="ht">// Progress by Scene</div>
         <div class="cele-grid" id="hg"></div>
       </div>
     </div>
@@ -876,7 +964,6 @@ function loadImg() {
   const photoIdx=ord[pos];
   const photo=photoList[photoIdx];
   sel=0; updStars(0);
-  document.getElementById('btnRate').classList.remove('on');
 
   // Update celebrity banner
   document.getElementById('celeName').textContent = photo.celebName;
@@ -914,7 +1001,7 @@ function loadImg() {
 document.querySelectorAll('.star').forEach(s=>{
   s.addEventListener('mouseover',()=>updStars(+s.dataset.v));
   s.addEventListener('mouseout',()=>updStars(sel));
-  s.addEventListener('click',()=>{ sel=+s.dataset.v; updStars(sel); document.getElementById('btnRate').classList.add('on'); });
+  s.addEventListener('click',()=>{ sel=+s.dataset.v; updStars(sel); setTimeout(submitRating,180); });
 });
 function updStars(v){ document.querySelectorAll('.star').forEach(s=>s.classList.toggle('lit',+s.dataset.v<=v)); }
 
@@ -950,7 +1037,7 @@ function renderHist() {
       d.className='hdot'+(r?' rated':'')+(orderPos===pos?' cur':'');
       d.title=(r?cele.name+' photo '+(pi+1)+' — '+r.stars+'★':cele.name+' photo '+(pi+1)+' — not rated');
       d.textContent=r?r.stars+'★':(pi+1);
-      d.onclick=()=>{ pos=orderPos>=0?orderPos:pos; sel=0; loadImg(); };
+      d.style.cursor='default';
       dots.appendChild(d);
     }
     row.appendChild(lbl); row.appendChild(dots); g.appendChild(row);
@@ -969,9 +1056,7 @@ function showDone() {
 
 document.addEventListener('keydown',e=>{
   if(!document.getElementById('page-rate').classList.contains('active')) return;
-  if(e.key>='1'&&e.key<='5'){ sel=+e.key; updStars(sel); document.getElementById('btnRate').classList.add('on'); }
-  else if(e.key==='Enter'&&sel) submitRating();
-  else if(e.key==='ArrowRight') skipImg();
+  if(e.key>='1'&&e.key<='5'){ sel=+e.key; updStars(sel); setTimeout(submitRating,180); }
 });
 
 /* ================================================================
@@ -1055,6 +1140,115 @@ function exportCSV() {
   if(s&&DB.exists(s)){ CU=DB.getUser(s); enterApp(); }
   else showPage('login');
 })();
+
+/* ================================================================
+   TEAM DATA
+================================================================ */
+const TEAM = [
+  { name:'Fahim',  id:'252-15-607', color:'#a7c080', initial:'F' },
+  { name:'Nadim',  id:'252-15-267', color:'#7fbbb3', initial:'N' },
+  { name:'Mim',    id:'252-15-609', color:'#d699b6', initial:'M' },
+  { name:'Provat', id:'252-15-303', color:'#dbbc7f', initial:'P' },
+  { name:'Alvi',   id:'252-15-282', color:'#e69875', initial:'A' },
+];
+
+/* ── About Modal — Pentagon Layout ── */
+
+
+function openAbout() {
+  const wrap = document.getElementById('pentagonNodes');
+  const svg  = document.getElementById('pentagonSvg');
+  // Pentagon positions (% of container) — 5 points of a circle
+  // viewBox 700x430, center 350,215, radius ~175
+  const cx=350, cy=215, r=175;
+  const angles = [-90, -90+72, -90+144, -90+216, -90+288]; // top first, clockwise
+  const pts = angles.map(a => ({
+    x: cx + r * Math.cos(a * Math.PI/180),
+    y: cy + r * Math.sin(a * Math.PI/180)
+  }));
+
+  // Draw connection lines in SVG
+  let lines = '';
+  for(let i=0;i<5;i++) {
+    for(let j=i+1;j<5;j++) {
+      lines += `<line x1="${pts[i].x}" y1="${pts[i].y}" x2="${pts[j].x}" y2="${pts[j].y}"
+        stroke="${TEAM[i].color}" stroke-width="1" stroke-opacity="0.18"/>`;
+    }
+  }
+  // Center label
+  lines += `<text x="350" y="210" text-anchor="middle" font-family="Roboto Mono,monospace"
+    font-size="11" fill="#859289" letter-spacing="2">PIXEL</text>
+  <text x="350" y="226" text-anchor="middle" font-family="Roboto Mono,monospace"
+    font-size="11" fill="#a7c080" letter-spacing="2" font-weight="700">RATE</text>`;
+  svg.innerHTML = lines;
+
+  // Place node divs
+  wrap.innerHTML = '';
+  TEAM.forEach((m,i) => {
+    const px = (pts[i].x / 700 * 100).toFixed(2)+'%';
+    const py = (pts[i].y / 430 * 100).toFixed(2)+'%';
+    const div = document.createElement('div');
+    div.className = 'node-wrap';
+    div.style.left = px;
+    div.style.top  = py;
+    div.innerHTML =
+      '<div class="node-circle" style="background:'+m.color+';border-color:'+m.color+'">'+m.initial+'</div>'+
+      '<div class="node-name">'+m.name+'</div>'+
+      '<div class="node-id">'+m.id+'</div>';
+    wrap.appendChild(div);
+  });
+
+  document.getElementById('aboutModal').classList.add('show');
+}
+function closeAbout() {
+  document.getElementById('aboutModal').classList.remove('show');
+}
+document.getElementById('aboutModal').addEventListener('click', function(e) {
+  if(e.target === this) closeAbout();
+});
+
+/* ── Profile Modal ── */
+function openProfile() {
+  if(!CU) return;
+  const m = TEAM.find(t => t.name.toLowerCase() === CU.name.toLowerCase()) || { color:'#a7c080', initial: CU.name[0].toUpperCase() };
+  document.getElementById('profAvatar').style.background = m.color;
+  document.getElementById('profAvatar').innerHTML = m.initial;
+  document.getElementById('profName').textContent = CU.name;
+  document.getElementById('profEmail').textContent = CU.email;
+  document.getElementById('cpOld').value = '';
+  document.getElementById('cpNew').value = '';
+  document.getElementById('cpCon').value = '';
+  document.getElementById('cpMsg').style.display = 'none';
+  document.getElementById('profileModal').classList.add('show');
+}
+function closeProfile() {
+  document.getElementById('profileModal').classList.remove('show');
+}
+document.getElementById('profileModal').addEventListener('click', function(e) {
+  if(e.target === this) closeProfile();
+});
+
+/* ── Change Password ── */
+function doChangePass() {
+  const old = document.getElementById('cpOld').value.trim();
+  const nw  = document.getElementById('cpNew').value.trim();
+  const cn  = document.getElementById('cpCon').value.trim();
+  const msg = document.getElementById('cpMsg');
+  const show = (t, type) => { msg.textContent=t; msg.className='msg '+(type||'err'); msg.style.display='block'; };
+  if(!old||!nw||!cn) return show('Please fill in all fields.');
+  if(DB.hash(old) !== CU.passHash) return show('Current password is incorrect.');
+  if(nw.length < 6) return show('New password must be at least 6 characters.');
+  if(nw !== cn) return show('New passwords do not match.');
+  // Update
+  const u = DB.gu();
+  u[CU.email].passHash = DB.hash(nw);
+  DB.su(u);
+  CU = DB.getUser(CU.email);
+  DB.syncUp(CU.email);
+  show('Password updated successfully!', 'ok');
+  setTimeout(closeProfile, 1800);
+}
+
 </script>
 </body>
 </html>
