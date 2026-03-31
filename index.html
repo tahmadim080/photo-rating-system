@@ -646,39 +646,68 @@ const DS = [
 ================================================================
 */
 
-/* Build flat photo list — uses Unsplash for showcase photos */
-// Each dataset has a unique seed offset so photos differ per dataset
-const DS_SEEDS = {
-  tanvir: 100, alvi: 200, provat: 300, mim: 400, nadim: 500
-};
-// Nature keywords per dataset for variety
-const DS_NATURE = {
-  tanvir: 'forest',
-  alvi:   'mountain',
-  provat: 'ocean',
-  mim:    'sunset',
-  nadim:  'river'
-};
+/* Build flat photo list — uses uploaded Firebase photos if available, else picsum placeholders */
+const DS_SEEDS = { tanvir:100, alvi:200, provat:300, mim:400, nadim:500 };
+const DS_NATURE = { tanvir:'forest', alvi:'mountain', provat:'ocean', mim:'sunset', nadim:'river' };
+
+// Cache of uploaded photos fetched from Firebase per dataset
+const _uploadedPhotos = {};
+
+async function fetchUploadedPhotos(dsId) {
+  if (_uploadedPhotos[dsId] !== undefined) return; // already fetched
+  try {
+    const r = await fetch(FIREBASE_URL + '/photos/' + dsId + '.json');
+    const data = await r.json();
+    _uploadedPhotos[dsId] = data || {};
+  } catch(e) {
+    _uploadedPhotos[dsId] = {};
+  }
+}
 
 function buildPhotoList(ds) {
   const photos = [];
-  const keyword = DS_NATURE[ds.id] || 'nature';
-  const seedBase = DS_SEEDS[ds.id] || 0;
-  ds.celebrities.forEach((cele, ci) => {
-    for (let i = 1; i <= 5; i++) {
-      const num = String(i).padStart(2, '0');
-      // Unsplash source: unique image per celeb+photo using seed
-      const seed = seedBase + ci * 5 + i;
+  const uploaded = _uploadedPhotos[ds.id] || {};
+  // Sort uploaded keys so photos are in a consistent order
+  const uploadedKeys = Object.keys(uploaded).sort();
+
+  if (uploadedKeys.length > 0) {
+    // Use uploaded photos — group into celebrities of 5 each
+    // Pad or trim to exactly 100 photos (20 groups × 5)
+    const padded = [];
+    while (padded.length < 100) {
+      for (const k of uploadedKeys) {
+        padded.push({ key: k, src: uploaded[k] });
+        if (padded.length >= 100) break;
+      }
+    }
+    padded.slice(0, 100).forEach((p, idx) => {
+      const ci = Math.floor(idx / 5);
+      const pi = (idx % 5) + 1;
+      const cele = ds.celebrities[ci] || { id: 'group_' + ci, name: 'Scene ' + (ci + 1) };
       photos.push({
         celebId:   cele.id,
         celebName: cele.name,
-        photoNum:  i,
-        filename:  cele.id + '_' + num + '.jpg',
-        path:      'https://picsum.photos/seed/' + ds.id + '_' + cele.id + '_' + i + '/800/600'
+        photoNum:  pi,
+        filename:  p.key + '.jpg',
+        path:      p.src  // base64 data URL from Firebase
       });
-    }
-  });
-  return photos; // 100 photos total
+    });
+  } else {
+    // Fallback: picsum placeholders
+    ds.celebrities.forEach((cele, ci) => {
+      for (let i = 1; i <= 5; i++) {
+        const num = String(i).padStart(2, '0');
+        photos.push({
+          celebId:   cele.id,
+          celebName: cele.name,
+          photoNum:  i,
+          filename:  cele.id + '_' + num + '.jpg',
+          path:      'https://picsum.photos/seed/' + ds.id + '_' + cele.id + '_' + i + '/800/600'
+        });
+      }
+    });
+  }
+  return photos; // 100 photos
 }
 
 /* ================================================================
@@ -931,15 +960,24 @@ function renderDash() {
 ================================================================ */
 let ADS=null, photoList=[], ord=[], rat={}, pos=0, sel=0, bz=false;
 
-function openDS(dsId) {
+async function openDS(dsId) {
   ADS = DS.find(d=>d.id===dsId);
-  photoList = buildPhotoList(ADS); // 100 photos flat list
   document.documentElement.style.setProperty('--ds-color', ADS.color);
-  document.getElementById('rEm').textContent = '';
   document.getElementById('rNm').textContent = ADS.member+"'s Dataset";
-  document.getElementById('rDe').textContent = '20 celebrities · 5 photos each';
+  document.getElementById('rDe').textContent = 'Loading photos...';
   document.getElementById('rateLayout').style.display='flex';
   document.getElementById('done-screen').style.display='none';
+  showPage('rate');
+
+  // Fetch uploaded photos from Firebase first
+  await fetchUploadedPhotos(ADS.id);
+  photoList = buildPhotoList(ADS);
+
+  const hasUploaded = Object.keys(_uploadedPhotos[ADS.id]||{}).length > 0;
+  document.getElementById('rEm').textContent = '';
+  document.getElementById('rDe').textContent = hasUploaded
+    ? photoList.length + ' uploaded photos'
+    : '20 scenes · 5 photos each';
 
   // Seeded shuffle — same order every time for same user+dataset
   const seed=Math.abs(DB.hash(CU.email+ADS.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0))||12345;
@@ -948,7 +986,6 @@ function openDS(dsId) {
   if(!dp){ DB.initDP(CU.email,ADS.id,shuffled); dp=DB.getDP(CU.email,ADS.id); }
   ord=dp.order; rat=dp.ratings;
   pos=nextUnrated(0);
-  showPage('rate');
   renderHist();
   loadImg();
 }
