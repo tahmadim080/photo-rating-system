@@ -726,23 +726,23 @@ const FB = {
 
   async set(path, data) {
     try {
-      await fetch(this.url(path), {
+      const r = await fetch(this.url(path), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      return true;
+      return r.ok;
     } catch(e) { return false; }
   },
 
   async patch(path, data) {
     try {
-      await fetch(this.url(path), {
+      const r = await fetch(this.url(path), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      return true;
+      return r.ok;
     } catch(e) { return false; }
   }
 };
