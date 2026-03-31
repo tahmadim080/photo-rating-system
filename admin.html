@@ -581,7 +581,7 @@ async function handleSlotFiles(files){
   let uploaded=0;
   for(const file of toUpload){
     const b64=await toBase64(file);
-    const fname=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').substring(0,60);
+    const fname=file.name.replace(/[^a-zA-Z0-9_-]/g,'_').substring(0,60);
     const ok=await FB.set('/photos/'+dsId+'/'+slotKey+'/'+fname, b64);
     if(ok){
       if(!_dsPhotos[dsId]) _dsPhotos[dsId]={};
