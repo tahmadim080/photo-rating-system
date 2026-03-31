@@ -228,7 +228,7 @@ function checkAdmin(){
   if(document.getElementById('adminPass').value===ADMIN_PASSWORD){
     document.getElementById('adminLogin').style.display='none';
     document.getElementById('adminPanel').style.display='block';
-    sessionStorage.setItem('adminOk','1');
+    localStorage.setItem('adminOk','1');
     loadData();
   } else {
     const e=document.getElementById('adminErr');
@@ -237,7 +237,7 @@ function checkAdmin(){
   }
 }
 function doLogout(){
-  sessionStorage.removeItem('adminOk');
+  localStorage.removeItem('adminOk');
   document.getElementById('adminPanel').style.display='none';
   document.getElementById('adminLogin').style.display='flex';
   document.getElementById('adminPass').value='';
@@ -589,7 +589,7 @@ function toBase64(file){
 }
 
 /* ---- Boot ---- */
-if(sessionStorage.getItem('adminOk')==='1'){
+if(localStorage.getItem('adminOk')==='1'){
   document.getElementById('adminLogin').style.display='none';
   document.getElementById('adminPanel').style.display='block';
   loadData();
