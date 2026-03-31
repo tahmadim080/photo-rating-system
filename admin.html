@@ -497,7 +497,7 @@ function renderSlotGrid(dsId){
     totalPhotos+=Object.keys(slot).length;
   }
   document.getElementById('pmSummary').innerHTML=
-    ds.member+"'s dataset: <span>"+totalPhotos+' / 100</span> photos uploaded across 20 slots';
+    ds.member+"'s dataset: <span>"+totalPhotos+' / 100<\/span> photos uploaded across 20 slots';
 
   const grid=document.getElementById('slotGrid'); grid.innerHTML='';
   for(let si=1;si<=20;si++){
