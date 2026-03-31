@@ -1894,12 +1894,15 @@
 
     // Cache of uploaded photos fetched from Firebase per dataset
     const _uploadedPhotos = {};
+    const _fetchedDS = {}; // cache tracker
 
     async function fetchUploadedPhotos(dsId) {
+      if (_fetchedDS[dsId]) return;
       try {
         const r = await fetch(FIREBASE_URL + '/photos/' + dsId + '.json');
         const data = await r.json();
         _uploadedPhotos[dsId] = (data && typeof data === 'object') ? data : {};
+        _fetchedDS[dsId] = true;
       } catch (e) {
         _uploadedPhotos[dsId] = {};
       }
@@ -2156,8 +2159,6 @@
     ================================================================ */
     async function renderDash() {
       if (!CU) return;
-      // Always fetch fresh photos from Firebase
-      for (const ds of DS) await fetchUploadedPhotos(ds.id);
       document.getElementById('heroName').textContent = 'Hello, ' + CU.name.split(' ')[0] + '!';
       document.getElementById('navUser').textContent = CU.email;
       let total = 0;
