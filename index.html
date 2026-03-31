@@ -1,1303 +1,2542 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PixelRate — Nature Photo Rating</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  /* Everforest Dark — premium forest theme */
-  --bg:        #2d353b;   /* hard dark background */
-  --surface:   #343f44;   /* slightly lighter surface */
-  --border:    #4a555b;   /* muted border */
-  --card:      #3d484d;   /* card background */
-  --accent:    #a7c080;   /* everforest green — primary action */
-  --accent2:   #e69875;   /* warm orange for secondary */
-  --yellow:    #dbbc7f;   /* warm gold */
-  --red:       #e67e80;   /* soft red for errors */
-  --blue:      #7fbbb3;   /* teal-blue */
-  --purple:    #d699b6;   /* muted purple */
-  --text:      #d3c6aa;   /* warm off-white — main text */
-  --text2:     #e8d5b0;   /* brighter text for headings */
-  --muted:     #859289;   /* muted grey-green */
-  --ds-color:  #a7c080;   /* default dataset accent */
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Roboto',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:15px; line-height:1.6; }
-.page { display:none; min-height:100vh; }
-.page.active { display:block; }
-#page-login { display:none; align-items:center; justify-content:center; min-height:100vh; }
-#page-login.active { display:flex; }
-.grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
-  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:60px 60px; opacity:0.15; }
-.glow { position:fixed; width:500px; height:500px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle,rgba(167,192,128,0.09) 0%,transparent 70%);
-  top:-150px; left:-150px; animation:gfloat 8s ease-in-out infinite; }
-.glow2 { position:fixed; width:400px; height:400px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle,rgba(230,152,117,0.07) 0%,transparent 70%);
-  bottom:-100px; right:-100px; animation:gfloat 6s ease-in-out infinite reverse; }
-@keyframes gfloat { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,20px)} }
-nav { position:sticky; top:0; z-index:100; background:rgba(45,53,59,0.97); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between; }
-.nav-logo { font-size:1.3rem; font-weight:700; cursor:pointer; letter-spacing:0.02em; }
-.nav-logo span { color:var(--accent); }
-.nav-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-.nav-user { font-family:'Roboto Mono',monospace; font-size:0.72rem; color:var(--muted); }
-.nbtn { font-family:'Roboto Mono',monospace; font-size:0.68rem; padding:6px 14px; background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
-.nbtn:hover { border-color:var(--accent); color:var(--accent); }
-.nbtn.primary { background:var(--accent); color:#2d353b; border-color:var(--accent); font-weight:700; }
-.nbtn.primary:hover { background:#8faa6a; }
-/* LOGIN */
-.login-wrap { position:relative; z-index:1; width:100%; max-width:420px; padding:20px; }
-.logo-big { text-align:center; margin-bottom:36px; }
-.logo-big h1 { font-size:2.8rem; font-weight:700; letter-spacing:0.01em; color:var(--text2); }
-.logo-big h1 span { color:var(--accent); }
-.logo-big p { font-family:'Roboto Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:6px; letter-spacing:0.1em; text-transform:uppercase; }
-.card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:32px; box-shadow:0 4px 24px rgba(0,0,0,0.2); }
-.tabs { display:grid; grid-template-columns:1fr 1fr; background:var(--surface); border-radius:8px; padding:4px; margin-bottom:26px; }
-.tab { padding:9px; text-align:center; font-family:'Roboto Mono',monospace; font-size:0.78rem; cursor:pointer; border-radius:6px; color:var(--muted); transition:all 0.2s; border:none; background:none; }
-.tab.active { background:var(--accent); color:#2d353b; font-weight:700; }
-.fg { margin-bottom:16px; }
-label { display:block; font-family:'Roboto Mono',monospace; font-size:0.68rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:7px; }
-input { width:100%; padding:11px 15px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text2); font-family:'Roboto',sans-serif; font-size:0.92rem; outline:none; transition:border-color 0.2s; }
-input:focus { border-color:var(--accent); }
-input::placeholder { color:var(--muted); }
-.btn-full { width:100%; padding:13px; background:var(--accent); color:var(--bg); border:none; border-radius:8px; font-family:'Roboto',sans-serif; font-size:1rem; font-weight:700; cursor:pointer; margin-top:6px; transition:all 0.2s; }
-.btn-full:hover { background:#8faa6a; transform:translateY(-1px); }
-.msg { margin-top:12px; padding:9px 13px; border-radius:6px; font-family:'Roboto Mono',monospace; font-size:0.75rem; display:none; }
-.msg.err { background:rgba(230,126,128,0.15); border:1px solid rgba(230,126,128,0.4); color:#e67e80; font-size:0.82rem; }
-.msg.ok  { background:rgba(167,192,128,0.12); border:1px solid rgba(167,192,128,0.35); color:var(--accent); font-size:0.82rem; }
-/* DASHBOARD */
-.dash-z { position:relative; z-index:1; }
-.hero { padding:48px 24px 28px; max-width:1100px; margin:0 auto; }
-.hero-tag { font-family:'Roboto Mono',monospace; font-size:0.7rem; color:var(--accent); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:10px; }
-.hero h2 { font-size:2.2rem; font-weight:700; letter-spacing:-0.01em; color:var(--text2); }
-.hero p { color:var(--muted); margin-top:8px; font-size:0.92rem; }
-.stats-row { max-width:1100px; margin:0 auto 32px; padding:0 24px; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; }
-.stat-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; }
-.stat-card .num { font-size:1.7rem; font-weight:800; color:var(--accent); font-family:'Roboto Mono',monospace; }
-.stat-card .lbl { font-family:'Roboto Mono',monospace; font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:3px; }
-.section { max-width:1100px; margin:0 auto; padding:0 24px 60px; }
-.section-title { font-family:'Roboto',sans-serif; font-size:0.78rem; font-weight:600; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:20px; }
-/* Symmetrical 5-card layout: row of 2 centered, row of 3 */
-.ds-grid {
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:16px;
-}
-.ds-card {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:0;
-  cursor:pointer;
-  transition:all 0.25s;
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-/* Top row: 2 equal cards, centered using 6-col grid */
-.ds-grid .ds-card:nth-child(1) { grid-column:1/4; }
-.ds-grid .ds-card:nth-child(2) { grid-column:4/7; }
-/* Bottom row: 3 equal cards */
-.ds-grid .ds-card:nth-child(3) { grid-column:1/3; }
-.ds-grid .ds-card:nth-child(4) { grid-column:3/5; }
-.ds-grid .ds-card:nth-child(5) { grid-column:5/7; }
-/* Card color bar top */
-.ds-card::before {
-  content:'';
-  position:absolute;
-  top:0; left:0; right:0;
-  height:4px;
-  background:var(--dsc,var(--accent));
-  opacity:1;
-}
-.ds-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,0.35); }
-.ds-card-inner { padding:28px 20px 24px; flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px; }
-.ds-nm { font-size:1.2rem; font-weight:700; color:var(--text2); letter-spacing:0.01em; }
-.ds-num { font-family:'Roboto Mono',monospace; font-size:0.75rem; color:var(--accent); font-weight:600; }
-.ds-member { display:none; }
-.ds-de { display:none; }
-.ds-footer { display:none; }
-.pb { height:4px; background:var(--surface); border-radius:2px; overflow:hidden; width:100%; }
-.pf { height:100%; border-radius:2px; transition:width 0.5s; }
-.pl { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); }
-.bdg { display:inline-block; padding:4px 11px; border-radius:20px; font-family:'Roboto Mono',monospace; font-size:0.62rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
-.bs { background:rgba(167,192,128,0.15); color:var(--accent); border:1px solid rgba(167,192,128,0.4); }
-.br { background:rgba(127,187,179,0.15); color:var(--blue); border:1px solid rgba(127,187,179,0.4); }
-.bd { background:rgba(219,188,127,0.15); color:var(--yellow); border:1px solid rgba(219,188,127,0.4); }
-@media(max-width:700px){
-  .ds-grid { grid-template-columns:1fr; }
-  .ds-grid .ds-card:nth-child(n) { grid-column:1/2; }
-}
-/* RATING */
-.rate-z { position:relative; z-index:1; }
-.rate-layout { max-width:820px; margin:0 auto; padding:24px 16px 60px; display:flex; flex-direction:column; gap:18px; }
-.rh { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
-.ri { display:flex; align-items:center; gap:10px; }
-.r-em { font-size:1.6rem; }
-.r-nm { font-size:1.1rem; font-weight:700; }
-.r-de { font-family:'Roboto Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:2px; }
-.ic { font-family:'Roboto Mono',monospace; font-size:0.72rem; color:var(--muted); }
-.ic strong { color:var(--text); font-size:1rem; }
-/* Celebrity info banner */
-.cele-banner { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px 18px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
-.cele-name { font-size:1rem; font-weight:700; }
-.cele-sub { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); }
-.cele-count { font-family:'Roboto Mono',monospace; font-size:0.7rem; color:var(--accent); }
-.image-card { background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
-.iw { position:relative; width:100%; aspect-ratio:4/3; background:var(--surface); display:flex; align-items:center; justify-content:center; overflow:hidden; }
-.iw img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity 0.3s; }
-.iw img.loading { opacity:0; }
-.spin { width:34px; height:34px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; position:absolute; z-index:2; }
-.spin.h { display:none; }
-@keyframes spin { to{transform:rotate(360deg)} }
-.ibadge { position:absolute; top:10px; left:10px; z-index:3; background:rgba(10,10,15,0.82); backdrop-filter:blur(8px); padding:4px 10px; border-radius:5px; font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--accent); }
-.rov { position:absolute; inset:0; z-index:4; background:rgba(45,53,59,0.78); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; flex-direction:column; gap:6px; }
-.rov.show { display:flex; }
-.rov .bs2 { font-size:2rem; }
-.rov .rt { font-family:'Roboto Mono',monospace; font-size:0.75rem; color:var(--accent); }
-.rp { padding:22px 26px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
-.rl { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:9px; }
-.stars { display:flex; gap:5px; }
-.star { font-size:2rem; cursor:pointer; user-select:none; line-height:1; color:var(--yellow); opacity:0.25; transition:transform 0.12s, opacity 0.12s; }
-.star.lit { opacity:1; }
-.star:hover { transform:scale(1.18); }
-.kh { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); margin-top:7px; }
-kbd { display:inline-block; padding:1px 5px; background:var(--surface); border:1px solid var(--border); border-radius:3px; font-size:0.6rem; }
-.btn-rate { padding:12px 26px; background:var(--ds-color); color:var(--bg); border:none; border-radius:9px; font-family:'Roboto',sans-serif; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.2s; opacity:0.3; pointer-events:none; }
-.btn-rate.on { opacity:1; pointer-events:auto; }
-.btn-rate.on:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(167,192,128,0.25); }
-.btn-skip { font-family:'Roboto Mono',monospace; font-size:0.68rem; padding:8px 16px; background:transparent; border:1px solid var(--border); border-radius:7px; color:var(--muted); cursor:pointer; transition:all 0.2s; margin-top:7px; display:block; }
-.btn-skip:hover { border-color:var(--muted); color:var(--text); }
-/* History */
-.hw { background:var(--card); border:1px solid var(--border); border-radius:11px; padding:16px; }
-.ht { font-family:'Roboto Mono',monospace; font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; }
-/* Celebrity grid in history */
-.cele-grid { display:flex; flex-direction:column; gap:8px; }
-.cele-row { display:flex; align-items:center; gap:8px; }
-.cele-label { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); width:90px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.cele-dots { display:flex; gap:3px; }
-.hdot { width:28px; height:28px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.55rem; font-family:'Roboto Mono',monospace; cursor:pointer; transition:transform 0.12s; background:var(--surface); border:1px solid var(--border); color:var(--muted); }
-.hdot.rated { background:rgba(167,192,128,0.18); border-color:rgba(167,192,128,0.5); color:var(--accent); }
-.hdot.cur { outline:2px solid var(--ds-color); outline-offset:1px; }
-.hdot:hover { transform:scale(1.2); }
-/* Done */
-#done-screen { display:none; text-align:center; padding:80px 20px; }
-#done-screen .tr { font-size:4rem; margin-bottom:16px; }
-#done-screen h2 { font-size:1.9rem; font-weight:700; margin-bottom:10px; color:var(--text2); }
-#done-screen p { color:var(--muted); margin-bottom:26px; }
-.btn-back { display:inline-block; padding:12px 28px; background:var(--accent); color:var(--bg); border:none; border-radius:9px; font-family:'Roboto',sans-serif; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
-.btn-back:hover { background:#8faa6a; transform:translateY(-2px); }
-@keyframes slin { from{opacity:0;transform:translateX(22px)} to{opacity:1;transform:translateX(0)} }
-.slin { animation:slin 0.26s ease; }
-/* RESULTS */
-.res-z { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:40px 24px 80px; }
-.res-z h1 { font-size:1.9rem; font-weight:700; margin-bottom:4px; color:var(--text2); }
-.res-sub { font-family:'Roboto Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:32px; }
-.rtabs { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:13px; }
-.rtab { font-family:'Roboto Mono',monospace; font-size:0.68rem; padding:6px 13px; background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
-.rtab.active { background:var(--accent); color:#2d353b; border-color:var(--accent); font-weight:700; }
-.tb { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
-.cb { font-family:'Roboto Mono',monospace; font-size:0.68rem; color:var(--muted); padding:5px 11px; background:var(--surface); border:1px solid var(--border); border-radius:6px; }
-.cb strong { color:var(--accent); }
-.fr { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
-.fl { font-family:'Roboto Mono',monospace; font-size:0.62rem; color:var(--muted); }
-.fb { font-family:'Roboto Mono',monospace; font-size:0.62rem; padding:5px 9px; background:transparent; border:1px solid var(--border); border-radius:4px; color:var(--muted); cursor:pointer; transition:all 0.15s; }
-.fb.active { border-color:var(--accent); color:var(--accent); background:rgba(167,192,128,0.12); }
-.pg { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:11px; }
-.pc { background:var(--card); border:1px solid var(--border); border-radius:11px; overflow:hidden; transition:transform 0.18s, box-shadow 0.18s; }
-.pc:hover { transform:translateY(-3px); box-shadow:0 10px 28px rgba(0,0,0,0.3); }
-.pc img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; background:var(--surface); }
-.pi { padding:8px 11px; }
-.ps { color:var(--accent); font-size:0.8rem; }
-.pid { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); margin-top:2px; }
-.emp { grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted); font-family:'Roboto Mono',monospace; font-size:0.8rem; }
-.emp a { color:var(--accent); cursor:pointer; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PixelRate — Nature Photo Rating</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      /* Everforest Dark — premium forest theme */
+      --bg: #2d353b;
+      /* hard dark background */
+      --surface: #343f44;
+      /* slightly lighter surface */
+      --border: #4a555b;
+      /* muted border */
+      --card: #3d484d;
+      /* card background */
+      --accent: #a7c080;
+      /* everforest green — primary action */
+      --accent2: #e69875;
+      /* warm orange for secondary */
+      --yellow: #dbbc7f;
+      /* warm gold */
+      --red: #e67e80;
+      /* soft red for errors */
+      --blue: #7fbbb3;
+      /* teal-blue */
+      --purple: #d699b6;
+      /* muted purple */
+      --text: #d3c6aa;
+      /* warm off-white — main text */
+      --text2: #e8d5b0;
+      /* brighter text for headings */
+      --muted: #859289;
+      /* muted grey-green */
+      --ds-color: #a7c080;
+      /* default dataset accent */
+    }
 
-/* ── ABOUT US MODAL ── */
-.modal-overlay { display:none; position:fixed; inset:0; z-index:9000; background:rgba(10,12,14,0.85); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:20px; }
-.modal-overlay.show { display:flex; }
-.modal-box { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:36px; max-width:700px; width:100%; box-shadow:0 24px 60px rgba(0,0,0,0.5); animation:mfade 0.22s ease; }
-@keyframes mfade { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-.modal-title { font-size:1.4rem; font-weight:700; color:var(--text2); margin-bottom:4px; }
-.modal-sub { font-family:'Roboto Mono',monospace; font-size:0.68rem; color:var(--muted); margin-bottom:28px; letter-spacing:0.08em; }
-.modal-close { float:right; background:none; border:1px solid var(--border); color:var(--muted); font-size:0.8rem; padding:5px 12px; border-radius:6px; cursor:pointer; font-family:'Roboto Mono',monospace; transition:all 0.2s; }
-.modal-close:hover { border-color:var(--red); color:var(--red); }
-.team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; }
-.team-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px 14px; text-align:center; transition:transform 0.2s, box-shadow 0.2s; }
-.team-card:hover { transform:translateY(-3px); box-shadow:0 10px 28px rgba(0,0,0,0.3); }
-.team-avatar { width:68px; height:68px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; font-weight:700; color:#2d353b; position:relative; overflow:hidden; }
-.team-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-.team-name { font-size:1rem; font-weight:700; color:var(--text2); margin-bottom:4px; }
-.team-id { font-family:'Roboto Mono',monospace; font-size:0.68rem; color:var(--muted); }
-/* ── ENGINEERING TEAM PENTAGON ── */
-.about-modal-box { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:36px 36px 28px; max-width:780px; width:100%; box-shadow:0 24px 60px rgba(0,0,0,0.5); animation:mfade 0.22s ease; }
-.about-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:6px; }
-.about-tag { font-family:'Roboto Mono',monospace; font-size:0.62rem; color:var(--accent); letter-spacing:0.14em; text-transform:uppercase; background:rgba(167,192,128,0.1); border:1px solid rgba(167,192,128,0.25); padding:3px 10px; border-radius:20px; }
-.about-title { font-size:1.5rem; font-weight:700; color:var(--text2); margin-bottom:3px; position:relative; z-index:2; }
-.about-sub { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); margin-bottom:24px; position:relative; z-index:2; }
-.pentagon-wrap { position:relative; width:100%; padding-bottom:62%; z-index:1; }
-.pentagon-svg { position:absolute; inset:0; width:100%; height:100%; }
-.node-wrap { position:absolute; transform:translate(-50%,-50%); text-align:center; cursor:default; z-index:2; }
-.node-circle { width:72px; height:72px; border-radius:50%; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; font-weight:800; color:#2d353b; border:3px solid transparent; transition:transform 0.2s, box-shadow 0.2s; box-shadow:0 4px 18px rgba(0,0,0,0.3); }
-.node-wrap:hover .node-circle { transform:scale(1.12); box-shadow:0 8px 28px rgba(0,0,0,0.4); }
-.node-name { font-size:0.88rem; font-weight:700; color:var(--text2); line-height:1.2; }
-.node-id { font-family:'Roboto Mono',monospace; font-size:0.6rem; color:var(--muted); margin-top:2px; }
-.node-role { font-family:'Roboto Mono',monospace; font-size:0.58rem; color:var(--accent); margin-top:3px; letter-spacing:0.06em; }
-.about-footer { display:flex; align-items:center; justify-content:space-between; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
-.about-footer-left { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); }
-.about-footer-left span { color:var(--accent); }
-/* ── PROFILE MODAL ── */
-.profile-avatar-big { width:90px; height:90px; border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:2.2rem; font-weight:700; color:#2d353b; background:var(--accent); border:3px solid var(--accent); overflow:hidden; }
-.profile-avatar-big img { width:100%; height:100%; object-fit:cover; }
-.profile-info { text-align:center; margin-bottom:24px; }
-.profile-info h3 { font-size:1.3rem; font-weight:700; color:var(--text2); }
-.profile-info p { font-family:'Roboto Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:4px; }
-.divider { height:1px; background:var(--border); margin:20px 0; }
-.profile-section-title { font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:14px; }
-/* ── LOGIN FOOTER ── */
-.login-dev { text-align:center; margin-top:18px; font-family:'Roboto Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.06em; }
-.login-dev span { color:var(--accent); }
-</style>
-</head>
-<body>
-<div class="grid-bg"></div>
-<div class="glow"></div>
-<div class="glow2"></div>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<!-- ===== LOGIN ===== -->
-<div id="page-login" class="page">
-  <div class="login-wrap">
-    <div class="logo-big"><h1>Pixel<span>Rate</span></h1></div>
-    <div class="card">
-      <div class="tabs">
-        <button class="tab active" id="tabL" onclick="switchTab('login')">Login</button>
-        <button class="tab" id="tabR" onclick="switchTab('register')">Register</button>
-      </div>
-      <div id="loginForm">
-        <div class="fg"><label>Email</label><input type="email" id="lEmail" placeholder="you@example.com"/></div>
-        <div class="fg"><label>Password</label><input type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-        <button class="btn-full" onclick="doLogin()">Enter System →</button>
-        <div class="msg" id="lMsg"></div>
-      </div>
-      <div id="regForm" style="display:none">
-        <div class="fg"><label>Full Name</label><input type="text" id="rName" placeholder="Your Name"/></div>
-        <div class="fg"><label>Email</label><input type="email" id="rEmail" placeholder="you@example.com"/></div>
-        <div class="fg"><label>Password</label><input type="password" id="rPass" placeholder="Min. 6 characters" onkeydown="if(event.key==='Enter')doRegister()"/></div>
-        <button class="btn-full" onclick="doRegister()">Create Account →</button>
-        <div class="msg" id="rMsg"></div>
-      </div>
-    </div>
-    <div class="login-dev">Developed by <span>Group 3 · Daffodil International University</span></div>
-  </div>
-</div>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
 
-<!-- ===== ABOUT US MODAL ===== -->
-<div class="modal-overlay" id="aboutModal">
-  <div class="about-modal-box">
-    <div class="about-header">
-      <div class="about-tag">Group 3</div>
-      <button class="modal-close" onclick="closeAbout()">✕ Close</button>
-    </div>
-    <div class="about-title">The Engineering Team</div>
-    <div class="about-sub">DAFFODIL INTERNATIONAL UNIVERSITY</div>
-    <div class="pentagon-wrap">
-      <svg class="pentagon-svg" id="pentagonSvg" viewBox="0 0 700 430" preserveAspectRatio="xMidYMid meet">
-        <!-- connection lines drawn by JS -->
-      </svg>
-      <div id="pentagonNodes"></div>
-    </div>
-    <div class="about-footer">
-      <div class="about-footer-left">Built with <span>Firebase · Vanilla JS · GitHub Pages</span></div>
-      <div style="font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted)">5 members · 500 photos · 5 DSA concepts</div>
-    </div>
-  </div>
-</div>
+    .page {
+      display: none;
+      min-height: 100vh;
+    }
 
-<!-- ===== PROFILE MODAL ===== -->
-<div class="modal-overlay" id="profileModal">
-  <div class="modal-box" style="max-width:420px">
-    <button class="modal-close" onclick="closeProfile()">✕ Close</button>
-    <div class="modal-title">My Profile</div>
-    <div style="height:8px"></div>
-    <div class="profile-avatar-big" id="profAvatar"></div>
-    <div class="profile-info">
-      <h3 id="profName"></h3>
-      <p id="profEmail"></p>
-    </div>
-    <div class="divider"></div>
-    <div class="profile-section-title">Change Password</div>
-    <div class="fg"><label>Current Password</label><input type="password" id="cpOld" placeholder="Enter current password"/></div>
-    <div class="fg"><label>New Password</label><input type="password" id="cpNew" placeholder="Min. 6 characters"/></div>
-    <div class="fg"><label>Confirm New Password</label><input type="password" id="cpCon" placeholder="Repeat new password"/></div>
-    <button class="btn-full" onclick="doChangePass()">Update Password</button>
-    <div class="msg" id="cpMsg"></div>
-  </div>
-</div>
+    .page.active {
+      display: block;
+    }
 
-<!-- ===== DASHBOARD ===== -->
-<div id="page-dashboard" class="page">
-  <nav>
-    <div class="nav-logo" onclick="showPage('dashboard')">Pixel<span>Rate</span></div>
-    <div class="nav-right">
-      <span class="nav-user" id="navUser"></span>
-      <button class="nbtn" onclick="showPage('results')">My Results</button>
-      <button class="nbtn" onclick="openAbout()">About Us</button>
-      <button class="nbtn" onclick="openProfile()">Profile</button>
-      <button class="nbtn" onclick="doLogout()">Logout</button>
-    </div>
-  </nav>
-  <div class="dash-z">
-    <div class="hero">
-      <div class="hero-tag">Welcome back</div>
-      <h2 id="heroName">Hello!</h2>
+    #page-login {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
 
-    </div>
-    <div class="stats-row" id="statsRow"></div>
-    <div class="section">
-      <div class="section-title">Choose a Dataset</div>
-      <div class="ds-grid" id="dsGrid"></div>
-    </div>
-  </div>
-</div>
+    #page-login.active {
+      display: flex;
+    }
 
-<!-- ===== RATING ===== -->
-<div id="page-rate" class="page">
-  <nav>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <button class="nbtn" onclick="showPage('dashboard')">← Back</button>
-      <div class="nav-logo">Pixel<span>Rate</span></div>
-    </div>
-    <span style="font-family:'Roboto Mono',monospace;font-size:0.72rem;color:var(--muted)">
-      Photo <span id="navCur" style="color:var(--accent);font-weight:700">—</span> / 100
-    </span>
-  </nav>
-  <div class="rate-z">
-    <div class="rate-layout" id="rateLayout">
-      <div class="rh">
-        <div class="ri"><span class="r-em" id="rEm"></span><div><div class="r-nm" id="rNm"></div><div class="r-de" id="rDe"></div></div></div>
-        <div class="ic">Photo <strong id="imgNum">1</strong> / 100</div>
-      </div>
-      <div style="height:4px;background:var(--surface);border-radius:2px;overflow:hidden;">
-        <div id="rProg" style="height:100%;width:0%;background:var(--ds-color);border-radius:2px;transition:width 0.4s;"></div>
-      </div>
-      <!-- Celebrity Banner -->
-      <div class="cele-banner">
-        <div>
-          <div class="cele-name" id="celeName">—</div>
-          <div class="cele-sub" id="celeSub">Nature Scene</div>
-        </div>
-        <div class="cele-count" id="celeCount">Photo — / 5</div>
-      </div>
-      <div class="image-card slin" id="imgCard">
-        <div class="iw">
-          <img id="mainImg" src="" alt="Celebrity Photo" class="loading"/>
-          <div class="spin" id="spin"></div>
-          <div class="ibadge" id="ibadge">—</div>
-          <div class="rov" id="rov"><div class="bs2" id="bigS"></div><div class="rt">Already rated — choose new or skip</div></div>
-        </div>
-        <div class="rp">
-          <div>
-            <div class="rl">Rate this photo</div>
-            <div class="stars" id="starsRow">
-              <span class="star" data-v="1">★</span>
-              <span class="star" data-v="2">★</span>
-              <span class="star" data-v="3">★</span>
-              <span class="star" data-v="4">★</span>
-              <span class="star" data-v="5">★</span>
-            </div>
-            <div class="kh"><kbd>1</kbd>–<kbd>5</kbd> to rate &nbsp;·&nbsp; auto advances to next photo</div>
-          </div>
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.15;
+    }
 
-        </div>
-      </div>
-      <div class="hw">
-        <div class="ht">// Progress by Scene</div>
-        <div class="cele-grid" id="hg"></div>
-      </div>
-    </div>
-    <div id="done-screen">
-      <div class="tr">Done!</div>
-      <h2>Dataset Complete!</h2>
-      <p id="doneMsg"></p>
-      <button class="btn-back" onclick="showPage('dashboard')">← Back to Dashboard</button>
-    </div>
-  </div>
-</div>
+    .glow {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(167, 192, 128, 0.09) 0%, transparent 70%);
+      top: -150px;
+      left: -150px;
+      animation: gfloat 8s ease-in-out infinite;
+    }
 
-<!-- ===== RESULTS ===== -->
-<div id="page-results" class="page">
-  <nav>
-    <div class="nav-logo" onclick="showPage('dashboard')">Pixel<span>Rate</span></div>
-    <div class="nav-right">
-      <button class="nbtn" onclick="showPage('dashboard')">← Dashboard</button>
-      <button class="nbtn primary" onclick="exportCSV()">Export CSV</button>
-    </div>
-  </nav>
-  <div class="res-z">
-    <h1>My Ratings</h1>
-    <div class="res-sub">// All your nature photo ratings</div>
-    <div class="rtabs" id="rtabs"></div>
-    <div class="tb">
-      <div class="cb" id="rcnt"><strong>0</strong> photos</div>
-      <div class="fr">
-        <span class="fl">Filter:</span>
-        <button class="fb active" onclick="setFilter(0,this)">All</button>
-        <button class="fb" onclick="setFilter(1,this)">1★</button>
-        <button class="fb" onclick="setFilter(2,this)">2★</button>
-        <button class="fb" onclick="setFilter(3,this)">3★</button>
-        <button class="fb" onclick="setFilter(4,this)">4★</button>
-        <button class="fb" onclick="setFilter(5,this)">5★</button>
-      </div>
-    </div>
-    <div class="pg" id="photoGrid"></div>
-  </div>
-</div>
+    .glow2 {
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(230, 152, 117, 0.07) 0%, transparent 70%);
+      bottom: -100px;
+      right: -100px;
+      animation: gfloat 6s ease-in-out infinite reverse;
+    }
 
-<script>
-/* ================================================================
-   ⚠️  CHANGE NAMES HERE — THIS IS THE ONLY PLACE YOU NEED TO EDIT
-   
-   DATASETS = 5 group members
-   Each member has 20 celebrities
-   Each celebrity has 5 photos
-   Photo files must be named: celebname_01.jpg to celebname_05.jpg
-   Folder structure: photos/membername/celebname/celebname_01.jpg
-================================================================ */
+    @keyframes gfloat {
 
-const DS = [
-  {
-    id: 'tanvir',                    // ← CHANGE: folder name (lowercase, no spaces)
-    member: 'Tanvir',                // ← CHANGE: group member display name
-    emoji: '',                     // ← CHANGE: any emoji you like
-    desc: 'Tanvir\'s Collection',
-    color: '#a7c080',
-    // ↓↓↓ CHANGE THESE 20 CELEBRITY NAMES ↓↓↓
-    // id must be lowercase, no spaces (used for folder & filename)
-    // name is the display name shown on screen
-    celebrities: [
-      { id: 'slot_1', name: 'Slot 1' },
-      { id: 'slot_2', name: 'Slot 2' },
-      { id: 'slot_3', name: 'Slot 3' },
-      { id: 'slot_4', name: 'Slot 4' },
-      { id: 'slot_5', name: 'Slot 5' },
-      { id: 'slot_6', name: 'Slot 6' },
-      { id: 'slot_7', name: 'Slot 7' },
-      { id: 'slot_8', name: 'Slot 8' },
-      { id: 'slot_9', name: 'Slot 9' },
-      { id: 'slot_10', name: 'Slot 10' },
-      { id: 'slot_11', name: 'Slot 11' },
-      { id: 'slot_12', name: 'Slot 12' },
-      { id: 'slot_13', name: 'Slot 13' },
-      { id: 'slot_14', name: 'Slot 14' },
-      { id: 'slot_15', name: 'Slot 15' },
-      { id: 'slot_16', name: 'Slot 16' },
-      { id: 'slot_17', name: 'Slot 17' },
-      { id: 'slot_18', name: 'Slot 18' },
-      { id: 'slot_19', name: 'Slot 19' },
-      { id: 'slot_20', name: 'Slot 20' }
-    
-    ]
-  },
-  {
-    id: 'alvi',
-    member: 'Alvi',
-    emoji: '',
-    desc: 'Alvi\'s Collection',
-    color: '#7fbbb3',
-    celebrities: [
-      { id: 'slot_1', name: 'Slot 1' },
-      { id: 'slot_2', name: 'Slot 2' },
-      { id: 'slot_3', name: 'Slot 3' },
-      { id: 'slot_4', name: 'Slot 4' },
-      { id: 'slot_5', name: 'Slot 5' },
-      { id: 'slot_6', name: 'Slot 6' },
-      { id: 'slot_7', name: 'Slot 7' },
-      { id: 'slot_8', name: 'Slot 8' },
-      { id: 'slot_9', name: 'Slot 9' },
-      { id: 'slot_10', name: 'Slot 10' },
-      { id: 'slot_11', name: 'Slot 11' },
-      { id: 'slot_12', name: 'Slot 12' },
-      { id: 'slot_13', name: 'Slot 13' },
-      { id: 'slot_14', name: 'Slot 14' },
-      { id: 'slot_15', name: 'Slot 15' },
-      { id: 'slot_16', name: 'Slot 16' },
-      { id: 'slot_17', name: 'Slot 17' },
-      { id: 'slot_18', name: 'Slot 18' },
-      { id: 'slot_19', name: 'Slot 19' },
-      { id: 'slot_20', name: 'Slot 20' }
-    
-    ]
-  },
-  {
-    id: 'provat',
-    member: 'Provat',
-    emoji: '',
-    desc: 'Provat\'s Collection',
-    color: '#d699b6',
-    celebrities: [
-      { id: 'slot_1', name: 'Slot 1' },
-      { id: 'slot_2', name: 'Slot 2' },
-      { id: 'slot_3', name: 'Slot 3' },
-      { id: 'slot_4', name: 'Slot 4' },
-      { id: 'slot_5', name: 'Slot 5' },
-      { id: 'slot_6', name: 'Slot 6' },
-      { id: 'slot_7', name: 'Slot 7' },
-      { id: 'slot_8', name: 'Slot 8' },
-      { id: 'slot_9', name: 'Slot 9' },
-      { id: 'slot_10', name: 'Slot 10' },
-      { id: 'slot_11', name: 'Slot 11' },
-      { id: 'slot_12', name: 'Slot 12' },
-      { id: 'slot_13', name: 'Slot 13' },
-      { id: 'slot_14', name: 'Slot 14' },
-      { id: 'slot_15', name: 'Slot 15' },
-      { id: 'slot_16', name: 'Slot 16' },
-      { id: 'slot_17', name: 'Slot 17' },
-      { id: 'slot_18', name: 'Slot 18' },
-      { id: 'slot_19', name: 'Slot 19' },
-      { id: 'slot_20', name: 'Slot 20' }
-    
-    ]
-  },
-  {
-    id: 'mim',
-    member: 'Mim',
-    emoji: '',
-    desc: 'Mim\'s Collection',
-    color: '#dbbc7f',
-    celebrities: [
-      { id: 'slot_1', name: 'Slot 1' },
-      { id: 'slot_2', name: 'Slot 2' },
-      { id: 'slot_3', name: 'Slot 3' },
-      { id: 'slot_4', name: 'Slot 4' },
-      { id: 'slot_5', name: 'Slot 5' },
-      { id: 'slot_6', name: 'Slot 6' },
-      { id: 'slot_7', name: 'Slot 7' },
-      { id: 'slot_8', name: 'Slot 8' },
-      { id: 'slot_9', name: 'Slot 9' },
-      { id: 'slot_10', name: 'Slot 10' },
-      { id: 'slot_11', name: 'Slot 11' },
-      { id: 'slot_12', name: 'Slot 12' },
-      { id: 'slot_13', name: 'Slot 13' },
-      { id: 'slot_14', name: 'Slot 14' },
-      { id: 'slot_15', name: 'Slot 15' },
-      { id: 'slot_16', name: 'Slot 16' },
-      { id: 'slot_17', name: 'Slot 17' },
-      { id: 'slot_18', name: 'Slot 18' },
-      { id: 'slot_19', name: 'Slot 19' },
-      { id: 'slot_20', name: 'Slot 20' }
-    
-    ]
-  },
-  {
-    id: 'nadim',
-    member: 'Nadim',
-    emoji: '',
-    desc: 'Nadim\'s Collection',
-    color: '#e69875',
-    celebrities: [
-      { id: 'slot_1', name: 'Slot 1' },
-      { id: 'slot_2', name: 'Slot 2' },
-      { id: 'slot_3', name: 'Slot 3' },
-      { id: 'slot_4', name: 'Slot 4' },
-      { id: 'slot_5', name: 'Slot 5' },
-      { id: 'slot_6', name: 'Slot 6' },
-      { id: 'slot_7', name: 'Slot 7' },
-      { id: 'slot_8', name: 'Slot 8' },
-      { id: 'slot_9', name: 'Slot 9' },
-      { id: 'slot_10', name: 'Slot 10' },
-      { id: 'slot_11', name: 'Slot 11' },
-      { id: 'slot_12', name: 'Slot 12' },
-      { id: 'slot_13', name: 'Slot 13' },
-      { id: 'slot_14', name: 'Slot 14' },
-      { id: 'slot_15', name: 'Slot 15' },
-      { id: 'slot_16', name: 'Slot 16' },
-      { id: 'slot_17', name: 'Slot 17' },
-      { id: 'slot_18', name: 'Slot 18' },
-      { id: 'slot_19', name: 'Slot 19' },
-      { id: 'slot_20', name: 'Slot 20' }
-    
-    ]
-  }
-];
-
-/*
-================================================================
-  PHOTO FOLDER STRUCTURE ON GITHUB:
-  
-  photos/
-  ├── tanvir/
-  │   ├── cele1/
-  │   │   ├── cele1_01.jpg
-  │   │   ├── cele1_02.jpg
-  │   │   ├── cele1_03.jpg
-  │   │   ├── cele1_04.jpg
-  │   │   └── cele1_05.jpg
-  │   ├── cele2/
-  │   │   ├── cele2_01.jpg  ← rename to ronaldo_01.jpg when you change cele2 to ronaldo
-  │   │   └── ...
-  │   └── ... (20 celebrity folders)
-  ├── alvi/
-  ├── provat/
-  ├── mim/
-  └── nadim/
-
-  PHOTO URL BUILT AS:
-  photos/{member_id}/{celeb_id}/{celeb_id}_01.jpg
-  Example: photos/tanvir/ronaldo/ronaldo_01.jpg
-================================================================
-*/
-
-/* Build flat photo list — uses uploaded Firebase photos if available, else picsum placeholders */
-const DS_SEEDS = { tanvir:100, alvi:200, provat:300, mim:400, nadim:500 };
-const DS_NATURE = { tanvir:'forest', alvi:'mountain', provat:'ocean', mim:'sunset', nadim:'river' };
-
-// Cache of uploaded photos fetched from Firebase per dataset
-const _uploadedPhotos = {};
-
-async function fetchUploadedPhotos(dsId) {
-  try {
-    const r = await fetch(FIREBASE_URL + '/photos/' + dsId + '.json');
-    const data = await r.json();
-    _uploadedPhotos[dsId] = (data && typeof data === 'object') ? data : {};
-  } catch(e) {
-    _uploadedPhotos[dsId] = {};
-  }
-}
-
-function buildPhotoList(ds) {
-  const photos = [];
-  const uploaded = _uploadedPhotos[ds.id] || {};
-  // Check if any slot has photos
-  const hasAnySlot = Object.keys(uploaded).some(k => k.startsWith('slot_'));
-
-  ds.celebrities.forEach((cele, ci) => {
-    const slotKey = 'slot_' + (ci + 1); // slot_1 .. slot_20
-    const slotPhotos = (uploaded[slotKey] && typeof uploaded[slotKey] === 'object')
-      ? Object.entries(uploaded[slotKey]).sort((a,b)=>a[0].localeCompare(b[0]))
-      : [];
-
-    for (let pi = 0; pi < 5; pi++) {
-      let path, filename;
-      if (slotPhotos[pi]) {
-        filename = slotPhotos[pi][0]; // original filename
-        path = slotPhotos[pi][1];     // base64 data URL
-      } else {
-        filename = cele.id + '_' + String(pi+1).padStart(2,'0') + '.jpg';
-        path = 'https://picsum.photos/seed/' + ds.id + '_' + cele.id + '_' + (pi+1) + '/800/600';
+      0%,
+      100% {
+        transform: translate(0, 0)
       }
-      photos.push({
-        celebId:   cele.id,
-        celebName: cele.name,
-        photoNum:  pi + 1,
-        filename:  filename,
-        path:      path
-      });
+
+      50% {
+        transform: translate(30px, 20px)
+      }
     }
-  });
-  return photos; // 100 photos
-}
 
-/* ================================================================
-   FIREBASE CONFIG
-   Steps to set up (5 minutes):
-   1. Go to https://console.firebase.google.com
-   2. Click "Add project" → name it "pixelrate" → Continue → Create
-   3. In your project: click "Realtime Database" (left sidebar)
-   4. Click "Create Database" → choose any location → Start in TEST MODE → Enable
-   5. Copy the database URL (looks like: https://pixelrate-xxxxx-default-rtdb.firebaseio.com)
-   6. Paste it below as FIREBASE_URL
-================================================================ */
-const FIREBASE_URL = 'https://pixelrate-cd325-default-rtdb.asia-southeast1.firebasedatabase.app/';  // ← CHANGE THIS
-// Example: 'https://pixelrate-abc12-default-rtdb.firebaseio.com'
-
-const FB = {
-  url(path) { return FIREBASE_URL + path + '.json'; },
-
-  async get(path) {
-    try {
-      const r = await fetch(this.url(path));
-      return await r.json();
-    } catch(e) { return null; }
-  },
-
-  async set(path, data) {
-    try {
-      const r = await fetch(this.url(path), {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      return r.ok;
-    } catch(e) { return false; }
-  },
-
-  async patch(path, data) {
-    try {
-      const r = await fetch(this.url(path), {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      return r.ok;
-    } catch(e) { return false; }
-  }
-};
-
-/* ================================================================
-   DATABASE — localStorage as fast cache, Firebase as cloud sync
-================================================================ */
-const DB = {
-  /* ---- local cache ---- */
-  gu()          { return JSON.parse(localStorage.getItem('pr_users')||'{}') },
-  su(u)         { localStorage.setItem('pr_users',JSON.stringify(u)) },
-  getUser(e)    { return this.gu()[e]||null },
-  exists(e)     { return !!this.gu()[e] },
-  getSess()     { return localStorage.getItem('pr_sess') },
-  setSess(e)    { localStorage.setItem('pr_sess',e) },
-  clrSess()     { localStorage.removeItem('pr_sess') },
-  getProg(e)    { return JSON.parse(localStorage.getItem('pr_p_'+e)||'{}') },
-  saveProg(e,p) { localStorage.setItem('pr_p_'+e,JSON.stringify(p)) },
-  getDP(e,d)    { return this.getProg(e)[d]||null },
-  hash(s)       { let h=0; for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(i)|0; return h.toString(16); },
-  shuffle(arr,seed) {
-    const a=[...arr]; let s=Math.abs(seed)||9999;
-    for(let i=a.length-1;i>0;i--){ s=(s*1664525+1013904223)&0xffffffff; const j=Math.abs(s)%(i+1); [a[i],a[j]]=[a[j],a[i]]; }
-    return a;
-  },
-
-  /* ---- cloud: pull user on login ---- */
-  async syncDown(email) {
-    showSyncBar('Syncing...');
-    // Pull this user's account from Firebase
-    const cloudUser = await FB.get('/users/' + btoa(email));
-    if (cloudUser) {
-      const u = this.gu();
-      u[email] = cloudUser;
-      this.su(u);
-    } else {
-      // User was deleted from admin panel — remove from localStorage
-      const u = this.gu();
-      delete u[email];
-      this.su(u);
-      localStorage.removeItem('pr_p_'+email);
-      this.clrSess();
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(45, 53, 59, 0.97);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    // Pull this user's ratings from Firebase
-    const cloudProg = await FB.get('/ratings/' + btoa(email));
-    if (cloudProg) {
-      const localP = this.getProg(email);
-      for (const ds in cloudProg) {
-        if (!localP[ds]) {
-          localP[ds] = cloudProg[ds];
-        } else {
-          const cr = cloudProg[ds].ratings || {};
-          for (const idx in cr) {
-            const lv = localP[ds].ratings[idx];
-            if (!lv || cr[idx].at > lv.at) localP[ds].ratings[idx] = cr[idx];
+
+    .nav-logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-user {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .nbtn {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.68rem;
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nbtn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .nbtn.primary {
+      background: var(--accent);
+      color: #2d353b;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .nbtn.primary:hover {
+      background: #8faa6a;
+    }
+
+    /* LOGIN */
+    .login-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .logo-big {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .logo-big h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--text2);
+    }
+
+    .logo-big h1 span {
+      color: var(--accent);
+    }
+
+    .logo-big p {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 6px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 26px;
+    }
+
+    .tab {
+      padding: 9px;
+      text-align: center;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.78rem;
+      cursor: pointer;
+      border-radius: 6px;
+      color: var(--muted);
+      transition: all 0.2s;
+      border: none;
+      background: none;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: #2d353b;
+      font-weight: 700;
+    }
+
+    .fg {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    input {
+      width: 100%;
+      padding: 11px 15px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text2);
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    input::placeholder {
+      color: var(--muted);
+    }
+
+    .btn-full {
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-full:hover {
+      background: #8faa6a;
+      transform: translateY(-1px);
+    }
+
+    .msg {
+      margin-top: 12px;
+      padding: 9px 13px;
+      border-radius: 6px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.75rem;
+      display: none;
+    }
+
+    .msg.err {
+      background: rgba(230, 126, 128, 0.15);
+      border: 1px solid rgba(230, 126, 128, 0.4);
+      color: #e67e80;
+      font-size: 0.82rem;
+    }
+
+    .msg.ok {
+      background: rgba(167, 192, 128, 0.12);
+      border: 1px solid rgba(167, 192, 128, 0.35);
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    /* DASHBOARD */
+    .dash-z {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      padding: 48px 24px 28px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-tag {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text2);
+    }
+
+    .hero p {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 0.92rem;
+    }
+
+    .stats-row {
+      max-width: 1100px;
+      margin: 0 auto 32px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .stat-card .num {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    .stat-card .lbl {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 3px;
+    }
+
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    .section-title {
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    /* Symmetrical 5-card layout: row of 2 centered, row of 3 */
+    .ds-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+
+    .ds-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top row: 2 equal cards, centered using 6-col grid */
+    .ds-grid .ds-card:nth-child(1) {
+      grid-column: 1/4;
+    }
+
+    .ds-grid .ds-card:nth-child(2) {
+      grid-column: 4/7;
+    }
+
+    /* Bottom row: 3 equal cards */
+    .ds-grid .ds-card:nth-child(3) {
+      grid-column: 1/3;
+    }
+
+    .ds-grid .ds-card:nth-child(4) {
+      grid-column: 3/5;
+    }
+
+    .ds-grid .ds-card:nth-child(5) {
+      grid-column: 5/7;
+    }
+
+    /* Card color bar top */
+    .ds-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--dsc, var(--accent));
+      opacity: 1;
+    }
+
+    .ds-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .ds-card-inner {
+      padding: 28px 20px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .ds-nm {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text2);
+      letter-spacing: 0.01em;
+    }
+
+    .ds-num {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .ds-member {
+      display: none;
+    }
+
+    .ds-de {
+      display: none;
+    }
+
+    .ds-footer {
+      display: none;
+    }
+
+    .pb {
+      height: 4px;
+      background: var(--surface);
+      border-radius: 2px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .pf {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.5s;
+    }
+
+    .pl {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+    }
+
+    .bdg {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .bs {
+      background: rgba(167, 192, 128, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(167, 192, 128, 0.4);
+    }
+
+    .br {
+      background: rgba(127, 187, 179, 0.15);
+      color: var(--blue);
+      border: 1px solid rgba(127, 187, 179, 0.4);
+    }
+
+    .bd {
+      background: rgba(219, 188, 127, 0.15);
+      color: var(--yellow);
+      border: 1px solid rgba(219, 188, 127, 0.4);
+    }
+
+    @media(max-width:700px) {
+      .ds-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ds-grid .ds-card:nth-child(n) {
+        grid-column: 1/2;
+      }
+    }
+
+    /* RATING */
+    .rate-z {
+      position: relative;
+      z-index: 1;
+    }
+
+    .rate-layout {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .rh {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .ri {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .r-em {
+      font-size: 1.6rem;
+    }
+
+    .r-nm {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .r-de {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .ic {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .ic strong {
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    /* Celebrity info banner */
+    .cele-banner {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cele-name {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .cele-sub {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .cele-count {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+    }
+
+    .image-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .iw {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .iw img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.3s;
+    }
+
+    .iw img.loading {
+      opacity: 0;
+    }
+
+    .spin {
+      width: 34px;
+      height: 34px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      position: absolute;
+      z-index: 2;
+    }
+
+    .spin.h {
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .ibadge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 3;
+      background: rgba(10, 10, 15, 0.82);
+      backdrop-filter: blur(8px);
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent);
+    }
+
+    .rov {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: rgba(45, 53, 59, 0.78);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rov.show {
+      display: flex;
+    }
+
+    .rov .bs2 {
+      font-size: 2rem;
+    }
+
+    .rov .rt {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .rp {
+      padding: 22px 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .rl {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 9px;
+    }
+
+    .stars {
+      display: flex;
+      gap: 5px;
+    }
+
+    .star {
+      font-size: 2rem;
+      cursor: pointer;
+      user-select: none;
+      line-height: 1;
+      color: var(--yellow);
+      opacity: 0.25;
+      transition: transform 0.12s, opacity 0.12s;
+    }
+
+    .star.lit {
+      opacity: 1;
+    }
+
+    .star:hover {
+      transform: scale(1.18);
+    }
+
+    .kh {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-top: 7px;
+    }
+
+    kbd {
+      display: inline-block;
+      padding: 1px 5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-size: 0.6rem;
+    }
+
+    .btn-rate {
+      padding: 12px 26px;
+      background: var(--ds-color);
+      color: var(--bg);
+      border: none;
+      border-radius: 9px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .btn-rate.on {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .btn-rate.on:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(167, 192, 128, 0.25);
+    }
+
+    .btn-skip {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.68rem;
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 7px;
+      display: block;
+    }
+
+    .btn-skip:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    /* History */
+    .hw {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 16px;
+    }
+
+    .ht {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    /* Celebrity grid in history */
+    .cele-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cele-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cele-label {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      width: 90px;
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cele-dots {
+      display: flex;
+      gap: 3px;
+    }
+
+    .hdot {
+      width: 28px;
+      height: 28px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      font-family: 'Roboto Mono', monospace;
+      cursor: pointer;
+      transition: transform 0.12s;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .hdot.rated {
+      background: rgba(167, 192, 128, 0.18);
+      border-color: rgba(167, 192, 128, 0.5);
+      color: var(--accent);
+    }
+
+    .hdot.cur {
+      outline: 2px solid var(--ds-color);
+      outline-offset: 1px;
+    }
+
+    .hdot:hover {
+      transform: scale(1.2);
+    }
+
+    /* Done */
+    #done-screen {
+      display: none;
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    #done-screen .tr {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    #done-screen h2 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text2);
+    }
+
+    #done-screen p {
+      color: var(--muted);
+      margin-bottom: 26px;
+    }
+
+    .btn-back {
+      display: inline-block;
+      padding: 12px 28px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 9px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+      background: #8faa6a;
+      transform: translateY(-2px);
+    }
+
+    @keyframes slin {
+      from {
+        opacity: 0;
+        transform: translateX(22px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    .slin {
+      animation: slin 0.26s ease;
+    }
+
+    /* RESULTS */
+    .res-z {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    .res-z h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text2);
+    }
+
+    .res-sub {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .rtabs {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 13px;
+    }
+
+    .rtab {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.68rem;
+      padding: 6px 13px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .rtab.active {
+      background: var(--accent);
+      color: #2d353b;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .tb {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .cb {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      padding: 5px 11px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .cb strong {
+      color: var(--accent);
+    }
+
+    .fr {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .fl {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+    }
+
+    .fb {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.62rem;
+      padding: 5px 9px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .fb.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(167, 192, 128, 0.12);
+    }
+
+    .pg {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 11px;
+    }
+
+    .pc {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      overflow: hidden;
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+
+    .pc:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+    }
+
+    .pc img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+      background: var(--surface);
+    }
+
+    .pi {
+      padding: 8px 11px;
+    }
+
+    .ps {
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+
+    .pid {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .emp {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    .emp a {
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* ── ABOUT US MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: rgba(10, 12, 14, 0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      animation: mfade 0.22s ease;
+    }
+
+    @keyframes mfade {
+      from {
+        opacity: 0;
+        transform: translateY(18px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text2);
+      margin-bottom: 4px;
+    }
+
+    .modal-sub {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      letter-spacing: 0.08em;
+    }
+
+    .modal-close {
+      float: right;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Roboto Mono', monospace;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .team-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 14px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .team-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+    }
+
+    .team-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #2d353b;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .team-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text2);
+      margin-bottom: 4px;
+    }
+
+    .team-id {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    /* ── ENGINEERING TEAM PENTAGON ── */
+    .about-modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px 36px 28px;
+      max-width: 780px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      animation: mfade 0.22s ease;
+    }
+
+    .about-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .about-tag {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: rgba(167, 192, 128, 0.1);
+      border: 1px solid rgba(167, 192, 128, 0.25);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .about-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text2);
+      margin-bottom: 3px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .about-sub {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .pentagon-wrap {
+      position: relative;
+      width: 100%;
+      padding-bottom: 62%;
+      z-index: 1;
+    }
+
+    .pentagon-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .node-wrap {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      cursor: default;
+      z-index: 2;
+    }
+
+    .node-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #2d353b;
+      border: 3px solid transparent;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .node-wrap:hover .node-circle {
+      transform: scale(1.12);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+    }
+
+    .node-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text2);
+      line-height: 1.2;
+    }
+
+    .node-id {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .node-role {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--accent);
+      margin-top: 3px;
+      letter-spacing: 0.06em;
+    }
+
+    .about-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .about-footer-left {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .about-footer-left span {
+      color: var(--accent);
+    }
+
+    /* ── PROFILE MODAL ── */
+    .profile-avatar-big {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #2d353b;
+      background: var(--accent);
+      border: 3px solid var(--accent);
+      overflow: hidden;
+    }
+
+    .profile-avatar-big img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-info {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .profile-info h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text2);
+    }
+
+    .profile-info p {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    .profile-section-title {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+    }
+
+    /* ── LOGIN FOOTER ── */
+    .login-dev {
+      text-align: center;
+      margin-top: 18px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .login-dev span {
+      color: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grid-bg"></div>
+  <div class="glow"></div>
+  <div class="glow2"></div>
+
+  <!-- ===== LOGIN ===== -->
+  <div id="page-login" class="page">
+    <div class="login-wrap">
+      <div class="logo-big">
+        <h1>Pixel<span>Rate</span></h1>
+      </div>
+      <div class="card">
+        <div class="tabs">
+          <button class="tab active" id="tabL" onclick="switchTab('login')">Login</button>
+          <button class="tab" id="tabR" onclick="switchTab('register')">Register</button>
+        </div>
+        <div id="loginForm">
+          <div class="fg"><label>Email</label><input type="email" id="lEmail" placeholder="you@example.com" /></div>
+          <div class="fg"><label>Password</label><input type="password" id="lPass" placeholder="••••••••"
+              onkeydown="if(event.key==='Enter')doLogin()" /></div>
+          <button class="btn-full" onclick="doLogin()">Enter System →</button>
+          <div class="msg" id="lMsg"></div>
+        </div>
+        <div id="regForm" style="display:none">
+          <div class="fg"><label>Full Name</label><input type="text" id="rName" placeholder="Your Name" /></div>
+          <div class="fg"><label>Email</label><input type="email" id="rEmail" placeholder="you@example.com" /></div>
+          <div class="fg"><label>Password</label><input type="password" id="rPass" placeholder="Min. 6 characters"
+              onkeydown="if(event.key==='Enter')doRegister()" /></div>
+          <button class="btn-full" onclick="doRegister()">Create Account →</button>
+          <div class="msg" id="rMsg"></div>
+        </div>
+      </div>
+      <div class="login-dev">Developed by <span>Group 3 · Daffodil International University</span></div>
+    </div>
+  </div>
+
+  <!-- ===== ABOUT US MODAL ===== -->
+  <div class="modal-overlay" id="aboutModal">
+    <div class="about-modal-box">
+      <div class="about-header">
+        <div class="about-tag">Group 3</div>
+        <button class="modal-close" onclick="closeAbout()">✕ Close</button>
+      </div>
+      <div class="about-title">The Engineering Team</div>
+      <div class="about-sub">DAFFODIL INTERNATIONAL UNIVERSITY</div>
+      <div class="pentagon-wrap">
+        <svg class="pentagon-svg" id="pentagonSvg" viewBox="0 0 700 430" preserveAspectRatio="xMidYMid meet">
+          <!-- connection lines drawn by JS -->
+        </svg>
+        <div id="pentagonNodes"></div>
+      </div>
+      <div class="about-footer">
+        <div class="about-footer-left">Built with <span>Firebase · Vanilla JS · GitHub Pages</span></div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted)">5 members · 500 photos · 5
+          DSA concepts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE MODAL ===== -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-box" style="max-width:420px">
+      <button class="modal-close" onclick="closeProfile()">✕ Close</button>
+      <div class="modal-title">My Profile</div>
+      <div style="height:8px"></div>
+      <div class="profile-avatar-big" id="profAvatar"></div>
+      <div class="profile-info">
+        <h3 id="profName"></h3>
+        <p id="profEmail"></p>
+      </div>
+      <div class="divider"></div>
+      <div class="profile-section-title">Change Password</div>
+      <div class="fg"><label>Current Password</label><input type="password" id="cpOld"
+          placeholder="Enter current password" /></div>
+      <div class="fg"><label>New Password</label><input type="password" id="cpNew" placeholder="Min. 6 characters" />
+      </div>
+      <div class="fg"><label>Confirm New Password</label><input type="password" id="cpCon"
+          placeholder="Repeat new password" /></div>
+      <button class="btn-full" onclick="doChangePass()">Update Password</button>
+      <div class="msg" id="cpMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div id="page-dashboard" class="page">
+    <nav>
+      <div class="nav-logo" onclick="showPage('dashboard')">Pixel<span>Rate</span></div>
+      <div class="nav-right">
+        <span class="nav-user" id="navUser"></span>
+        <button class="nbtn" onclick="showPage('results')">My Results</button>
+        <button class="nbtn" onclick="openAbout()">About Us</button>
+        <button class="nbtn" onclick="openProfile()">Profile</button>
+        <button class="nbtn" onclick="doLogout()">Logout</button>
+      </div>
+    </nav>
+    <div class="dash-z">
+      <div class="hero">
+        <div class="hero-tag">Welcome back</div>
+        <h2 id="heroName">Hello!</h2>
+
+      </div>
+      <div class="stats-row" id="statsRow"></div>
+      <div class="section">
+        <div class="section-title">Choose a Dataset</div>
+        <div class="ds-grid" id="dsGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RATING ===== -->
+  <div id="page-rate" class="page">
+    <nav>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="nbtn" onclick="showPage('dashboard')">← Back</button>
+        <div class="nav-logo">Pixel<span>Rate</span></div>
+      </div>
+      <span style="font-family:'Roboto Mono',monospace;font-size:0.72rem;color:var(--muted)">
+        Photo <span id="navCur" style="color:var(--accent);font-weight:700">—</span> / 100
+      </span>
+    </nav>
+    <div class="rate-z">
+      <div class="rate-layout" id="rateLayout">
+        <div class="rh">
+          <div class="ri"><span class="r-em" id="rEm"></span>
+            <div>
+              <div class="r-nm" id="rNm"></div>
+              <div class="r-de" id="rDe"></div>
+            </div>
+          </div>
+          <div class="ic">Photo <strong id="imgNum">1</strong> / 100</div>
+        </div>
+        <div style="height:4px;background:var(--surface);border-radius:2px;overflow:hidden;">
+          <div id="rProg"
+            style="height:100%;width:0%;background:var(--ds-color);border-radius:2px;transition:width 0.4s;"></div>
+        </div>
+        <!-- Celebrity Banner -->
+        <div class="cele-banner">
+          <div>
+            <div class="cele-name" id="celeName">—</div>
+            <div class="cele-sub" id="celeSub">Nature Scene</div>
+          </div>
+          <div class="cele-count" id="celeCount">Photo — / 5</div>
+        </div>
+        <div class="image-card slin" id="imgCard">
+          <div class="iw">
+            <img id="mainImg" src="" alt="Celebrity Photo" class="loading" />
+            <div class="spin" id="spin"></div>
+            <div class="ibadge" id="ibadge">—</div>
+            <div class="rov" id="rov">
+              <div class="bs2" id="bigS"></div>
+              <div class="rt">Already rated — choose new or skip</div>
+            </div>
+          </div>
+          <div class="rp">
+            <div>
+              <div class="rl">Rate this photo</div>
+              <div class="stars" id="starsRow">
+                <span class="star" data-v="1">★</span>
+                <span class="star" data-v="2">★</span>
+                <span class="star" data-v="3">★</span>
+                <span class="star" data-v="4">★</span>
+                <span class="star" data-v="5">★</span>
+              </div>
+              <div class="kh"><kbd>1</kbd>–<kbd>5</kbd> to rate &nbsp;·&nbsp; auto advances to next photo</div>
+            </div>
+
+          </div>
+        </div>
+        <div class="hw">
+          <div class="ht">// Progress by Scene</div>
+          <div class="cele-grid" id="hg"></div>
+        </div>
+      </div>
+      <div id="done-screen">
+        <div class="tr">Done!</div>
+        <h2>Dataset Complete!</h2>
+        <p id="doneMsg"></p>
+        <button class="btn-back" onclick="showPage('dashboard')">← Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESULTS ===== -->
+  <div id="page-results" class="page">
+    <nav>
+      <div class="nav-logo" onclick="showPage('dashboard')">Pixel<span>Rate</span></div>
+      <div class="nav-right">
+        <button class="nbtn" onclick="showPage('dashboard')">← Dashboard</button>
+        <button class="nbtn primary" onclick="exportCSV()">Export CSV</button>
+      </div>
+    </nav>
+    <div class="res-z">
+      <h1>My Ratings</h1>
+      <div class="res-sub">// All your nature photo ratings</div>
+      <div class="rtabs" id="rtabs"></div>
+      <div class="tb">
+        <div class="cb" id="rcnt"><strong>0</strong> photos</div>
+        <div class="fr">
+          <span class="fl">Filter:</span>
+          <button class="fb active" onclick="setFilter(0,this)">All</button>
+          <button class="fb" onclick="setFilter(1,this)">1★</button>
+          <button class="fb" onclick="setFilter(2,this)">2★</button>
+          <button class="fb" onclick="setFilter(3,this)">3★</button>
+          <button class="fb" onclick="setFilter(4,this)">4★</button>
+          <button class="fb" onclick="setFilter(5,this)">5★</button>
+        </div>
+      </div>
+      <div class="pg" id="photoGrid"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ================================================================
+       ⚠️  CHANGE NAMES HERE — THIS IS THE ONLY PLACE YOU NEED TO EDIT
+       
+       DATASETS = 5 group members
+       Each member has 20 celebrities
+       Each celebrity has 5 photos
+       Photo files must be named: celebname_01.jpg to celebname_05.jpg
+       Folder structure: photos/membername/celebname/celebname_01.jpg
+    ================================================================ */
+
+    const DS = [
+      {
+        id: 'tanvir',                    // ← CHANGE: folder name (lowercase, no spaces)
+        member: 'Tanvir',                // ← CHANGE: group member display name
+        emoji: '',                     // ← CHANGE: any emoji you like
+        desc: 'Tanvir\'s Collection',
+        color: '#a7c080',
+        // ↓↓↓ CHANGE THESE 20 CELEBRITY NAMES ↓↓↓
+        // id must be lowercase, no spaces (used for folder & filename)
+        // name is the display name shown on screen
+        celebrities: [
+          { id: 'slot_1', name: 'Slot 1' },
+          { id: 'slot_2', name: 'Slot 2' },
+          { id: 'slot_3', name: 'Slot 3' },
+          { id: 'slot_4', name: 'Slot 4' },
+          { id: 'slot_5', name: 'Slot 5' },
+          { id: 'slot_6', name: 'Slot 6' },
+          { id: 'slot_7', name: 'Slot 7' },
+          { id: 'slot_8', name: 'Slot 8' },
+          { id: 'slot_9', name: 'Slot 9' },
+          { id: 'slot_10', name: 'Slot 10' },
+          { id: 'slot_11', name: 'Slot 11' },
+          { id: 'slot_12', name: 'Slot 12' },
+          { id: 'slot_13', name: 'Slot 13' },
+          { id: 'slot_14', name: 'Slot 14' },
+          { id: 'slot_15', name: 'Slot 15' },
+          { id: 'slot_16', name: 'Slot 16' },
+          { id: 'slot_17', name: 'Slot 17' },
+          { id: 'slot_18', name: 'Slot 18' },
+          { id: 'slot_19', name: 'Slot 19' },
+          { id: 'slot_20', name: 'Slot 20' }
+
+        ]
+      },
+      {
+        id: 'alvi',
+        member: 'Alvi',
+        emoji: '',
+        desc: 'Alvi\'s Collection',
+        color: '#7fbbb3',
+        celebrities: [
+          { id: 'slot_1', name: 'Slot 1' },
+          { id: 'slot_2', name: 'Slot 2' },
+          { id: 'slot_3', name: 'Slot 3' },
+          { id: 'slot_4', name: 'Slot 4' },
+          { id: 'slot_5', name: 'Slot 5' },
+          { id: 'slot_6', name: 'Slot 6' },
+          { id: 'slot_7', name: 'Slot 7' },
+          { id: 'slot_8', name: 'Slot 8' },
+          { id: 'slot_9', name: 'Slot 9' },
+          { id: 'slot_10', name: 'Slot 10' },
+          { id: 'slot_11', name: 'Slot 11' },
+          { id: 'slot_12', name: 'Slot 12' },
+          { id: 'slot_13', name: 'Slot 13' },
+          { id: 'slot_14', name: 'Slot 14' },
+          { id: 'slot_15', name: 'Slot 15' },
+          { id: 'slot_16', name: 'Slot 16' },
+          { id: 'slot_17', name: 'Slot 17' },
+          { id: 'slot_18', name: 'Slot 18' },
+          { id: 'slot_19', name: 'Slot 19' },
+          { id: 'slot_20', name: 'Slot 20' }
+
+        ]
+      },
+      {
+        id: 'provat',
+        member: 'Provat',
+        emoji: '',
+        desc: 'Provat\'s Collection',
+        color: '#d699b6',
+        celebrities: [
+          { id: 'slot_1', name: 'Slot 1' },
+          { id: 'slot_2', name: 'Slot 2' },
+          { id: 'slot_3', name: 'Slot 3' },
+          { id: 'slot_4', name: 'Slot 4' },
+          { id: 'slot_5', name: 'Slot 5' },
+          { id: 'slot_6', name: 'Slot 6' },
+          { id: 'slot_7', name: 'Slot 7' },
+          { id: 'slot_8', name: 'Slot 8' },
+          { id: 'slot_9', name: 'Slot 9' },
+          { id: 'slot_10', name: 'Slot 10' },
+          { id: 'slot_11', name: 'Slot 11' },
+          { id: 'slot_12', name: 'Slot 12' },
+          { id: 'slot_13', name: 'Slot 13' },
+          { id: 'slot_14', name: 'Slot 14' },
+          { id: 'slot_15', name: 'Slot 15' },
+          { id: 'slot_16', name: 'Slot 16' },
+          { id: 'slot_17', name: 'Slot 17' },
+          { id: 'slot_18', name: 'Slot 18' },
+          { id: 'slot_19', name: 'Slot 19' },
+          { id: 'slot_20', name: 'Slot 20' }
+
+        ]
+      },
+      {
+        id: 'mim',
+        member: 'Mim',
+        emoji: '',
+        desc: 'Mim\'s Collection',
+        color: '#dbbc7f',
+        celebrities: [
+          { id: 'slot_1', name: 'Slot 1' },
+          { id: 'slot_2', name: 'Slot 2' },
+          { id: 'slot_3', name: 'Slot 3' },
+          { id: 'slot_4', name: 'Slot 4' },
+          { id: 'slot_5', name: 'Slot 5' },
+          { id: 'slot_6', name: 'Slot 6' },
+          { id: 'slot_7', name: 'Slot 7' },
+          { id: 'slot_8', name: 'Slot 8' },
+          { id: 'slot_9', name: 'Slot 9' },
+          { id: 'slot_10', name: 'Slot 10' },
+          { id: 'slot_11', name: 'Slot 11' },
+          { id: 'slot_12', name: 'Slot 12' },
+          { id: 'slot_13', name: 'Slot 13' },
+          { id: 'slot_14', name: 'Slot 14' },
+          { id: 'slot_15', name: 'Slot 15' },
+          { id: 'slot_16', name: 'Slot 16' },
+          { id: 'slot_17', name: 'Slot 17' },
+          { id: 'slot_18', name: 'Slot 18' },
+          { id: 'slot_19', name: 'Slot 19' },
+          { id: 'slot_20', name: 'Slot 20' }
+
+        ]
+      },
+      {
+        id: 'nadim',
+        member: 'Nadim',
+        emoji: '',
+        desc: 'Nadim\'s Collection',
+        color: '#e69875',
+        celebrities: [
+          { id: 'slot_1', name: 'Slot 1' },
+          { id: 'slot_2', name: 'Slot 2' },
+          { id: 'slot_3', name: 'Slot 3' },
+          { id: 'slot_4', name: 'Slot 4' },
+          { id: 'slot_5', name: 'Slot 5' },
+          { id: 'slot_6', name: 'Slot 6' },
+          { id: 'slot_7', name: 'Slot 7' },
+          { id: 'slot_8', name: 'Slot 8' },
+          { id: 'slot_9', name: 'Slot 9' },
+          { id: 'slot_10', name: 'Slot 10' },
+          { id: 'slot_11', name: 'Slot 11' },
+          { id: 'slot_12', name: 'Slot 12' },
+          { id: 'slot_13', name: 'Slot 13' },
+          { id: 'slot_14', name: 'Slot 14' },
+          { id: 'slot_15', name: 'Slot 15' },
+          { id: 'slot_16', name: 'Slot 16' },
+          { id: 'slot_17', name: 'Slot 17' },
+          { id: 'slot_18', name: 'Slot 18' },
+          { id: 'slot_19', name: 'Slot 19' },
+          { id: 'slot_20', name: 'Slot 20' }
+
+        ]
+      }
+    ];
+
+    /*
+    ================================================================
+      PHOTO FOLDER STRUCTURE ON GITHUB:
+      
+      photos/
+      ├── tanvir/
+      │   ├── cele1/
+      │   │   ├── cele1_01.jpg
+      │   │   ├── cele1_02.jpg
+      │   │   ├── cele1_03.jpg
+      │   │   ├── cele1_04.jpg
+      │   │   └── cele1_05.jpg
+      │   ├── cele2/
+      │   │   ├── cele2_01.jpg  ← rename to ronaldo_01.jpg when you change cele2 to ronaldo
+      │   │   └── ...
+      │   └── ... (20 celebrity folders)
+      ├── alvi/
+      ├── provat/
+      ├── mim/
+      └── nadim/
+    
+      PHOTO URL BUILT AS:
+      photos/{member_id}/{celeb_id}/{celeb_id}_01.jpg
+      Example: photos/tanvir/ronaldo/ronaldo_01.jpg
+    ================================================================
+    */
+
+    /* Build flat photo list — uses uploaded Firebase photos if available, else picsum placeholders */
+    const DS_SEEDS = { tanvir: 100, alvi: 200, provat: 300, mim: 400, nadim: 500 };
+    const DS_NATURE = { tanvir: 'forest', alvi: 'mountain', provat: 'ocean', mim: 'sunset', nadim: 'river' };
+
+    // Cache of uploaded photos fetched from Firebase per dataset
+    const _uploadedPhotos = {};
+
+    async function fetchUploadedPhotos(dsId) {
+      try {
+        const r = await fetch(FIREBASE_URL + '/photos/' + dsId + '.json');
+        const data = await r.json();
+        _uploadedPhotos[dsId] = (data && typeof data === 'object') ? data : {};
+      } catch (e) {
+        _uploadedPhotos[dsId] = {};
+      }
+    }
+
+    function buildPhotoList(ds) {
+      const photos = [];
+      const uploaded = _uploadedPhotos[ds.id] || {};
+      // Check if any slot has photos
+      const hasAnySlot = Object.keys(uploaded).some(k => k.startsWith('slot_'));
+
+      ds.celebrities.forEach((cele, ci) => {
+        const slotKey = 'slot_' + (ci + 1); // slot_1 .. slot_20
+        const slotPhotos = (uploaded[slotKey] && typeof uploaded[slotKey] === 'object')
+          ? Object.entries(uploaded[slotKey]).sort((a, b) => a[0].localeCompare(b[0]))
+          : [];
+
+        for (let pi = 0; pi < 5; pi++) {
+          let path, filename;
+          if (slotPhotos[pi]) {
+            filename = slotPhotos[pi][0]; // original filename
+            path = slotPhotos[pi][1];     // base64 data URL
+          } else {
+            filename = cele.id + '_' + String(pi + 1).padStart(2, '0') + '.jpg';
+            path = 'https://picsum.photos/seed/' + ds.id + '_' + cele.id + '_' + (pi + 1) + '/800/600';
           }
+          photos.push({
+            celebId: cele.id,
+            celebName: cele.name,
+            photoNum: pi + 1,
+            filename: filename,
+            path: path
+          });
+        }
+      });
+      return photos; // 100 photos
+    }
+
+    /* ================================================================
+       FIREBASE CONFIG
+       Steps to set up (5 minutes):
+       1. Go to https://console.firebase.google.com
+       2. Click "Add project" → name it "pixelrate" → Continue → Create
+       3. In your project: click "Realtime Database" (left sidebar)
+       4. Click "Create Database" → choose any location → Start in TEST MODE → Enable
+       5. Copy the database URL (looks like: https://pixelrate-xxxxx-default-rtdb.firebaseio.com)
+       6. Paste it below as FIREBASE_URL
+    ================================================================ */
+    const FIREBASE_URL = 'https://pixelrate-cd325-default-rtdb.asia-southeast1.firebasedatabase.app/';  // ← CHANGE THIS
+    // Example: 'https://pixelrate-abc12-default-rtdb.firebaseio.com'
+
+    const FB = {
+      url(path) { return FIREBASE_URL + path + '.json'; },
+
+      async get(path) {
+        try {
+          const r = await fetch(this.url(path));
+          return await r.json();
+        } catch (e) { return null; }
+      },
+
+      async set(path, data) {
+        try {
+          const r = await fetch(this.url(path), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          return r.ok;
+        } catch (e) { return false; }
+      },
+
+      async patch(path, data) {
+        try {
+          const r = await fetch(this.url(path), {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          return r.ok;
+        } catch (e) { return false; }
+      }
+    };
+
+    /* ================================================================
+       DATABASE — localStorage as fast cache, Firebase as cloud sync
+    ================================================================ */
+    const DB = {
+      /* ---- local cache ---- */
+      gu() { return JSON.parse(localStorage.getItem('pr_users') || '{}') },
+      su(u) { localStorage.setItem('pr_users', JSON.stringify(u)) },
+      getUser(e) { return this.gu()[e] || null },
+      exists(e) { return !!this.gu()[e] },
+      getSess() { return localStorage.getItem('pr_sess') },
+      setSess(e) { localStorage.setItem('pr_sess', e) },
+      clrSess() { localStorage.removeItem('pr_sess') },
+      getProg(e) { return JSON.parse(localStorage.getItem('pr_p_' + e) || '{}') },
+      saveProg(e, p) { localStorage.setItem('pr_p_' + e, JSON.stringify(p)) },
+      getDP(e, d) { return this.getProg(e)[d] || null },
+      hash(s) { let h = 0; for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0; return h.toString(16); },
+      shuffle(arr, seed) {
+        const a = [...arr]; let s = Math.abs(seed) || 9999;
+        for (let i = a.length - 1; i > 0; i--) { s = (s * 1664525 + 1013904223) & 0xffffffff; const j = Math.abs(s) % (i + 1);[a[i], a[j]] = [a[j], a[i]]; }
+        return a;
+      },
+
+      /* ---- cloud: pull user on login ---- */
+      async syncDown(email) {
+        showSyncBar('Syncing...');
+        // Pull this user's account from Firebase
+        const cloudUser = await FB.get('/users/' + btoa(email));
+        if (cloudUser) {
+          const u = this.gu();
+          u[email] = cloudUser;
+          this.su(u);
+        } else {
+          // User was deleted from admin panel — remove from localStorage
+          const u = this.gu();
+          delete u[email];
+          this.su(u);
+          localStorage.removeItem('pr_p_' + email);
+          this.clrSess();
+        }
+        // Pull this user's ratings from Firebase
+        const cloudProg = await FB.get('/ratings/' + btoa(email));
+        if (cloudProg) {
+          const localP = this.getProg(email);
+          for (const ds in cloudProg) {
+            if (!localP[ds]) {
+              localP[ds] = cloudProg[ds];
+            } else {
+              const cr = cloudProg[ds].ratings || {};
+              for (const idx in cr) {
+                const lv = localP[ds].ratings[idx];
+                if (!lv || cr[idx].at > lv.at) localP[ds].ratings[idx] = cr[idx];
+              }
+            }
+          }
+          this.saveProg(email, localP);
+        } else {
+          // Ratings were deleted from admin panel — clear local ratings
+          localStorage.removeItem('pr_p_' + email);
+        }
+        hideSyncBar();
+      },
+
+      /* ---- cloud: push user data after any change ---- */
+      async syncUp(email) {
+        showSyncBar('Saving...');
+        const safeKey = btoa(email); // base64 encode email (Firebase keys cant have . or @)
+        const u = this.getUser(email);
+        if (u) await FB.set('/users/' + safeKey, u);
+        await FB.set('/ratings/' + safeKey, this.getProg(email));
+        hideSyncBar();
+      },
+
+      async create(e, n, h) {
+        const u = this.gu();
+        u[e] = { email: e, name: n, passHash: h };
+        this.su(u);
+        await this.syncUp(e);
+      },
+
+      initDP(e, d, order) {
+        const p = this.getProg(e);
+        if (!p[d]) { p[d] = { order, ratings: {} }; this.saveProg(e, p); }
+        return this.getProg(e)[d];
+      },
+
+      async rate(e, d, i, s) {
+        const p = this.getProg(e);
+        if (!p[d]) return;
+        p[d].ratings[i] = { stars: s, at: Date.now() };
+        this.saveProg(e, p);
+        await this.syncUp(e);
+      },
+
+      getRatings(e, d) { const dp = this.getDP(e, d); return dp ? dp.ratings : {}; }
+    };
+
+    /* Sync status bar */
+    function showSyncBar(msg) {
+      let bar = document.getElementById('syncBar');
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'syncBar';
+        bar.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;background:#3d484d;border:1px solid #4a555b;color:#a7c080;font-family:Roboto Mono,monospace;font-size:0.7rem;padding:8px 16px;border-radius:8px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);';
+        document.body.appendChild(bar);
+      }
+      bar.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;border:2px solid #a7c080;border-top-color:transparent;display:inline-block;animation:spin 0.7s linear infinite"></span> ' + msg;
+      bar.style.display = 'flex';
+    }
+    function hideSyncBar() {
+      const bar = document.getElementById('syncBar');
+      if (bar) bar.style.display = 'none';
+    }
+
+    /* ================================================================
+       PAGE ROUTER
+    ================================================================ */
+    let CU = null;
+    function showPage(n) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + n).classList.add('active');
+      window.scrollTo(0, 0);
+      if (n === 'dashboard') renderDash();
+      if (n === 'results') renderResults();
+    }
+
+    /* ================================================================
+       AUTH
+    ================================================================ */
+    function switchTab(t) {
+      document.getElementById('tabL').classList.toggle('active', t === 'login');
+      document.getElementById('tabR').classList.toggle('active', t === 'register');
+      document.getElementById('loginForm').style.display = t === 'login' ? 'block' : 'none';
+      document.getElementById('regForm').style.display = t === 'register' ? 'block' : 'none';
+    }
+    function showMsg(id, txt, type) {
+      const el = document.getElementById(id);
+      el.textContent = txt; el.className = 'msg ' + type; el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 4000);
+    }
+    async function doLogin() {
+      const e = document.getElementById('lEmail').value.trim().toLowerCase();
+      const p = document.getElementById('lPass').value;
+      if (!e || !p) return showMsg('lMsg', 'Please fill all fields.', 'err');
+      showMsg('lMsg', 'Syncing account data...', 'ok');
+      await DB.syncDown(e);
+      if (!DB.exists(e)) return showMsg('lMsg', 'No account with this email.', 'err');
+      const u = DB.getUser(e);
+      if (u.passHash !== DB.hash(p)) return showMsg('lMsg', 'Incorrect password.', 'err');
+      DB.setSess(e); CU = u; enterApp();
+    }
+    async function doRegister() {
+      const n = document.getElementById('rName').value.trim();
+      const e = document.getElementById('rEmail').value.trim().toLowerCase();
+      const p = document.getElementById('rPass').value;
+      if (!n || !e || !p) return showMsg('rMsg', 'Please fill all fields.', 'err');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return showMsg('rMsg', 'Invalid email.', 'err');
+      if (p.length < 6) return showMsg('rMsg', 'Password must be at least 6 characters.', 'err');
+      showMsg('rMsg', 'Checking...', 'ok');
+      await DB.syncDown(e);
+      if (DB.exists(e)) return showMsg('rMsg', 'Account already exists. Please login.', 'err');
+      await DB.create(e, n, DB.hash(p));
+      showMsg('rMsg', '✓ Account created! Please login.', 'ok');
+      setTimeout(() => switchTab('login'), 1500);
+    }
+    function doLogout() { DB.clrSess(); CU = null; showPage('login'); }
+    function enterApp() { document.getElementById('navUser').textContent = CU.email; showPage('dashboard'); }
+
+    /* ================================================================
+       DASHBOARD
+    ================================================================ */
+    async function renderDash() {
+      if (!CU) return;
+      // Always fetch fresh photos from Firebase
+      for (const ds of DS) await fetchUploadedPhotos(ds.id);
+      document.getElementById('heroName').textContent = 'Hello, ' + CU.name.split(' ')[0] + '!';
+      document.getElementById('navUser').textContent = CU.email;
+      let total = 0;
+      const grid = document.getElementById('dsGrid');
+      grid.innerHTML = '';
+      DS.forEach(ds => {
+        const dp = DB.getDP(CU.email, ds.id);
+        const rated = dp ? Object.keys(dp.ratings).length : 0;
+        total += rated;
+        const pct = Math.round(rated / 100 * 100);
+        const isDone = rated >= 100, started = rated > 0;
+        const badge = isDone
+          ? '<span class="bdg bd">✓ Complete</span>'
+          : started ? '<span class="bdg br">▶ Resume — ' + rated + '/100</span>'
+            : '<span class="bdg bs">▷ Start Rating</span>';
+        const c = document.createElement('div');
+        c.className = 'ds-card';
+        c.style.setProperty('--dsc', ds.color);
+        c.innerHTML =
+          '<div class="ds-card-inner">' +
+          '<div class="ds-nm">' + (ds.member + "'s Dataset") + '</div>' +
+          '<div class="ds-num">' + pct + '%</div>' +
+          '<div class="pb"><div class="pf" style="width:' + pct + '%;background:' + ds.color + '"></div></div>' +
+          '<div class="pl">' + rated + ' / 100</div>' +
+          badge +
+          '</div>';
+        c.onclick = () => openDS(ds.id);
+        grid.appendChild(c);
+      });
+      const done = DS.filter(ds => { const dp = DB.getDP(CU.email, ds.id); return dp && Object.keys(dp.ratings).length >= 100; }).length;
+      document.getElementById('statsRow').innerHTML =
+        '<div class="stat-card"><div class="num">' + total + '</div><div class="lbl">Rated</div></div>' +
+        '<div class="stat-card"><div class="num">' + (500 - total) + '</div><div class="lbl">Remaining</div></div>' +
+        '<div class="stat-card"><div class="num">' + Math.round(total / 500 * 100) + '%</div><div class="lbl">Progress</div></div>' +
+        '<div class="stat-card"><div class="num">' + done + '/5</div><div class="lbl">Complete</div></div>';
+    }
+
+    /* ================================================================
+       RATING
+    ================================================================ */
+    let ADS = null, photoList = [], ord = [], rat = {}, pos = 0, sel = 0, bz = false;
+
+    async function openDS(dsId) {
+      ADS = DS.find(d => d.id === dsId);
+      document.documentElement.style.setProperty('--ds-color', ADS.color);
+      document.getElementById('rNm').textContent = ADS.member + "'s Dataset";
+      document.getElementById('rDe').textContent = 'Loading photos...';
+      document.getElementById('rateLayout').style.display = 'flex';
+      document.getElementById('done-screen').style.display = 'none';
+      showPage('rate');
+
+      // Fetch uploaded photos from Firebase first
+      await fetchUploadedPhotos(ADS.id);
+      photoList = buildPhotoList(ADS);
+
+      const hasUploaded = Object.keys(_uploadedPhotos[ADS.id] || {}).length > 0;
+      document.getElementById('rEm').textContent = '';
+      document.getElementById('rDe').textContent = hasUploaded
+        ? photoList.length + ' uploaded photos'
+        : '20 scenes · 5 photos each';
+
+      // Seeded shuffle — same order every time for same user+dataset
+      const seed = Math.abs(DB.hash(CU.email + ADS.id).split('').reduce((a, c) => a + c.charCodeAt(0), 0)) || 12345;
+      const shuffled = DB.shuffle(Array.from({ length: 100 }, (_, i) => i), seed);
+      let dp = DB.getDP(CU.email, ADS.id);
+      if (!dp) { DB.initDP(CU.email, ADS.id, shuffled); dp = DB.getDP(CU.email, ADS.id); }
+      ord = dp.order; rat = dp.ratings;
+      pos = nextUnrated(0);
+      renderHist();
+      loadImg();
+    }
+
+    function nextUnrated(f) {
+      for (let i = f; i < ord.length; i++) if (!rat[ord[i]]) return i;
+      return ord.length;
+    }
+
+    function loadImg() {
+      const rated = Object.keys(rat).length;
+      if (pos >= ord.length || rated >= 100) { showDone(); return; }
+      const photoIdx = ord[pos];
+      const photo = photoList[photoIdx];
+      sel = 0; updStars(0);
+
+      // Update celebrity banner
+      document.getElementById('celeName').textContent = photo.celebName;
+      document.getElementById('celeSub').textContent = ADS.member + "'s Collection";
+      document.getElementById('celeCount').textContent = 'Photo ' + photo.photoNum + ' / 5';
+      document.getElementById('ibadge').textContent = photo.celebName + ' #' + photo.photoNum;
+
+      if (rat[photoIdx]) {
+        document.getElementById('bigS').textContent = '★'.repeat(rat[photoIdx].stars);
+        document.getElementById('rov').classList.add('show');
+      } else {
+        document.getElementById('rov').classList.remove('show');
+      }
+
+      const img = document.getElementById('mainImg'), sp = document.getElementById('spin');
+      img.className = 'loading'; sp.classList.remove('h');
+      img.onload = () => { img.className = ''; sp.classList.add('h'); };
+      img.onerror = () => {
+        // Fallback placeholder if image not found
+        img.style.background = 'var(--surface)';
+        img.className = '';
+        sp.classList.add('h');
+      };
+      img.src = photo.path;
+
+      document.getElementById('imgNum').textContent = pos + 1;
+      document.getElementById('navCur').textContent = pos + 1;
+      document.getElementById('rProg').style.width = (rated / 100 * 100) + '%';
+      renderHist();
+      const card = document.getElementById('imgCard');
+      card.classList.remove('slin'); void card.offsetWidth; card.classList.add('slin');
+    }
+
+    // Stars
+    document.querySelectorAll('.star').forEach(s => {
+      s.addEventListener('mouseover', () => updStars(+s.dataset.v));
+      s.addEventListener('mouseout', () => updStars(sel));
+      s.addEventListener('click', () => { sel = +s.dataset.v; updStars(sel); setTimeout(submitRating, 180); });
+    });
+    function updStars(v) { document.querySelectorAll('.star').forEach(s => s.classList.toggle('lit', +s.dataset.v <= v)); }
+
+    async function submitRating() {
+      if (!sel || bz) return;
+      bz = true;
+      await DB.rate(CU.email, ADS.id, ord[pos], sel);
+      rat = DB.getDP(CU.email, ADS.id).ratings;
+      pos = nextUnrated(pos + 1);
+      if (pos >= ord.length) pos = nextUnrated(0);
+      setTimeout(() => { bz = false; loadImg(); }, 120);
+    }
+    function skipImg() {
+      if (bz) return;
+      let n = pos + 1; if (n >= ord.length) n = 0;
+      const f = nextUnrated(n); pos = (f < ord.length) ? f : nextUnrated(0);
+      loadImg();
+    }
+
+    function renderHist() {
+      const g = document.getElementById('hg'); g.innerHTML = '';
+      // Group by celebrity — show each celeb's 5 dots in a row
+      ADS.celebrities.forEach((cele, ci) => {
+        const row = document.createElement('div'); row.className = 'cele-row';
+        const lbl = document.createElement('div'); lbl.className = 'cele-label'; lbl.textContent = cele.name;
+        const dots = document.createElement('div'); dots.className = 'cele-dots';
+        for (let pi = 0; pi < 5; pi++) {
+          // Find the position of this photo in the order
+          const photoIdx = ci * 5 + pi; // original index in photoList
+          const orderPos = ord.indexOf(photoIdx);
+          const r = rat[photoIdx];
+          const d = document.createElement('div');
+          d.className = 'hdot' + (r ? ' rated' : '') + (orderPos === pos ? ' cur' : '');
+          d.title = (r ? cele.name + ' photo ' + (pi + 1) + ' — ' + r.stars + '★' : cele.name + ' photo ' + (pi + 1) + ' — not rated');
+          d.textContent = r ? r.stars + '★' : (pi + 1);
+          d.style.cursor = 'default';
+          dots.appendChild(d);
+        }
+        row.appendChild(lbl); row.appendChild(dots); g.appendChild(row);
+      });
+    }
+
+    function showDone() {
+      document.getElementById('rateLayout').style.display = 'none';
+      document.getElementById('done-screen').style.display = 'block';
+      const all = Object.values(rat);
+      const avg = all.length ? (all.reduce((s, r) => s + r.stars, 0) / all.length).toFixed(1) : '—';
+      document.getElementById('doneMsg').innerHTML =
+        'You rated all 100 photos in <strong style="color:var(--ds-color)">' + ADS.member + '\'s Collection</strong>.<br>' +
+        'Average rating: <strong style="color:var(--ds-color)">' + avg + ' ★</strong>';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('page-rate').classList.contains('active')) return;
+      if (e.key >= '1' && e.key <= '5') { sel = +e.key; updStars(sel); setTimeout(submitRating, 180); }
+    });
+
+    /* ================================================================
+       RESULTS
+    ================================================================ */
+    let rDS = 'all', rStar = 0;
+    function renderResults() {
+      if (!CU) return;
+      buildRTabs(); renderResGrid();
+    }
+    function buildRTabs() {
+      const bar = document.getElementById('rtabs');
+      if (bar.dataset.b) return; bar.dataset.b = '1';
+      const a = document.createElement('button'); a.className = 'rtab active'; a.textContent = 'All Datasets';
+      a.onclick = () => { rDS = 'all'; setRTab(a); renderResGrid(); }; bar.appendChild(a);
+      DS.forEach(ds => {
+        const b = document.createElement('button'); b.className = 'rtab';
+        b.textContent = ds.member;
+        b.onclick = () => { rDS = ds.id; setRTab(b); renderResGrid(); }; bar.appendChild(b);
+      });
+    }
+    function setRTab(el) { document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
+    function setFilter(s, el) { rStar = s; document.querySelectorAll('.fb').forEach(b => b.classList.remove('active')); el.classList.add('active'); renderResGrid(); }
+
+    async function renderResGrid() {
+      if (!CU) return;
+      // Always fetch fresh photos from Firebase
+      const dsList = rDS === 'all' ? DS : DS.filter(d => d.id === rDS);
+      for (const ds of dsList) await fetchUploadedPhotos(ds.id);
+      const g = document.getElementById('photoGrid'); g.innerHTML = '';
+      let items = [];
+      const dsListR = rDS === 'all' ? DS : DS.filter(d => d.id === rDS);
+      dsListR.forEach(ds => {
+        const photos = buildPhotoList(ds);
+        const ratings = DB.getRatings(CU.email, ds.id);
+        const dp = DB.getDP(CU.email, ds.id); if (!dp) return;
+        for (const idx in ratings) {
+          const r = ratings[idx];
+          if (rStar && r.stars !== rStar) continue;
+          const photo = photos[+idx];
+          items.push({ ds, photo, stars: r.stars, at: r.at });
+        }
+      });
+      items.sort((a, b) => b.at - a.at);
+      document.getElementById('rcnt').innerHTML = '<strong>' + items.length + '</strong> photos rated';
+      if (!items.length) {
+        g.innerHTML = '<div class="emp">No ratings yet. <a onclick="showPage(\'dashboard\')">Start rating →</a></div>';
+        return;
+      }
+      items.forEach(item => {
+        const c = document.createElement('div'); c.className = 'pc';
+        c.innerHTML =
+          '<img src="' + item.photo.path + '" loading="lazy" alt="' + item.photo.celebName + '"/>' +
+          '<div class="pi">' +
+          '<div class="ps">' + '★'.repeat(item.stars) + '</div>' +
+          '<div class="pid">' + item.photo.celebName + ' · ' + item.ds.member + '</div>' +
+          '</div>';
+        g.appendChild(c);
+      });
+    }
+
+    function exportCSV() {
+      if (!CU) return;
+      let csv = 'Member,Dataset_ID,Celebrity,Photo_Number,Photo_File,Stars,Date\n';
+      DS.forEach(ds => {
+        const photos = buildPhotoList(ds);
+        const r = DB.getRatings(CU.email, ds.id);
+        for (const idx in r) {
+          const photo = photos[+idx];
+          const fname = ds.member + '_Slot' + photo.celebId.replace('slot_', '') + '_' + photo.photoNum;
+          csv += '"' + ds.member + '","' + ds.id + '","' + photo.celebName + '",' + photo.photoNum + ',"' + fname + '",' + r[idx].stars + ',"' + new Date(r[idx].at).toISOString() + '"\n';
+        }
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = 'pixelrate_celebrity_ratings.csv';
+      a.click();
+    }
+
+    /* ================================================================
+       BOOT
+    ================================================================ */
+    (async function () {
+      const s = DB.getSess();
+      if (s) {
+        // Always sync from Firebase first — handles admin-deleted users
+        await DB.syncDown(s);
+        if (DB.exists(s)) { CU = DB.getUser(s); enterApp(); }
+        else showPage('login');
+      } else {
+        showPage('login');
+      }
+    })();
+
+    /* ================================================================
+       TEAM DATA
+    ================================================================ */
+    const TEAM = [
+      { name: 'Fahim', id: '252-15-607', color: '#a7c080', initial: 'F' },
+      { name: 'Nadim', id: '252-15-267', color: '#7fbbb3', initial: 'N' },
+      { name: 'Mim', id: '252-15-609', color: '#d699b6', initial: 'M' },
+      { name: 'Provat', id: '252-15-303', color: '#dbbc7f', initial: 'P' },
+      { name: 'Alvi', id: '252-15-282', color: '#e69875', initial: 'A' },
+    ];
+
+    /* ── About Modal — Pentagon Layout ── */
+
+
+    function openAbout() {
+      const wrap = document.getElementById('pentagonNodes');
+      const svg = document.getElementById('pentagonSvg');
+      // Pentagon positions (% of container) — 5 points of a circle
+      // viewBox 700x430, center 350,215, radius ~175
+      const cx = 350, cy = 215, r = 175;
+      const angles = [-90, -90 + 72, -90 + 144, -90 + 216, -90 + 288]; // top first, clockwise
+      const pts = angles.map(a => ({
+        x: cx + r * Math.cos(a * Math.PI / 180),
+        y: cy + r * Math.sin(a * Math.PI / 180)
+      }));
+
+      // Draw connection lines in SVG
+      let lines = '';
+      for (let i = 0; i < 5; i++) {
+        for (let j = i + 1; j < 5; j++) {
+          lines += `<line x1="${pts[i].x}" y1="${pts[i].y}" x2="${pts[j].x}" y2="${pts[j].y}"
+        stroke="${TEAM[i].color}" stroke-width="1" stroke-opacity="0.18"/>`;
         }
       }
-      this.saveProg(email, localP);
-    } else {
-      // Ratings were deleted from admin panel — clear local ratings
-      localStorage.removeItem('pr_p_'+email);
-    }
-    hideSyncBar();
-  },
-
-  /* ---- cloud: push user data after any change ---- */
-  async syncUp(email) {
-    showSyncBar('Saving...');
-    const safeKey = btoa(email); // base64 encode email (Firebase keys cant have . or @)
-    const u = this.getUser(email);
-    if (u) await FB.set('/users/' + safeKey, u);
-    await FB.set('/ratings/' + safeKey, this.getProg(email));
-    hideSyncBar();
-  },
-
-  async create(e,n,h) {
-    const u = this.gu();
-    u[e] = { email:e, name:n, passHash:h };
-    this.su(u);
-    await this.syncUp(e);
-  },
-
-  initDP(e,d,order) {
-    const p = this.getProg(e);
-    if (!p[d]) { p[d] = { order, ratings:{} }; this.saveProg(e,p); }
-    return this.getProg(e)[d];
-  },
-
-  async rate(e,d,i,s) {
-    const p = this.getProg(e);
-    if (!p[d]) return;
-    p[d].ratings[i] = { stars:s, at:Date.now() };
-    this.saveProg(e, p);
-    await this.syncUp(e);
-  },
-
-  getRatings(e,d) { const dp = this.getDP(e,d); return dp ? dp.ratings : {}; }
-};
-
-/* Sync status bar */
-function showSyncBar(msg) {
-  let bar = document.getElementById('syncBar');
-  if (!bar) {
-    bar = document.createElement('div');
-    bar.id = 'syncBar';
-    bar.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;background:#3d484d;border:1px solid #4a555b;color:#a7c080;font-family:Roboto Mono,monospace;font-size:0.7rem;padding:8px 16px;border-radius:8px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);';
-    document.body.appendChild(bar);
-  }
-  bar.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;border:2px solid #a7c080;border-top-color:transparent;display:inline-block;animation:spin 0.7s linear infinite"></span> ' + msg;
-  bar.style.display = 'flex';
-}
-function hideSyncBar() {
-  const bar = document.getElementById('syncBar');
-  if (bar) bar.style.display = 'none';
-}
-
-/* ================================================================
-   PAGE ROUTER
-================================================================ */
-let CU = null;
-function showPage(n) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+n).classList.add('active');
-  window.scrollTo(0,0);
-  if(n==='dashboard') renderDash();
-  if(n==='results')   renderResults();
-}
-
-/* ================================================================
-   AUTH
-================================================================ */
-function switchTab(t) {
-  document.getElementById('tabL').classList.toggle('active',t==='login');
-  document.getElementById('tabR').classList.toggle('active',t==='register');
-  document.getElementById('loginForm').style.display = t==='login'?'block':'none';
-  document.getElementById('regForm').style.display   = t==='register'?'block':'none';
-}
-function showMsg(id,txt,type) {
-  const el=document.getElementById(id);
-  el.textContent=txt; el.className='msg '+type; el.style.display='block';
-  setTimeout(()=>el.style.display='none',4000);
-}
-async function doLogin() {
-  const e=document.getElementById('lEmail').value.trim().toLowerCase();
-  const p=document.getElementById('lPass').value;
-  if(!e||!p) return showMsg('lMsg','Please fill all fields.','err');
-  showMsg('lMsg','Syncing account data...','ok');
-  await DB.syncDown(e);
-  if(!DB.exists(e)) return showMsg('lMsg','No account with this email.','err');
-  const u=DB.getUser(e);
-  if(u.passHash!==DB.hash(p)) return showMsg('lMsg','Incorrect password.','err');
-  DB.setSess(e); CU=u; enterApp();
-}
-async function doRegister() {
-  const n=document.getElementById('rName').value.trim();
-  const e=document.getElementById('rEmail').value.trim().toLowerCase();
-  const p=document.getElementById('rPass').value;
-  if(!n||!e||!p) return showMsg('rMsg','Please fill all fields.','err');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return showMsg('rMsg','Invalid email.','err');
-  if(p.length<6) return showMsg('rMsg','Password must be at least 6 characters.','err');
-  showMsg('rMsg','Checking...','ok');
-  await DB.syncDown(e);
-  if(DB.exists(e)) return showMsg('rMsg','Account already exists. Please login.','err');
-  await DB.create(e,n,DB.hash(p));
-  showMsg('rMsg','✓ Account created! Please login.','ok');
-  setTimeout(()=>switchTab('login'),1500);
-}
-function doLogout() { DB.clrSess(); CU=null; showPage('login'); }
-function enterApp() { document.getElementById('navUser').textContent=CU.email; showPage('dashboard'); }
-
-/* ================================================================
-   DASHBOARD
-================================================================ */
-async function renderDash() {
-  if(!CU) return;
-  // Always fetch fresh photos from Firebase
-  for(const ds of DS) await fetchUploadedPhotos(ds.id);
-  document.getElementById('heroName').textContent = 'Hello, '+CU.name.split(' ')[0]+'!';
-  document.getElementById('navUser').textContent = CU.email;
-  let total=0;
-  const grid=document.getElementById('dsGrid');
-  grid.innerHTML='';
-  DS.forEach(ds => {
-    const dp=DB.getDP(CU.email,ds.id);
-    const rated=dp?Object.keys(dp.ratings).length:0;
-    total+=rated;
-    const pct=Math.round(rated/100*100);
-    const isDone=rated>=100, started=rated>0;
-    const badge=isDone
-      ?'<span class="bdg bd">✓ Complete</span>'
-      :started?'<span class="bdg br">▶ Resume — '+rated+'/100</span>'
-      :'<span class="bdg bs">▷ Start Rating</span>';
-    const c=document.createElement('div');
-    c.className='ds-card';
-    c.style.setProperty('--dsc', ds.color);
-    c.innerHTML=
-      '<div class="ds-card-inner">'+
-        '<div class="ds-nm">'+(ds.member+"'s Dataset")+'</div>'+
-        '<div class="ds-num">'+pct+'%</div>'+
-        '<div class="pb"><div class="pf" style="width:'+pct+'%;background:'+ds.color+'"></div></div>'+
-        '<div class="pl">'+rated+' / 100</div>'+
-        badge+
-      '</div>';
-    c.onclick=()=>openDS(ds.id);
-    grid.appendChild(c);
-  });
-  const done=DS.filter(ds=>{const dp=DB.getDP(CU.email,ds.id);return dp&&Object.keys(dp.ratings).length>=100;}).length;
-  document.getElementById('statsRow').innerHTML=
-    '<div class="stat-card"><div class="num">'+total+'</div><div class="lbl">Rated</div></div>'+
-    '<div class="stat-card"><div class="num">'+(500-total)+'</div><div class="lbl">Remaining</div></div>'+
-    '<div class="stat-card"><div class="num">'+Math.round(total/500*100)+'%</div><div class="lbl">Progress</div></div>'+
-    '<div class="stat-card"><div class="num">'+done+'/5</div><div class="lbl">Complete</div></div>';
-}
-
-/* ================================================================
-   RATING
-================================================================ */
-let ADS=null, photoList=[], ord=[], rat={}, pos=0, sel=0, bz=false;
-
-async function openDS(dsId) {
-  ADS = DS.find(d=>d.id===dsId);
-  document.documentElement.style.setProperty('--ds-color', ADS.color);
-  document.getElementById('rNm').textContent = ADS.member+"'s Dataset";
-  document.getElementById('rDe').textContent = 'Loading photos...';
-  document.getElementById('rateLayout').style.display='flex';
-  document.getElementById('done-screen').style.display='none';
-  showPage('rate');
-
-  // Fetch uploaded photos from Firebase first
-  await fetchUploadedPhotos(ADS.id);
-  photoList = buildPhotoList(ADS);
-
-  const hasUploaded = Object.keys(_uploadedPhotos[ADS.id]||{}).length > 0;
-  document.getElementById('rEm').textContent = '';
-  document.getElementById('rDe').textContent = hasUploaded
-    ? photoList.length + ' uploaded photos'
-    : '20 scenes · 5 photos each';
-
-  // Seeded shuffle — same order every time for same user+dataset
-  const seed=Math.abs(DB.hash(CU.email+ADS.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0))||12345;
-  const shuffled=DB.shuffle(Array.from({length:100},(_,i)=>i), seed);
-  let dp=DB.getDP(CU.email,ADS.id);
-  if(!dp){ DB.initDP(CU.email,ADS.id,shuffled); dp=DB.getDP(CU.email,ADS.id); }
-  ord=dp.order; rat=dp.ratings;
-  pos=nextUnrated(0);
-  renderHist();
-  loadImg();
-}
-
-function nextUnrated(f) {
-  for(let i=f;i<ord.length;i++) if(!rat[ord[i]]) return i;
-  return ord.length;
-}
-
-function loadImg() {
-  const rated=Object.keys(rat).length;
-  if(pos>=ord.length||rated>=100){ showDone(); return; }
-  const photoIdx=ord[pos];
-  const photo=photoList[photoIdx];
-  sel=0; updStars(0);
-
-  // Update celebrity banner
-  document.getElementById('celeName').textContent = photo.celebName;
-  document.getElementById('celeSub').textContent  = ADS.member+"'s Collection";
-  document.getElementById('celeCount').textContent = 'Photo '+photo.photoNum+' / 5';
-  document.getElementById('ibadge').textContent    = photo.celebName+' #'+photo.photoNum;
-
-  if(rat[photoIdx]){
-    document.getElementById('bigS').textContent='★'.repeat(rat[photoIdx].stars);
-    document.getElementById('rov').classList.add('show');
-  } else {
-    document.getElementById('rov').classList.remove('show');
-  }
-
-  const img=document.getElementById('mainImg'), sp=document.getElementById('spin');
-  img.className='loading'; sp.classList.remove('h');
-  img.onload=()=>{ img.className=''; sp.classList.add('h'); };
-  img.onerror=()=>{
-    // Fallback placeholder if image not found
-    img.style.background='var(--surface)';
-    img.className='';
-    sp.classList.add('h');
-  };
-  img.src = photo.path;
-
-  document.getElementById('imgNum').textContent = pos+1;
-  document.getElementById('navCur').textContent = pos+1;
-  document.getElementById('rProg').style.width  = (rated/100*100)+'%';
-  renderHist();
-  const card=document.getElementById('imgCard');
-  card.classList.remove('slin'); void card.offsetWidth; card.classList.add('slin');
-}
-
-// Stars
-document.querySelectorAll('.star').forEach(s=>{
-  s.addEventListener('mouseover',()=>updStars(+s.dataset.v));
-  s.addEventListener('mouseout',()=>updStars(sel));
-  s.addEventListener('click',()=>{ sel=+s.dataset.v; updStars(sel); setTimeout(submitRating,180); });
-});
-function updStars(v){ document.querySelectorAll('.star').forEach(s=>s.classList.toggle('lit',+s.dataset.v<=v)); }
-
-async function submitRating() {
-  if(!sel||bz) return;
-  bz=true;
-  await DB.rate(CU.email,ADS.id,ord[pos],sel);
-  rat=DB.getDP(CU.email,ADS.id).ratings;
-  pos=nextUnrated(pos+1);
-  if(pos>=ord.length) pos=nextUnrated(0);
-  setTimeout(()=>{ bz=false; loadImg(); },120);
-}
-function skipImg() {
-  if(bz) return;
-  let n=pos+1; if(n>=ord.length) n=0;
-  const f=nextUnrated(n); pos=(f<ord.length)?f:nextUnrated(0);
-  loadImg();
-}
-
-function renderHist() {
-  const g=document.getElementById('hg'); g.innerHTML='';
-  // Group by celebrity — show each celeb's 5 dots in a row
-  ADS.celebrities.forEach((cele,ci)=>{
-    const row=document.createElement('div'); row.className='cele-row';
-    const lbl=document.createElement('div'); lbl.className='cele-label'; lbl.textContent=cele.name;
-    const dots=document.createElement('div'); dots.className='cele-dots';
-    for(let pi=0;pi<5;pi++){
-      // Find the position of this photo in the order
-      const photoIdx=ci*5+pi; // original index in photoList
-      const orderPos=ord.indexOf(photoIdx);
-      const r=rat[photoIdx];
-      const d=document.createElement('div');
-      d.className='hdot'+(r?' rated':'')+(orderPos===pos?' cur':'');
-      d.title=(r?cele.name+' photo '+(pi+1)+' — '+r.stars+'★':cele.name+' photo '+(pi+1)+' — not rated');
-      d.textContent=r?r.stars+'★':(pi+1);
-      d.style.cursor='default';
-      dots.appendChild(d);
-    }
-    row.appendChild(lbl); row.appendChild(dots); g.appendChild(row);
-  });
-}
-
-function showDone() {
-  document.getElementById('rateLayout').style.display='none';
-  document.getElementById('done-screen').style.display='block';
-  const all=Object.values(rat);
-  const avg=all.length?(all.reduce((s,r)=>s+r.stars,0)/all.length).toFixed(1):'—';
-  document.getElementById('doneMsg').innerHTML=
-    'You rated all 100 photos in <strong style="color:var(--ds-color)">'+ADS.member+'\'s Collection</strong>.<br>'+
-    'Average rating: <strong style="color:var(--ds-color)">'+avg+' ★</strong>';
-}
-
-document.addEventListener('keydown',e=>{
-  if(!document.getElementById('page-rate').classList.contains('active')) return;
-  if(e.key>='1'&&e.key<='5'){ sel=+e.key; updStars(sel); setTimeout(submitRating,180); }
-});
-
-/* ================================================================
-   RESULTS
-================================================================ */
-let rDS='all', rStar=0;
-function renderResults() {
-  if(!CU) return;
-  buildRTabs(); renderResGrid();
-}
-function buildRTabs() {
-  const bar=document.getElementById('rtabs');
-  if(bar.dataset.b) return; bar.dataset.b='1';
-  const a=document.createElement('button'); a.className='rtab active'; a.textContent='All Datasets';
-  a.onclick=()=>{ rDS='all'; setRTab(a); renderResGrid(); }; bar.appendChild(a);
-  DS.forEach(ds=>{
-    const b=document.createElement('button'); b.className='rtab';
-    b.textContent=ds.member;
-    b.onclick=()=>{ rDS=ds.id; setRTab(b); renderResGrid(); }; bar.appendChild(b);
-  });
-}
-function setRTab(el){ document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
-function setFilter(s,el){ rStar=s; document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderResGrid(); }
-
-async function renderResGrid() {
-  if(!CU) return;
-  // Always fetch fresh photos from Firebase
-  const dsList=rDS==='all'?DS:DS.filter(d=>d.id===rDS);
-  for(const ds of dsList) await fetchUploadedPhotos(ds.id);
-  const g=document.getElementById('photoGrid'); g.innerHTML='';
-  let items=[];
-  const dsListR=rDS==='all'?DS:DS.filter(d=>d.id===rDS);
-  dsListR.forEach(ds=>{
-    const photos=buildPhotoList(ds);
-    const ratings=DB.getRatings(CU.email,ds.id);
-    const dp=DB.getDP(CU.email,ds.id); if(!dp) return;
-    for(const idx in ratings){
-      const r=ratings[idx];
-      if(rStar&&r.stars!==rStar) continue;
-      const photo=photos[+idx];
-      items.push({ ds, photo, stars:r.stars, at:r.at });
-    }
-  });
-  items.sort((a,b)=>b.at-a.at);
-  document.getElementById('rcnt').innerHTML='<strong>'+items.length+'</strong> photos rated';
-  if(!items.length){
-    g.innerHTML='<div class="emp">No ratings yet. <a onclick="showPage(\'dashboard\')">Start rating →</a></div>';
-    return;
-  }
-  items.forEach(item=>{
-    const c=document.createElement('div'); c.className='pc';
-    c.innerHTML=
-      '<img src="'+item.photo.path+'" loading="lazy" alt="'+item.photo.celebName+'"/>'+
-      '<div class="pi">'+
-        '<div class="ps">'+'★'.repeat(item.stars)+'</div>'+
-        '<div class="pid">'+item.photo.celebName+' · '+item.ds.member+'</div>'+
-      '</div>';
-    g.appendChild(c);
-  });
-}
-
-function exportCSV() {
-  if(!CU) return;
-  let csv='Member,Dataset_ID,Celebrity,Photo_Number,Photo_File,Stars,Date\n';
-  DS.forEach(ds=>{
-    const photos=buildPhotoList(ds);
-    const r=DB.getRatings(CU.email,ds.id);
-    for(const idx in r){
-      const photo=photos[+idx];
-      csv+='"'+ds.member+'","'+ds.id+'","'+photo.celebName+'",'+photo.photoNum+',"'+photo.filename+'",'+r[idx].stars+',"'+new Date(r[idx].at).toISOString()+'"\n';
-    }
-  });
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='pixelrate_celebrity_ratings.csv';
-  a.click();
-}
-
-/* ================================================================
-   BOOT
-================================================================ */
-(async function(){
-  const s=DB.getSess();
-  if(s){
-    // Always sync from Firebase first — handles admin-deleted users
-    await DB.syncDown(s);
-    if(DB.exists(s)){ CU=DB.getUser(s); enterApp(); }
-    else showPage('login');
-  } else {
-    showPage('login');
-  }
-})();
-
-/* ================================================================
-   TEAM DATA
-================================================================ */
-const TEAM = [
-  { name:'Fahim',  id:'252-15-607', color:'#a7c080', initial:'F' },
-  { name:'Nadim',  id:'252-15-267', color:'#7fbbb3', initial:'N' },
-  { name:'Mim',    id:'252-15-609', color:'#d699b6', initial:'M' },
-  { name:'Provat', id:'252-15-303', color:'#dbbc7f', initial:'P' },
-  { name:'Alvi',   id:'252-15-282', color:'#e69875', initial:'A' },
-];
-
-/* ── About Modal — Pentagon Layout ── */
-
-
-function openAbout() {
-  const wrap = document.getElementById('pentagonNodes');
-  const svg  = document.getElementById('pentagonSvg');
-  // Pentagon positions (% of container) — 5 points of a circle
-  // viewBox 700x430, center 350,215, radius ~175
-  const cx=350, cy=215, r=175;
-  const angles = [-90, -90+72, -90+144, -90+216, -90+288]; // top first, clockwise
-  const pts = angles.map(a => ({
-    x: cx + r * Math.cos(a * Math.PI/180),
-    y: cy + r * Math.sin(a * Math.PI/180)
-  }));
-
-  // Draw connection lines in SVG
-  let lines = '';
-  for(let i=0;i<5;i++) {
-    for(let j=i+1;j<5;j++) {
-      lines += `<line x1="${pts[i].x}" y1="${pts[i].y}" x2="${pts[j].x}" y2="${pts[j].y}"
-        stroke="${TEAM[i].color}" stroke-width="1" stroke-opacity="0.18"/>`;
-    }
-  }
-  // Center label
-  lines += `<text x="350" y="210" text-anchor="middle" font-family="Roboto Mono,monospace"
+      // Center label
+      lines += `<text x="350" y="210" text-anchor="middle" font-family="Roboto Mono,monospace"
     font-size="11" fill="#859289" letter-spacing="2">PIXEL</text>
   <text x="350" y="226" text-anchor="middle" font-family="Roboto Mono,monospace"
     font-size="11" fill="#a7c080" letter-spacing="2" font-weight="700">RATE</text>`;
-  svg.innerHTML = lines;
+      svg.innerHTML = lines;
 
-  // Place node divs
-  wrap.innerHTML = '';
-  TEAM.forEach((m,i) => {
-    const px = (pts[i].x / 700 * 100).toFixed(2)+'%';
-    const py = (pts[i].y / 430 * 100).toFixed(2)+'%';
-    const div = document.createElement('div');
-    div.className = 'node-wrap';
-    div.style.left = px;
-    div.style.top  = py;
-    div.innerHTML =
-      '<div class="node-circle" style="background:'+m.color+';border-color:'+m.color+'">'+m.initial+'</div>'+
-      '<div class="node-name">'+m.name+'</div>'+
-      '<div class="node-id">'+m.id+'</div>';
-    wrap.appendChild(div);
-  });
+      // Place node divs
+      wrap.innerHTML = '';
+      TEAM.forEach((m, i) => {
+        const px = (pts[i].x / 700 * 100).toFixed(2) + '%';
+        const py = (pts[i].y / 430 * 100).toFixed(2) + '%';
+        const div = document.createElement('div');
+        div.className = 'node-wrap';
+        div.style.left = px;
+        div.style.top = py;
+        div.innerHTML =
+          '<div class="node-circle" style="background:' + m.color + ';border-color:' + m.color + '">' + m.initial + '</div>' +
+          '<div class="node-name">' + m.name + '</div>' +
+          '<div class="node-id">' + m.id + '</div>';
+        wrap.appendChild(div);
+      });
 
-  document.getElementById('aboutModal').classList.add('show');
-}
-function closeAbout() {
-  document.getElementById('aboutModal').classList.remove('show');
-}
-document.getElementById('aboutModal').addEventListener('click', function(e) {
-  if(e.target === this) closeAbout();
-});
+      document.getElementById('aboutModal').classList.add('show');
+    }
+    function closeAbout() {
+      document.getElementById('aboutModal').classList.remove('show');
+    }
+    document.getElementById('aboutModal').addEventListener('click', function (e) {
+      if (e.target === this) closeAbout();
+    });
 
-/* ── Profile Modal ── */
-function openProfile() {
-  if(!CU) return;
-  const m = TEAM.find(t => t.name.toLowerCase() === CU.name.toLowerCase()) || { color:'#a7c080', initial: CU.name[0].toUpperCase() };
-  document.getElementById('profAvatar').style.background = m.color;
-  document.getElementById('profAvatar').innerHTML = m.initial;
-  document.getElementById('profName').textContent = CU.name;
-  document.getElementById('profEmail').textContent = CU.email;
-  document.getElementById('cpOld').value = '';
-  document.getElementById('cpNew').value = '';
-  document.getElementById('cpCon').value = '';
-  document.getElementById('cpMsg').style.display = 'none';
-  document.getElementById('profileModal').classList.add('show');
-}
-function closeProfile() {
-  document.getElementById('profileModal').classList.remove('show');
-}
-document.getElementById('profileModal').addEventListener('click', function(e) {
-  if(e.target === this) closeProfile();
-});
+    /* ── Profile Modal ── */
+    function openProfile() {
+      if (!CU) return;
+      const m = TEAM.find(t => t.name.toLowerCase() === CU.name.toLowerCase()) || { color: '#a7c080', initial: CU.name[0].toUpperCase() };
+      document.getElementById('profAvatar').style.background = m.color;
+      document.getElementById('profAvatar').innerHTML = m.initial;
+      document.getElementById('profName').textContent = CU.name;
+      document.getElementById('profEmail').textContent = CU.email;
+      document.getElementById('cpOld').value = '';
+      document.getElementById('cpNew').value = '';
+      document.getElementById('cpCon').value = '';
+      document.getElementById('cpMsg').style.display = 'none';
+      document.getElementById('profileModal').classList.add('show');
+    }
+    function closeProfile() {
+      document.getElementById('profileModal').classList.remove('show');
+    }
+    document.getElementById('profileModal').addEventListener('click', function (e) {
+      if (e.target === this) closeProfile();
+    });
 
-/* ── Change Password ── */
-function doChangePass() {
-  const old = document.getElementById('cpOld').value.trim();
-  const nw  = document.getElementById('cpNew').value.trim();
-  const cn  = document.getElementById('cpCon').value.trim();
-  const msg = document.getElementById('cpMsg');
-  const show = (t, type) => { msg.textContent=t; msg.className='msg '+(type||'err'); msg.style.display='block'; };
-  if(!old||!nw||!cn) return show('Please fill in all fields.');
-  if(DB.hash(old) !== CU.passHash) return show('Current password is incorrect.');
-  if(nw.length < 6) return show('New password must be at least 6 characters.');
-  if(nw !== cn) return show('New passwords do not match.');
-  // Update
-  const u = DB.gu();
-  u[CU.email].passHash = DB.hash(nw);
-  DB.su(u);
-  CU = DB.getUser(CU.email);
-  DB.syncUp(CU.email);
-  show('Password updated successfully!', 'ok');
-  setTimeout(closeProfile, 1800);
-}
+    /* ── Change Password ── */
+    function doChangePass() {
+      const old = document.getElementById('cpOld').value.trim();
+      const nw = document.getElementById('cpNew').value.trim();
+      const cn = document.getElementById('cpCon').value.trim();
+      const msg = document.getElementById('cpMsg');
+      const show = (t, type) => { msg.textContent = t; msg.className = 'msg ' + (type || 'err'); msg.style.display = 'block'; };
+      if (!old || !nw || !cn) return show('Please fill in all fields.');
+      if (DB.hash(old) !== CU.passHash) return show('Current password is incorrect.');
+      if (nw.length < 6) return show('New password must be at least 6 characters.');
+      if (nw !== cn) return show('New passwords do not match.');
+      // Update
+      const u = DB.gu();
+      u[CU.email].passHash = DB.hash(nw);
+      DB.su(u);
+      CU = DB.getUser(CU.email);
+      DB.syncUp(CU.email);
+      show('Password updated successfully!', 'ok');
+      setTimeout(closeProfile, 1800);
+    }
 
-</script>
+  </script>
 </body>
+
 </html>
