@@ -284,6 +284,11 @@ async function loadData(){
   try{
     const rawUsers=await FB.get('/users');
     const rawRatings=await FB.get('/ratings');
+    // Load all dataset photos so ranking grid shows uploaded images
+    for(const ds of DS){
+      const pdata=await FB.get('/photos/'+ds.id);
+      _dsPhotos[ds.id]=(pdata&&typeof pdata==='object')?pdata:{};
+    }
     allUsers={};
     if(rawUsers) for(const k in rawUsers){ try{ allUsers[atob(k)]=rawUsers[k]; }catch(e){} }
     allRatings={};
