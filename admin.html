@@ -998,11 +998,12 @@
       try {
         const rawUsers = await FB.get('/users');
         const rawRatings = await FB.get('/ratings');
-        // Load all dataset photos so ranking grid shows uploaded images
-        for (const ds of DS) {
+        // Load all dataset photos in background so panel opens instantly
+        Promise.all(DS.map(async ds => {
           const pdata = await FB.get('/photos/' + ds.id);
           _dsPhotos[ds.id] = (pdata && typeof pdata === 'object') ? pdata : {};
-        }
+          renderRankedPhotos(); // re-render grid as images load
+        }));
         allUsers = {};
         if (rawUsers) for (const k in rawUsers) { try { allUsers[atob(k)] = rawUsers[k]; } catch (e) { } }
         allRatings = {};
