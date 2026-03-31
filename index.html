@@ -917,8 +917,10 @@ function enterApp() { document.getElementById('navUser').textContent=CU.email; s
 /* ================================================================
    DASHBOARD
 ================================================================ */
-function renderDash() {
+async function renderDash() {
   if(!CU) return;
+  // Always fetch fresh photos from Firebase
+  for(const ds of DS) await fetchUploadedPhotos(ds.id);
   document.getElementById('heroName').textContent = 'Hello, '+CU.name.split(' ')[0]+'!';
   document.getElementById('navUser').textContent = CU.email;
   let total=0;
@@ -1119,12 +1121,15 @@ function buildRTabs() {
 function setRTab(el){ document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
 function setFilter(s,el){ rStar=s; document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderResGrid(); }
 
-function renderResGrid() {
+async function renderResGrid() {
   if(!CU) return;
+  // Always fetch fresh photos from Firebase
+  const dsList=rDS==='all'?DS:DS.filter(d=>d.id===rDS);
+  for(const ds of dsList) await fetchUploadedPhotos(ds.id);
   const g=document.getElementById('photoGrid'); g.innerHTML='';
   let items=[];
-  const dsList=rDS==='all'?DS:DS.filter(d=>d.id===rDS);
-  dsList.forEach(ds=>{
+  const dsListR=rDS==='all'?DS:DS.filter(d=>d.id===rDS);
+  dsListR.forEach(ds=>{
     const photos=buildPhotoList(ds);
     const ratings=DB.getRatings(CU.email,ds.id);
     const dp=DB.getDP(CU.email,ds.id); if(!dp) return;
@@ -1173,10 +1178,16 @@ function exportCSV() {
 /* ================================================================
    BOOT
 ================================================================ */
-(function(){
+(async function(){
   const s=DB.getSess();
-  if(s&&DB.exists(s)){ CU=DB.getUser(s); enterApp(); }
-  else showPage('login');
+  if(s){
+    // Always sync from Firebase first — handles admin-deleted users
+    await DB.syncDown(s);
+    if(DB.exists(s)){ CU=DB.getUser(s); enterApp(); }
+    else showPage('login');
+  } else {
+    showPage('login');
+  }
 })();
 
 /* ================================================================
