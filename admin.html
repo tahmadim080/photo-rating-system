@@ -15,7 +15,7 @@ body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);min-
 .login-box p{font-family:'Roboto Mono',monospace;font-size:0.7rem;color:var(--muted);margin-bottom:28px;}
 .fg{margin-bottom:16px;}
 label{display:block;font-family:'Roboto Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
-input[type=password],input[type=text]{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'Roboto',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+input{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'Roboto',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
 input:focus{border-color:var(--accent);}
 .btn{width:100%;padding:12px;background:var(--accent);color:#2d353b;border:none;border-radius:8px;font-family:'Roboto',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
 .btn:hover{background:#8faa6a;transform:translateY(-1px);}
@@ -25,7 +25,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
 .nav-logo{font-size:1.2rem;font-weight:700;color:var(--text2);}
 .nav-logo span{color:var(--accent);}
 .nav-tag{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--accent);background:rgba(167,192,128,0.15);border:1px solid rgba(167,192,128,0.3);padding:3px 10px;border-radius:20px;}
-.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .nbtn{font-family:'Roboto Mono',monospace;font-size:0.68rem;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
 .nbtn:hover{border-color:var(--accent);color:var(--accent);}
 .nbtn.danger{border-color:rgba(230,126,128,0.4);color:var(--red);}
@@ -76,39 +76,43 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:40px;color:var(--muted);font-family:'Roboto Mono',monospace;font-size:0.78rem;}
 .last-sync{font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted);}
-/* rank badge */
 .rank-gold{background:rgba(219,188,127,0.2);color:var(--yellow);border:1px solid rgba(219,188,127,0.5);padding:2px 8px;border-radius:20px;font-family:'Roboto Mono',monospace;font-size:0.6rem;font-weight:700;}
 .rank-silver{background:rgba(127,187,179,0.2);color:var(--blue);border:1px solid rgba(127,187,179,0.5);padding:2px 8px;border-radius:20px;font-family:'Roboto Mono',monospace;font-size:0.6rem;font-weight:700;}
 .rank-bronze{background:rgba(230,152,117,0.2);color:var(--orange);border:1px solid rgba(230,152,117,0.5);padding:2px 8px;border-radius:20px;font-family:'Roboto Mono',monospace;font-size:0.6rem;font-weight:700;}
-/* Modal overlay */
+/* Modal */
 .modal-ov{display:none;position:fixed;inset:0;z-index:500;background:rgba(10,12,14,0.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;}
 .modal-ov.show{display:flex;}
-.modal-bx{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.5);animation:mfade 0.2s ease;}
+.modal-bx{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;width:100%;max-width:760px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.5);animation:mfade 0.2s ease;}
 @keyframes mfade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .modal-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
 .modal-head h2{font-size:1.2rem;font-weight:700;color:var(--text2);}
 .modal-close{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'Roboto Mono',monospace;font-size:0.7rem;transition:all 0.2s;}
 .modal-close:hover{border-color:var(--red);color:var(--red);}
 /* Photo manager */
-.ds-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.ds-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
 .ds-tab{font-family:'Roboto Mono',monospace;font-size:0.68rem;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
-.ds-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(167,192,128,0.1);}
-.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:16px;}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(167,192,128,0.05);}
-.upload-zone p{font-family:'Roboto Mono',monospace;font-size:0.75rem;color:var(--muted);margin-top:8px;}
-.upload-zone strong{color:var(--accent);}
-.upload-icon{font-size:2rem;margin-bottom:8px;}
-.photo-mgr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;max-height:380px;overflow-y:auto;}
-.pm-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;position:relative;}
-.pm-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
-.pm-card .pm-info{padding:6px 8px;}
-.pm-card .pm-name{font-family:'Roboto Mono',monospace;font-size:0.6rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.pm-card .pm-del{position:absolute;top:4px;right:4px;background:rgba(230,126,128,0.9);border:none;border-radius:4px;color:white;font-size:0.6rem;padding:2px 6px;cursor:pointer;font-family:'Roboto Mono',monospace;opacity:0;transition:opacity 0.2s;}
-.pm-card:hover .pm-del{opacity:1;}
+.ds-tab.active{font-weight:700;}
+/* Slot grid */
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:8px;}
+.slot-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.slot-head{padding:10px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.slot-title{font-family:'Roboto Mono',monospace;font-size:0.72rem;color:var(--text2);font-weight:700;}
+.slot-count{font-family:'Roboto Mono',monospace;font-size:0.6rem;color:var(--muted);}
+.slot-photos{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px;}
+.slot-photo{position:relative;aspect-ratio:1;border-radius:4px;overflow:hidden;background:var(--border);}
+.slot-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.slot-photo .sp-del{position:absolute;inset:0;background:rgba(230,126,128,0.85);display:none;align-items:center;justify-content:center;font-size:0.65rem;color:white;cursor:pointer;font-family:'Roboto Mono',monospace;}
+.slot-photo:hover .sp-del{display:flex;}
+.slot-empty{aspect-ratio:1;border-radius:4px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--muted);font-family:'Roboto Mono',monospace;}
+.slot-add{padding:6px 12px 10px;}
+.slot-add-btn{width:100%;padding:6px;background:transparent;border:1px dashed var(--border);border-radius:6px;color:var(--muted);font-family:'Roboto Mono',monospace;font-size:0.65rem;cursor:pointer;transition:all 0.2s;text-align:center;}
+.slot-add-btn:hover{border-color:var(--accent);color:var(--accent);}
+.slot-add-btn.full{border-color:var(--accent);color:var(--accent);cursor:default;background:rgba(167,192,128,0.05);}
 .pm-msg{font-family:'Roboto Mono',monospace;font-size:0.72rem;padding:8px 12px;border-radius:6px;margin-bottom:12px;display:none;}
 .pm-msg.ok{background:rgba(167,192,128,0.12);border:1px solid rgba(167,192,128,0.35);color:var(--accent);}
 .pm-msg.err{background:rgba(230,126,128,0.12);border:1px solid rgba(230,126,128,0.35);color:var(--red);}
-.pm-count{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--muted);margin-bottom:10px;}
+.pm-summary{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--muted);margin-bottom:14px;padding:8px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);}
+.pm-summary span{color:var(--accent);font-weight:700;}
 </style>
 </head>
 <body>
@@ -137,6 +141,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
       <button class="nbtn" onclick="loadData()">Refresh</button>
       <button class="nbtn primary" onclick="openPhotoMgr()">Manage Photos</button>
       <button class="nbtn" onclick="exportRankedCSV()">Export Ranked CSV</button>
+      <button class="nbtn danger" onclick="resetAllData()">Reset All Data</button>
       <button class="nbtn danger" onclick="doLogout()">Logout</button>
     </div>
   </nav>
@@ -192,17 +197,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
     </div>
     <div class="ds-tabs" id="dsTabs"></div>
     <div class="pm-msg" id="pmMsg"></div>
-    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()"
-      ondragover="event.preventDefault();this.classList.add('drag')"
-      ondragleave="this.classList.remove('drag')"
-      ondrop="handleDrop(event)">
-      <div class="upload-icon">📷</div>
-      <strong>Click or drag photos here to upload</strong>
-      <p>Supports JPG, PNG, WEBP · Multiple files at once · Stored in Firebase</p>
-    </div>
-    <input type="file" id="photoInput" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)"/>
-    <div class="pm-count" id="pmCount"></div>
-    <div class="photo-mgr-grid" id="photoMgrGrid"></div>
+    <div class="pm-summary" id="pmSummary"></div>
+    <div class="slot-grid" id="slotGrid"></div>
+    <!-- hidden file inputs per slot -->
+    <input type="file" id="slotFileInput" multiple accept="image/*" style="display:none"/>
   </div>
 </div>
 
@@ -220,18 +218,9 @@ const DS = [
 
 const FB = {
   url(p){ return FIREBASE_URL + p + '.json'; },
-  async get(p){
-    try{ const r=await fetch(this.url(p)); return await r.json(); }
-    catch(e){ return null; }
-  },
-  async set(p,data){
-    try{ await fetch(this.url(p),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); return true; }
-    catch(e){ return false; }
-  },
-  async del(p){
-    try{ await fetch(this.url(p),{method:'DELETE'}); return true; }
-    catch(e){ return false; }
-  }
+  async get(p){ try{ const r=await fetch(this.url(p)); return await r.json(); }catch(e){ return null; } },
+  async set(p,data){ try{ await fetch(this.url(p),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); return true; }catch(e){ return false; } },
+  async del(p){ try{ await fetch(this.url(p),{method:'DELETE'}); return true; }catch(e){ return false; } }
 };
 
 /* ---- Auth ---- */
@@ -254,7 +243,24 @@ function doLogout(){
   document.getElementById('adminPass').value='';
 }
 
-/* ---- Data ---- */
+/* ---- Reset All User Data ---- */
+async function resetAllData(){
+  const confirmed = confirm(
+    '⚠️ WARNING: This will permanently delete ALL user accounts and ALL ratings from Firebase.\n\n' +
+    'Photos will NOT be deleted.\n\n' +
+    'Type "RESET" to confirm.'
+  );
+  if(!confirmed) return;
+  const typed = prompt('Type RESET to confirm:');
+  if(typed !== 'RESET'){ alert('Cancelled. Nothing was deleted.'); return; }
+  showPmMsg('Deleting all user data...','ok');
+  await FB.del('/users');
+  await FB.del('/ratings');
+  alert('✓ All user data has been reset. Photos are still intact.');
+  loadData();
+}
+
+/* ---- Load Data ---- */
 let allUsers={}, allRatings={}, filterDsId='all';
 
 async function loadData(){
@@ -271,8 +277,8 @@ async function loadData(){
     renderAll();
     document.getElementById('loadingWrap').style.display='none';
     document.getElementById('content').style.display='block';
-  } catch(err){
-    document.getElementById('loadingWrap').innerHTML='<div style="color:var(--red);font-family:Roboto Mono,monospace;font-size:0.8rem;max-width:400px;margin:0 auto"><strong>Failed to load.</strong><br><br>Check FIREBASE_URL in admin.html<br><br><button onclick="loadData()" style="padding:8px 16px;background:var(--accent);color:#2d353b;border:none;border-radius:6px;cursor:pointer;font-weight:700;margin-top:8px">Retry</button></div>';
+  }catch(err){
+    document.getElementById('loadingWrap').innerHTML='<div style="color:var(--red);font-family:Roboto Mono,monospace;font-size:0.8rem;max-width:400px;margin:0 auto"><strong>Failed to load.</strong><br><br>Check FIREBASE_URL<br><br><button onclick="loadData()" style="padding:8px 16px;background:var(--accent);color:#2d353b;border:none;border-radius:6px;cursor:pointer;font-weight:700;margin-top:8px">Retry</button></div>';
   }
 }
 
@@ -328,20 +334,16 @@ function renderAll(){
     });
   }
 
-  // DS filter buttons
   const rf=document.getElementById('rf');
   rf.innerHTML='<span class="rf-lbl">Filter by dataset:</span><button class="rf-btn active" onclick="filterDS(\'all\',this)">All</button>';
   DS.forEach(ds=>{
     const b=document.createElement('button'); b.className='rf-btn';
     b.textContent=ds.member; b.onclick=()=>filterDS(ds.id,b); rf.appendChild(b);
   });
-
   renderRankedPhotos();
 }
 
-/* ══════════════════════════════════════════
-   RANKED PHOTO GRID — highest avg rating first
-══════════════════════════════════════════ */
+/* ---- Ranked photo grid ---- */
 function filterDS(dsId,el){
   filterDsId=dsId;
   document.querySelectorAll('.rf-btn').forEach(b=>b.classList.remove('active'));
@@ -350,7 +352,6 @@ function filterDS(dsId,el){
 }
 
 function buildPhotoScores(){
-  // Build map: dsId_photoIdx -> { totalStars, count, ds, photoIdx }
   const scores={};
   for(const email in allRatings){
     DS.forEach(ds=>{
@@ -361,15 +362,29 @@ function buildPhotoScores(){
           const r=dr[idx];
           if(!r) continue;
           const key=ds.id+'_'+idx;
-          if(!scores[key]) scores[key]={ds,idx,ci,pi,total:0,count:0};
+          if(!scores[key]) scores[key]={ds,idx,ci,pi:pi+1,total:0,count:0};
           scores[key].total+=r.stars;
           scores[key].count++;
         }
       }
     });
   }
-  return Object.values(scores).map(x=>({...x, avg:x.total/x.count}))
-    .sort((a,b)=>b.avg-a.avg || b.count-a.count);
+  return Object.values(scores).map(x=>({...x,avg:x.total/x.count})).sort((a,b)=>b.avg-a.avg||b.count-a.count);
+}
+
+function getPhotoSrc(ds,ci,pi){
+  const slotKey='slot_'+(ci+1);
+  const slot=(_dsPhotos[ds.id]||{})[slotKey]||{};
+  const keys=Object.keys(slot).sort();
+  if(keys[pi-1]) return slot[keys[pi-1]];
+  return 'https://picsum.photos/seed/'+ds.id+'_slot'+(ci+1)+'_'+pi+'/400/300';
+}
+
+function getPhotoFilename(ds,ci,pi){
+  const slotKey='slot_'+(ci+1);
+  const slot=(_dsPhotos[ds.id]||{})[slotKey]||{};
+  const keys=Object.keys(slot).sort();
+  return keys[pi-1] ? keys[pi-1] : 'slot'+(ci+1)+'_photo'+pi;
 }
 
 function renderRankedPhotos(){
@@ -377,59 +392,34 @@ function renderRankedPhotos(){
   let items=buildPhotoScores();
   if(filterDsId!=='all') items=items.filter(x=>x.ds.id===filterDsId);
   if(!items.length){ g.innerHTML='<div class="empty" style="grid-column:1/-1">No ratings yet.</div>'; return; }
-
   items.slice(0,120).forEach((item,rank)=>{
-    const path=getPhotoPath(item.ds,item.ci,item.pi);
+    const src=getPhotoSrc(item.ds,item.ci,item.pi);
     const stars=Math.round(item.avg);
     let rankBadge='';
     if(rank===0) rankBadge='<span class="rank-gold">🥇 #1</span>';
     else if(rank===1) rankBadge='<span class="rank-silver">🥈 #2</span>';
     else if(rank===2) rankBadge='<span class="rank-bronze">🥉 #3</span>';
     else rankBadge='<span style="font-family:Roboto Mono,monospace;font-size:0.6rem;color:var(--muted)">#'+(rank+1)+'</span>';
-
     const c=document.createElement('div'); c.className='pc';
-    c.innerHTML='<img src="'+path+'" loading="lazy"/>'+
+    c.innerHTML='<img src="'+src+'" loading="lazy"/>'+
       '<div class="pi">'+
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">'+
-          rankBadge+
-          '<span style="color:var(--yellow);font-size:0.78rem">'+'★'.repeat(stars)+'</span>'+
-        '</div>'+
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">'+rankBadge+
+        '<span style="color:var(--yellow);font-size:0.78rem">'+'★'.repeat(stars)+'</span></div>'+
         '<div class="pu">Avg: <strong style="color:var(--accent)">'+item.avg.toFixed(2)+'</strong> / 5</div>'+
-        '<div class="pu">'+item.count+' rating'+(item.count!==1?'s':'')+' · '+item.ds.member+'</div>'+
+        '<div class="pu">'+item.count+' rating'+(item.count!==1?'s':'')+' · Slot '+(item.ci+1)+' · '+item.ds.member+'</div>'+
       '</div>';
     g.appendChild(c);
   });
-  if(items.length>120){
-    const n=document.createElement('div');
-    n.style.cssText='grid-column:1/-1;text-align:center;padding:16px;font-family:Roboto Mono,monospace;font-size:0.7rem;color:var(--muted)';
-    n.textContent='Showing top 120 of '+items.length+'. Export CSV for full ranked list.';
-    g.appendChild(n);
-  }
-}
-
-function getPhotoPath(ds,ci,pi){
-  // Check if admin has uploaded custom photos to Firebase
-  const key='photos_'+ds.id;
-  const stored=window._adminPhotos&&window._adminPhotos[ds.id];
-  if(stored){
-    const photoKey='p_'+ci+'_'+pi;
-    if(stored[photoKey]) return stored[photoKey]; // base64 data URL
-  }
-  return 'https://picsum.photos/seed/'+ds.id+'_cele'+(ci+1)+'_'+(pi+1)+'/400/300';
 }
 
 function s(val,label){ return '<div class="stat"><div class="n">'+val+'</div><div class="l">'+label+'</div></div>'; }
 
-/* ══════════════════════════════════════════
-   CSV EXPORT — clean format + ranked
-══════════════════════════════════════════ */
+/* ══════════════════════════════════════
+   CSV — clean format with real filenames
+══════════════════════════════════════ */
 function exportRankedCSV(){
-  // Sheet 1 style: User, Email, Photo ID, Dataset, Stars — then ranked summary
-  let csv='RATED PHOTOS — ALL USERS\n';
-  csv+='User Name,User Email,Dataset,Photo ID,Stars Given\n';
-
-  // Collect all individual ratings
-  const rows=[];
+  let csv='SECTION 1: ALL INDIVIDUAL RATINGS\n';
+  csv+='User Name,User Email,Dataset,Slot,Photo Filename,Stars Given\n';
   for(const email in allRatings){
     const name=(allUsers[email]||{}).name||email;
     DS.forEach(ds=>{
@@ -438,20 +428,19 @@ function exportRankedCSV(){
         for(let pi=0;pi<5;pi++){
           const idx=ci*5+pi;
           const r=dr[idx];
-          if(r) rows.push({name,email,ds:ds.member,photoId:'Photo_'+(ci+1)+'_'+(pi+1),stars:r.stars,at:r.at});
+          if(!r) continue;
+          const fname=getPhotoFilename(ds,ci,pi+1);
+          csv+='"'+name+'","'+email+'","'+ds.member+'","Slot '+(ci+1)+'","'+fname+'",'+r.stars+'\n';
         }
       }
     });
   }
-  rows.forEach(r=>{ csv+='"'+r.name+'","'+r.email+'","'+r.ds+'","'+r.photoId+'",'+r.stars+'\n'; });
-
-  csv+='\n\nPHOTO RANKINGS — HIGHEST TO LOWEST AVERAGE RATING\n';
-  csv+='Rank,Dataset,Photo ID,Average Rating,Total Ratings\n';
-  const ranked=buildPhotoScores();
-  ranked.forEach((item,i)=>{
-    csv+=(i+1)+',"'+item.ds.member+'","Photo_'+(item.ci+1)+'_'+(item.pi+1)+'",'+item.avg.toFixed(2)+','+item.count+'\n';
+  csv+='\n\nSECTION 2: PHOTO RANKINGS — HIGHEST TO LOWEST AVERAGE\n';
+  csv+='Rank,Dataset,Slot,Photo Filename,Average Rating,Total Ratings\n';
+  buildPhotoScores().forEach((item,i)=>{
+    const fname=getPhotoFilename(item.ds,item.ci,item.pi);
+    csv+=(i+1)+',"'+item.ds.member+'","Slot '+(item.ci+1)+'","'+fname+'",'+item.avg.toFixed(2)+','+item.count+'\n';
   });
-
   dl(csv,'pixelrate_ranked_ratings.csv');
 }
 
@@ -461,108 +450,142 @@ function dl(csv,name){
   a.download=name; a.click();
 }
 
-/* ══════════════════════════════════════════
-   PHOTO MANAGER
-══════════════════════════════════════════ */
+/* ══════════════════════════════════════
+   PHOTO MANAGER — slot based
+══════════════════════════════════════ */
 let activeDsId='tanvir';
-window._adminPhotos={};
+let _dsPhotos={}; // cache: dsId -> { slot_1: { filename: base64 }, ... }
+let _activeSlot=null;
 
 async function openPhotoMgr(){
-  // Build tabs
   const tabs=document.getElementById('dsTabs');
   tabs.innerHTML=DS.map(ds=>
-    '<button class="ds-tab'+(ds.id===activeDsId?' active':'')+'" onclick="switchDsTab(\''+ds.id+'\',this)" style="'+(ds.id===activeDsId?'border-color:'+ds.color+';color:'+ds.color:'')+'">'+ds.member+'</button>'
+    '<button class="ds-tab'+(ds.id===activeDsId?' active':'')+'" '+
+    'style="'+(ds.id===activeDsId?'border-color:'+ds.color+';color:'+ds.color+';background:rgba(0,0,0,0.1)':'')+'" '+
+    'onclick="switchDsTab(\''+ds.id+'\',this,\''+ds.color+'\')">'+ds.member+'</button>'
   ).join('');
   document.getElementById('photoModal').classList.add('show');
   await loadDsPhotos(activeDsId);
 }
+
 function closePhotoMgr(){
   document.getElementById('photoModal').classList.remove('show');
 }
 document.getElementById('photoModal').addEventListener('click',function(e){ if(e.target===this) closePhotoMgr(); });
 
-async function switchDsTab(dsId,el){
+async function switchDsTab(dsId,el,color){
   activeDsId=dsId;
-  document.querySelectorAll('.ds-tab').forEach(t=>{ t.classList.remove('active'); t.style.borderColor=''; t.style.color=''; });
-  const ds=DS.find(d=>d.id===dsId);
-  el.classList.add('active'); el.style.borderColor=ds.color; el.style.color=ds.color;
+  document.querySelectorAll('.ds-tab').forEach(t=>{ t.classList.remove('active'); t.style.borderColor=''; t.style.color=''; t.style.background=''; });
+  el.classList.add('active'); el.style.borderColor=color; el.style.color=color; el.style.background='rgba(0,0,0,0.1)';
   await loadDsPhotos(dsId);
 }
 
 async function loadDsPhotos(dsId){
   document.getElementById('pmMsg').style.display='none';
-  document.getElementById('photoMgrGrid').innerHTML='<div style="color:var(--muted);font-family:Roboto Mono,monospace;font-size:0.75rem;padding:16px">Loading...</div>';
-  // Load from Firebase
+  document.getElementById('slotGrid').innerHTML='<div style="color:var(--muted);font-family:Roboto Mono,monospace;font-size:0.75rem;padding:16px;grid-column:1/-1">Loading slots...</div>';
   const data=await FB.get('/photos/'+dsId);
-  window._adminPhotos[dsId]=data||{};
-  renderPhotoGrid(dsId);
+  _dsPhotos[dsId]=(data&&typeof data==='object')?data:{};
+  renderSlotGrid(dsId);
 }
 
-function renderPhotoGrid(dsId){
-  const photos=window._adminPhotos[dsId]||{};
-  const keys=Object.keys(photos);
-  const grid=document.getElementById('photoMgrGrid');
-  document.getElementById('pmCount').textContent=keys.length+' photo'+(keys.length!==1?'s':'')+' in '+DS.find(d=>d.id===dsId).member+"'s dataset";
-  if(!keys.length){
-    grid.innerHTML='<div style="color:var(--muted);font-family:Roboto Mono,monospace;font-size:0.75rem;padding:16px;grid-column:1/-1">No photos uploaded yet. Upload photos above.</div>';
-    return;
+function renderSlotGrid(dsId){
+  const ds=DS.find(d=>d.id===dsId);
+  const dsData=_dsPhotos[dsId]||{};
+  let totalPhotos=0;
+  for(let i=1;i<=20;i++){
+    const slot=dsData['slot_'+i]||{};
+    totalPhotos+=Object.keys(slot).length;
   }
-  grid.innerHTML='';
-  keys.sort().forEach(key=>{
-    const src=photos[key];
-    const card=document.createElement('div'); card.className='pm-card';
-    card.innerHTML='<img src="'+src+'" loading="lazy"/>'+
-      '<div class="pm-info"><div class="pm-name">'+key+'</div></div>'+
-      '<button class="pm-del" onclick="deletePhoto(\''+dsId+'\',\''+key+'\')">✕ Delete</button>';
+  document.getElementById('pmSummary').innerHTML=
+    ds.member+"'s dataset: <span>"+totalPhotos+' / 100</span> photos uploaded across 20 slots";
+
+  const grid=document.getElementById('slotGrid'); grid.innerHTML='';
+  for(let si=1;si<=20;si++){
+    const slotKey='slot_'+si;
+    const slot=dsData[slotKey]||{};
+    const photoKeys=Object.keys(slot).sort();
+    const count=photoKeys.length;
+
+    const card=document.createElement('div'); card.className='slot-card';
+    // Head
+    let head=document.createElement('div'); head.className='slot-head';
+    head.innerHTML='<span class="slot-title">Slot '+si+'</span><span class="slot-count">'+count+'/5</span>';
+    card.appendChild(head);
+
+    // Photos row (5 spots)
+    const photosDiv=document.createElement('div'); photosDiv.className='slot-photos';
+    for(let pi=0;pi<5;pi++){
+      const div=document.createElement('div');
+      if(photoKeys[pi]){
+        div.className='slot-photo';
+        div.innerHTML='<img src="'+slot[photoKeys[pi]]+'" loading="lazy" title="'+photoKeys[pi]+'"/>'+
+          '<div class="sp-del" onclick="deleteSlotPhoto(\''+dsId+'\',\''+slotKey+'\',\''+photoKeys[pi]+'\')">✕</div>';
+      } else {
+        div.className='slot-empty'; div.textContent=(pi+1);
+      }
+      photosDiv.appendChild(div);
+    }
+    card.appendChild(photosDiv);
+
+    // Add button
+    const addDiv=document.createElement('div'); addDiv.className='slot-add';
+    const addBtn=document.createElement('button');
+    if(count>=5){
+      addBtn.className='slot-add-btn full'; addBtn.textContent='✓ Slot Full';
+      addBtn.disabled=true;
+    } else {
+      addBtn.className='slot-add-btn';
+      addBtn.textContent='+ Add Photos ('+(5-count)+' remaining)';
+      addBtn.onclick=()=>triggerSlotUpload(dsId,slotKey,5-count);
+    }
+    addDiv.appendChild(addBtn); card.appendChild(addDiv);
     grid.appendChild(card);
-  });
+  }
+}
+
+function triggerSlotUpload(dsId,slotKey,remaining){
+  _activeSlot={dsId,slotKey,remaining};
+  const inp=document.getElementById('slotFileInput');
+  inp.value='';
+  inp.onchange=()=>handleSlotFiles(inp.files);
+  inp.click();
+}
+
+async function handleSlotFiles(files){
+  if(!files||!files.length) return;
+  const {dsId,slotKey,remaining}=_activeSlot;
+  const toUpload=Array.from(files).slice(0,remaining);
+  showPmMsg('Uploading '+toUpload.length+' photo'+(toUpload.length>1?'s':'')+'...','ok');
+
+  for(const file of toUpload){
+    const b64=await toBase64(file);
+    // Use original filename (sanitized) as key
+    const fname=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').substring(0,60);
+    await FB.set('/photos/'+dsId+'/'+slotKey+'/'+fname, b64);
+    if(!_dsPhotos[dsId]) _dsPhotos[dsId]={};
+    if(!_dsPhotos[dsId][slotKey]) _dsPhotos[dsId][slotKey]={};
+    _dsPhotos[dsId][slotKey][fname]=b64;
+  }
+  renderSlotGrid(dsId);
+  showPmMsg('✓ Uploaded successfully! Slot now has '+Object.keys((_dsPhotos[dsId][slotKey]||{})).length+'/5 photos.','ok');
+}
+
+async function deleteSlotPhoto(dsId,slotKey,fname){
+  if(!confirm('Delete "'+fname+'"?')) return;
+  await FB.del('/photos/'+dsId+'/'+slotKey+'/'+fname);
+  delete _dsPhotos[dsId][slotKey][fname];
+  renderSlotGrid(dsId);
+  showPmMsg('Photo deleted.','ok');
 }
 
 function showPmMsg(msg,type){
   const el=document.getElementById('pmMsg');
   el.textContent=msg; el.className='pm-msg '+(type||'ok'); el.style.display='block';
-  setTimeout(()=>el.style.display='none',3000);
-}
-
-async function handleFiles(files){
-  if(!files||!files.length) return;
-  showPmMsg('Uploading '+files.length+' photo'+(files.length>1?'s':'')+'...','ok');
-  let uploaded=0;
-  for(const file of files){
-    const b64=await toBase64(file);
-    // key: filename without extension, sanitized
-    const key=file.name.replace(/\.[^.]+$/,'').replace(/[^a-zA-Z0-9_-]/g,'_').substring(0,40);
-    const uniqueKey=key+'_'+Date.now();
-    await FB.set('/photos/'+activeDsId+'/'+uniqueKey, b64);
-    if(!window._adminPhotos[activeDsId]) window._adminPhotos[activeDsId]={};
-    window._adminPhotos[activeDsId][uniqueKey]=b64;
-    uploaded++;
-  }
-  renderPhotoGrid(activeDsId);
-  showPmMsg('✓ '+uploaded+' photo'+(uploaded>1?'s':'')+' uploaded successfully!','ok');
-}
-
-function handleDrop(e){
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.remove('drag');
-  handleFiles(e.dataTransfer.files);
-}
-
-async function deletePhoto(dsId,key){
-  if(!confirm('Delete this photo? This cannot be undone.')) return;
-  await FB.del('/photos/'+dsId+'/'+key);
-  delete window._adminPhotos[dsId][key];
-  renderPhotoGrid(dsId);
-  showPmMsg('Photo deleted.','ok');
+  setTimeout(()=>el.style.display='none',4000);
 }
 
 function toBase64(file){
-  return new Promise((res,rej)=>{
-    const r=new FileReader();
-    r.onload=()=>res(r.result);
-    r.onerror=rej;
-    r.readAsDataURL(file);
-  });
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
 }
 
 /* ---- Boot ---- */
