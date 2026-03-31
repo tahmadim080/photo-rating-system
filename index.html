@@ -659,7 +659,6 @@ const DS_NATURE = { tanvir:'forest', alvi:'mountain', provat:'ocean', mim:'sunse
 const _uploadedPhotos = {};
 
 async function fetchUploadedPhotos(dsId) {
-  if (_uploadedPhotos[dsId] !== undefined) return;
   try {
     const r = await fetch(FIREBASE_URL + '/photos/' + dsId + '.json');
     const data = await r.json();
@@ -779,6 +778,13 @@ const DB = {
       const u = this.gu();
       u[email] = cloudUser;
       this.su(u);
+    } else {
+      // User was deleted from admin panel — remove from localStorage
+      const u = this.gu();
+      delete u[email];
+      this.su(u);
+      localStorage.removeItem('pr_p_'+email);
+      this.clrSess();
     }
     // Pull this user's ratings from Firebase
     const cloudProg = await FB.get('/ratings/' + btoa(email));
@@ -796,6 +802,9 @@ const DB = {
         }
       }
       this.saveProg(email, localP);
+    } else {
+      // Ratings were deleted from admin panel — clear local ratings
+      localStorage.removeItem('pr_p_'+email);
     }
     hideSyncBar();
   },
