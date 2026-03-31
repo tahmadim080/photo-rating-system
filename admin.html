@@ -6,12 +6,7 @@
 <title>PixelRate — Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#2d353b; --surface:#343f44; --border:#4a555b; --card:#3d484d;
-  --accent:#a7c080; --yellow:#dbbc7f; --red:#e67e80; --blue:#7fbbb3;
-  --purple:#d699b6; --orange:#e69875;
-  --text:#d3c6aa; --text2:#e8d5b0; --muted:#859289;
-}
+:root{--bg:#2d353b;--surface:#343f44;--border:#4a555b;--card:#3d484d;--accent:#a7c080;--yellow:#dbbc7f;--red:#e67e80;--blue:#7fbbb3;--purple:#d699b6;--orange:#e69875;--text:#d3c6aa;--text2:#e8d5b0;--muted:#859289;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 #adminLogin{display:flex;align-items:center;justify-content:center;min-height:100vh;}
@@ -20,7 +15,7 @@ body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);min-
 .login-box p{font-family:'Roboto Mono',monospace;font-size:0.7rem;color:var(--muted);margin-bottom:28px;}
 .fg{margin-bottom:16px;}
 label{display:block;font-family:'Roboto Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
-input{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'Roboto',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+input[type=password],input[type=text]{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'Roboto',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
 input:focus{border-color:var(--accent);}
 .btn{width:100%;padding:12px;background:var(--accent);color:#2d353b;border:none;border-radius:8px;font-family:'Roboto',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
 .btn:hover{background:#8faa6a;transform:translateY(-1px);}
@@ -35,13 +30,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
 .nbtn:hover{border-color:var(--accent);color:var(--accent);}
 .nbtn.danger{border-color:rgba(230,126,128,0.4);color:var(--red);}
 .nbtn.danger:hover{background:rgba(230,126,128,0.1);}
+.nbtn.primary{background:var(--accent);color:#2d353b;border-color:var(--accent);font-weight:700;}
+.nbtn.primary:hover{background:#8faa6a;}
 .wrap{max-width:1200px;margin:0 auto;padding:36px 24px 80px;}
 .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:32px;}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
 .stat .n{font-size:2rem;font-weight:700;font-family:'Roboto Mono',monospace;color:var(--accent);}
 .stat .l{font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:3px;}
 .sec{margin-bottom:36px;}
-.sec-title{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.sec-title{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 .sec-title .xbtn{font-size:0.62rem;padding:4px 10px;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
 .sec-title .xbtn:hover{border-color:var(--accent);color:var(--accent);}
 .tbl{width:100%;border-collapse:collapse;font-size:0.85rem;}
@@ -79,6 +76,39 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:40px;color:var(--muted);font-family:'Roboto Mono',monospace;font-size:0.78rem;}
 .last-sync{font-family:'Roboto Mono',monospace;font-size:0.62rem;color:var(--muted);}
+/* rank badge */
+.rank-gold{background:rgba(219,188,127,0.2);color:var(--yellow);border:1px solid rgba(219,188,127,0.5);padding:2px 8px;border-radius:20px;font-family:'Roboto Mono',monospace;font-size:0.6rem;font-weight:700;}
+.rank-silver{background:rgba(127,187,179,0.2);color:var(--blue);border:1px solid rgba(127,187,179,0.5);padding:2px 8px;border-radius:20px;font-family:'Roboto Mono',monospace;font-size:0.6rem;font-weight:700;}
+.rank-bronze{background:rgba(230,152,117,0.2);color:var(--orange);border:1px solid rgba(230,152,117,0.5);padding:2px 8px;border-radius:20px;font-family:'Roboto Mono',monospace;font-size:0.6rem;font-weight:700;}
+/* Modal overlay */
+.modal-ov{display:none;position:fixed;inset:0;z-index:500;background:rgba(10,12,14,0.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;}
+.modal-ov.show{display:flex;}
+.modal-bx{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.5);animation:mfade 0.2s ease;}
+@keyframes mfade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.modal-head h2{font-size:1.2rem;font-weight:700;color:var(--text2);}
+.modal-close{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'Roboto Mono',monospace;font-size:0.7rem;transition:all 0.2s;}
+.modal-close:hover{border-color:var(--red);color:var(--red);}
+/* Photo manager */
+.ds-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.ds-tab{font-family:'Roboto Mono',monospace;font-size:0.68rem;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.ds-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(167,192,128,0.1);}
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:16px;}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(167,192,128,0.05);}
+.upload-zone p{font-family:'Roboto Mono',monospace;font-size:0.75rem;color:var(--muted);margin-top:8px;}
+.upload-zone strong{color:var(--accent);}
+.upload-icon{font-size:2rem;margin-bottom:8px;}
+.photo-mgr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;max-height:380px;overflow-y:auto;}
+.pm-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;position:relative;}
+.pm-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
+.pm-card .pm-info{padding:6px 8px;}
+.pm-card .pm-name{font-family:'Roboto Mono',monospace;font-size:0.6rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pm-card .pm-del{position:absolute;top:4px;right:4px;background:rgba(230,126,128,0.9);border:none;border-radius:4px;color:white;font-size:0.6rem;padding:2px 6px;cursor:pointer;font-family:'Roboto Mono',monospace;opacity:0;transition:opacity 0.2s;}
+.pm-card:hover .pm-del{opacity:1;}
+.pm-msg{font-family:'Roboto Mono',monospace;font-size:0.72rem;padding:8px 12px;border-radius:6px;margin-bottom:12px;display:none;}
+.pm-msg.ok{background:rgba(167,192,128,0.12);border:1px solid rgba(167,192,128,0.35);color:var(--accent);}
+.pm-msg.err{background:rgba(230,126,128,0.12);border:1px solid rgba(230,126,128,0.35);color:var(--red);}
+.pm-count{font-family:'Roboto Mono',monospace;font-size:0.65rem;color:var(--muted);margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -105,7 +135,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
     <div class="nav-right">
       <span class="last-sync" id="lastSync"></span>
       <button class="nbtn" onclick="loadData()">Refresh</button>
-      <button class="nbtn" onclick="exportAllCSV()">Export CSV</button>
+      <button class="nbtn primary" onclick="openPhotoMgr()">Manage Photos</button>
+      <button class="nbtn" onclick="exportRankedCSV()">Export Ranked CSV</button>
       <button class="nbtn danger" onclick="doLogout()">Logout</button>
     </div>
   </nav>
@@ -124,7 +155,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
       <div class="sec">
         <div class="sec-title">
           <span>All Users</span>
-          <button class="xbtn" onclick="exportUsersCSV()">Export Users CSV</button>
+          <button class="xbtn" onclick="exportRankedCSV()">Export Ranked CSV</button>
         </div>
         <div style="overflow-x:auto">
           <table class="tbl">
@@ -139,12 +170,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
       </div>
       <div class="sec">
         <div class="sec-title">
-          <span>All Ratings</span>
-          <button class="xbtn" onclick="exportAllCSV()">Export CSV</button>
+          <span>All Ratings — Ranked Highest to Lowest</span>
+          <button class="xbtn" onclick="exportRankedCSV()">Export CSV</button>
         </div>
         <div class="rf" id="rf">
-          <span class="rf-lbl">Filter by user:</span>
-          <button class="rf-btn active" onclick="filterUser('all',this)">All</button>
+          <span class="rf-lbl">Filter by dataset:</span>
+          <button class="rf-btn active" onclick="filterDS('all',this)">All</button>
         </div>
         <div class="pg" id="pg"></div>
       </div>
@@ -152,13 +183,32 @@ nav{position:sticky;top:0;z-index:100;background:rgba(45,53,59,0.97);backdrop-fi
   </div>
 </div>
 
-<script>
-/* ================================================================
-   CONFIG — paste same values as in index.html
-================================================================ */
-const ADMIN_PASSWORD = 'pixelrate2024';       // ← CHANGE THIS
+<!-- Photo Manager Modal -->
+<div class="modal-ov" id="photoModal">
+  <div class="modal-bx">
+    <div class="modal-head">
+      <h2>📁 Manage Dataset Photos</h2>
+      <button class="modal-close" onclick="closePhotoMgr()">✕ Close</button>
+    </div>
+    <div class="ds-tabs" id="dsTabs"></div>
+    <div class="pm-msg" id="pmMsg"></div>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="handleDrop(event)">
+      <div class="upload-icon">📷</div>
+      <strong>Click or drag photos here to upload</strong>
+      <p>Supports JPG, PNG, WEBP · Multiple files at once · Stored in Firebase</p>
+    </div>
+    <input type="file" id="photoInput" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)"/>
+    <div class="pm-count" id="pmCount"></div>
+    <div class="photo-mgr-grid" id="photoMgrGrid"></div>
+  </div>
+</div>
 
-const FIREBASE_URL = 'https://pixelrate-cd325-default-rtdb.asia-southeast1.firebasedatabase.app/'; // ← SAME AS index.html
+<script>
+const ADMIN_PASSWORD = 'pixelrate2024';
+const FIREBASE_URL = 'https://pixelrate-cd325-default-rtdb.asia-southeast1.firebasedatabase.app/';
 
 const DS = [
   { id:'tanvir', member:'Tanvir', color:'#a7c080' },
@@ -173,12 +223,20 @@ const FB = {
   async get(p){
     try{ const r=await fetch(this.url(p)); return await r.json(); }
     catch(e){ return null; }
+  },
+  async set(p,data){
+    try{ await fetch(this.url(p),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); return true; }
+    catch(e){ return false; }
+  },
+  async del(p){
+    try{ await fetch(this.url(p),{method:'DELETE'}); return true; }
+    catch(e){ return false; }
   }
 };
 
 /* ---- Auth ---- */
 function checkAdmin(){
-  if(document.getElementById('adminPass').value === ADMIN_PASSWORD){
+  if(document.getElementById('adminPass').value===ADMIN_PASSWORD){
     document.getElementById('adminLogin').style.display='none';
     document.getElementById('adminPanel').style.display='block';
     sessionStorage.setItem('adminOk','1');
@@ -196,203 +254,315 @@ function doLogout(){
   document.getElementById('adminPass').value='';
 }
 
-/* ---- Load all data from Firebase ---- */
-let allUsers={}, allRatings={}, filterEmail='all';
+/* ---- Data ---- */
+let allUsers={}, allRatings={}, filterDsId='all';
 
 async function loadData(){
   document.getElementById('loadingWrap').style.display='block';
   document.getElementById('content').style.display='none';
-  try {
-    // Fetch raw Firebase data
-    const rawUsers   = await FB.get('/users');
-    const rawRatings = await FB.get('/ratings');
-
-    // Decode base64 keys back to emails
+  try{
+    const rawUsers=await FB.get('/users');
+    const rawRatings=await FB.get('/ratings');
     allUsers={};
-    if(rawUsers) for(const k in rawUsers){
-      try{ const email=atob(k); allUsers[email]=rawUsers[k]; }catch(e){}
-    }
+    if(rawUsers) for(const k in rawUsers){ try{ allUsers[atob(k)]=rawUsers[k]; }catch(e){} }
     allRatings={};
-    if(rawRatings) for(const k in rawRatings){
-      try{ const email=atob(k); allRatings[email]=rawRatings[k]; }catch(e){}
-    }
-
+    if(rawRatings) for(const k in rawRatings){ try{ allRatings[atob(k)]=rawRatings[k]; }catch(e){} }
     document.getElementById('lastSync').textContent='Synced '+new Date().toLocaleTimeString();
     renderAll();
     document.getElementById('loadingWrap').style.display='none';
     document.getElementById('content').style.display='block';
-  } catch(err) {
-    document.getElementById('loadingWrap').innerHTML=
-      '<div style="color:var(--red);font-family:Roboto Mono,monospace;font-size:0.8rem;max-width:400px;margin:0 auto">'+
-      '<strong>Failed to load data.</strong><br><br>'+
-      'Make sure FIREBASE_URL is correctly set in admin.html<br><br>'+
-      'Also check Firebase Realtime Database rules are set to TEST MODE (allow read/write)<br><br>'+
-      '<button onclick="loadData()" style="padding:8px 16px;background:var(--accent);color:#2d353b;border:none;border-radius:6px;cursor:pointer;font-weight:700;margin-top:8px">Retry</button></div>';
+  } catch(err){
+    document.getElementById('loadingWrap').innerHTML='<div style="color:var(--red);font-family:Roboto Mono,monospace;font-size:0.8rem;max-width:400px;margin:0 auto"><strong>Failed to load.</strong><br><br>Check FIREBASE_URL in admin.html<br><br><button onclick="loadData()" style="padding:8px 16px;background:var(--accent);color:#2d353b;border:none;border-radius:6px;cursor:pointer;font-weight:700;margin-top:8px">Retry</button></div>';
   }
 }
 
 function renderAll(){
   const userList=Object.values(allUsers);
-  let totalRatings=0, completedUsers=0;
+  let totalRatings=0,completedUsers=0;
   const byDs={};
   DS.forEach(ds=>byDs[ds.id]=0);
-
   for(const email in allRatings){
     let ut=0;
     for(const dsId in allRatings[email]){
       const cnt=Object.keys((allRatings[email][dsId]||{}).ratings||{}).length;
-      ut+=cnt;
-      byDs[dsId]=(byDs[dsId]||0)+cnt;
+      ut+=cnt; byDs[dsId]=(byDs[dsId]||0)+cnt;
     }
     totalRatings+=ut;
     if(ut>=500) completedUsers++;
   }
-
-  // Stats
   document.getElementById('globalStats').innerHTML=
-    s(userList.length,'Total Users')+
-    s(totalRatings,'Total Ratings')+
-    s(completedUsers,'Fully Done')+
-    s(userList.length?(totalRatings/userList.length).toFixed(0):0,'Avg / User')+
+    s(userList.length,'Total Users')+s(totalRatings,'Total Ratings')+
+    s(completedUsers,'Fully Done')+s(userList.length?(totalRatings/userList.length).toFixed(0):0,'Avg / User')+
     s(userList.length?(totalRatings/(userList.length*500)*100).toFixed(1)+'%':'0%','Overall');
 
-  // Dataset overview
   const dg=document.getElementById('dsSummary'); dg.innerHTML='';
   DS.forEach(ds=>{
-    const tot=byDs[ds.id]||0;
-    const max=userList.length*100;
+    const tot=byDs[ds.id]||0, max=userList.length*100;
     const pct=max?Math.round(tot/max*100):0;
     const d=document.createElement('div'); d.className='ds-card';
     d.style.setProperty('--dsc',ds.color);
-    d.innerHTML=
-      '<div class="ds-title">'+ds.member+"'s Dataset"+'</div>'+
+    d.innerHTML='<div class="ds-title">'+ds.member+"'s Dataset"+'</div>'+
       '<div class="ds-sub">'+tot+' ratings · '+userList.length+' users</div>'+
       '<div class="ds-bar"><div class="ds-fill" style="width:'+pct+'%;background:'+ds.color+'"></div></div>'+
       '<div class="ds-stats"><span>'+pct+'% complete</span><span>'+(userList.length?(tot/userList.length).toFixed(1):0)+' avg</span></div>';
     dg.appendChild(d);
   });
 
-  // Users table
   const tbody=document.getElementById('usersBody'); tbody.innerHTML='';
   if(!userList.length){
     tbody.innerHTML='<tr><td colspan="9" class="empty">No users yet.</td></tr>';
   } else {
     userList.forEach(u=>{
-      const r=allRatings[u.email]||{};
-      let ut=0;
+      const r=allRatings[u.email]||{}; let ut=0;
       const cells=DS.map(ds=>{
-        const cnt=Object.keys((r[ds.id]||{}).ratings||{}).length;
-        ut+=cnt;
+        const cnt=Object.keys((r[ds.id]||{}).ratings||{}).length; ut+=cnt;
         const pct=Math.round(cnt/100*100);
         return '<td><div class="mpb"><div class="mpf" style="width:'+pct+'%;background:'+ds.color+'"></div></div>'+
-               '<span style="font-family:Roboto Mono,monospace;font-size:0.72rem;color:var(--muted)">'+cnt+'</span></td>';
+          '<span style="font-family:Roboto Mono,monospace;font-size:0.72rem;color:var(--muted)">'+cnt+'</span></td>';
       }).join('');
-      const badge=ut>=500?'<span class="badge done">Complete</span>':
-                  ut>0?'<span class="badge part">In Progress</span>':
-                  '<span class="badge none">Not Started</span>';
+      const badge=ut>=500?'<span class="badge done">Complete</span>':ut>0?'<span class="badge part">In Progress</span>':'<span class="badge none">Not Started</span>';
       const tr=document.createElement('tr');
-      tr.innerHTML='<td><span class="nm">'+u.name+'</span></td>'+
-                   '<td><span class="em">'+u.email+'</span></td>'+
-                   cells+
-                   '<td style="font-family:Roboto Mono,monospace;font-size:0.8rem;color:var(--accent);font-weight:600">'+ut+'</td>'+
-                   '<td>'+badge+'</td>';
+      tr.innerHTML='<td><span class="nm">'+u.name+'</span></td><td><span class="em">'+u.email+'</span></td>'+cells+
+        '<td style="font-family:Roboto Mono,monospace;font-size:0.8rem;color:var(--accent);font-weight:600">'+ut+'</td><td>'+badge+'</td>';
       tbody.appendChild(tr);
     });
   }
 
-  // User filter buttons
+  // DS filter buttons
   const rf=document.getElementById('rf');
-  rf.innerHTML='<span class="rf-lbl">Filter by user:</span><button class="rf-btn active" onclick="filterUser(\'all\',this)">All</button>';
-  userList.forEach(u=>{
+  rf.innerHTML='<span class="rf-lbl">Filter by dataset:</span><button class="rf-btn active" onclick="filterDS(\'all\',this)">All</button>';
+  DS.forEach(ds=>{
     const b=document.createElement('button'); b.className='rf-btn';
-    b.textContent=u.name;
-    b.onclick=()=>filterUser(u.email,b);
-    rf.appendChild(b);
+    b.textContent=ds.member; b.onclick=()=>filterDS(ds.id,b); rf.appendChild(b);
   });
 
-  renderRatings();
+  renderRankedPhotos();
 }
 
-function filterUser(email,el){
-  filterEmail=email;
+/* ══════════════════════════════════════════
+   RANKED PHOTO GRID — highest avg rating first
+══════════════════════════════════════════ */
+function filterDS(dsId,el){
+  filterDsId=dsId;
   document.querySelectorAll('.rf-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  renderRatings();
+  renderRankedPhotos();
 }
 
-function renderRatings(){
-  const g=document.getElementById('pg'); g.innerHTML='';
-  let items=[];
-  const emails=filterEmail==='all'?Object.keys(allRatings):[filterEmail];
-  emails.forEach(email=>{
-    const uName=(allUsers[email]||{}).name||email;
+function buildPhotoScores(){
+  // Build map: dsId_photoIdx -> { totalStars, count, ds, photoIdx }
+  const scores={};
+  for(const email in allRatings){
     DS.forEach(ds=>{
       const dr=((allRatings[email]||{})[ds.id]||{}).ratings||{};
       for(let ci=0;ci<20;ci++){
-        for(let pi=1;pi<=5;pi++){
-          const idx=ci*5+(pi-1);
+        for(let pi=0;pi<5;pi++){
+          const idx=ci*5+pi;
           const r=dr[idx];
-          if(r) items.push({email,uName,ds,celebId:'cele'+(ci+1),photoNum:pi,stars:r.stars,at:r.at});
+          if(!r) continue;
+          const key=ds.id+'_'+idx;
+          if(!scores[key]) scores[key]={ds,idx,ci,pi,total:0,count:0};
+          scores[key].total+=r.stars;
+          scores[key].count++;
         }
       }
     });
-  });
-  items.sort((a,b)=>b.at-a.at);
+  }
+  return Object.values(scores).map(x=>({...x, avg:x.total/x.count}))
+    .sort((a,b)=>b.avg-a.avg || b.count-a.count);
+}
+
+function renderRankedPhotos(){
+  const g=document.getElementById('pg'); g.innerHTML='';
+  let items=buildPhotoScores();
+  if(filterDsId!=='all') items=items.filter(x=>x.ds.id===filterDsId);
   if(!items.length){ g.innerHTML='<div class="empty" style="grid-column:1/-1">No ratings yet.</div>'; return; }
-  items.slice(0,120).forEach(item=>{
-    const path='https://picsum.photos/seed/'+item.ds.id+'_'+item.celebId+'_'+item.photoNum+'/400/300';
+
+  items.slice(0,120).forEach((item,rank)=>{
+    const path=getPhotoPath(item.ds,item.ci,item.pi);
+    const stars=Math.round(item.avg);
+    let rankBadge='';
+    if(rank===0) rankBadge='<span class="rank-gold">🥇 #1</span>';
+    else if(rank===1) rankBadge='<span class="rank-silver">🥈 #2</span>';
+    else if(rank===2) rankBadge='<span class="rank-bronze">🥉 #3</span>';
+    else rankBadge='<span style="font-family:Roboto Mono,monospace;font-size:0.6rem;color:var(--muted)">#'+(rank+1)+'</span>';
+
     const c=document.createElement('div'); c.className='pc';
     c.innerHTML='<img src="'+path+'" loading="lazy"/>'+
       '<div class="pi">'+
-        '<div class="ps">'+'★'.repeat(item.stars)+'<span style="color:var(--muted);font-size:0.65rem"> '+item.stars+'/5</span></div>'+
-        '<div class="pu">'+item.uName+' · '+item.ds.member+'</div>'+
-        '<div class="pu" style="color:var(--border)">'+new Date(item.at).toLocaleDateString()+'</div>'+
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">'+
+          rankBadge+
+          '<span style="color:var(--yellow);font-size:0.78rem">'+'★'.repeat(stars)+'</span>'+
+        '</div>'+
+        '<div class="pu">Avg: <strong style="color:var(--accent)">'+item.avg.toFixed(2)+'</strong> / 5</div>'+
+        '<div class="pu">'+item.count+' rating'+(item.count!==1?'s':'')+' · '+item.ds.member+'</div>'+
       '</div>';
     g.appendChild(c);
   });
   if(items.length>120){
     const n=document.createElement('div');
     n.style.cssText='grid-column:1/-1;text-align:center;padding:16px;font-family:Roboto Mono,monospace;font-size:0.7rem;color:var(--muted)';
-    n.textContent='Showing latest 120 of '+items.length+'. Export CSV for full data.';
+    n.textContent='Showing top 120 of '+items.length+'. Export CSV for full ranked list.';
     g.appendChild(n);
   }
 }
 
+function getPhotoPath(ds,ci,pi){
+  // Check if admin has uploaded custom photos to Firebase
+  const key='photos_'+ds.id;
+  const stored=window._adminPhotos&&window._adminPhotos[ds.id];
+  if(stored){
+    const photoKey='p_'+ci+'_'+pi;
+    if(stored[photoKey]) return stored[photoKey]; // base64 data URL
+  }
+  return 'https://picsum.photos/seed/'+ds.id+'_cele'+(ci+1)+'_'+(pi+1)+'/400/300';
+}
+
 function s(val,label){ return '<div class="stat"><div class="n">'+val+'</div><div class="l">'+label+'</div></div>'; }
 
-/* ---- Exports ---- */
-function exportAllCSV(){
-  let csv='User Name,User Email,Member,Dataset ID,Celebrity ID,Photo Number,Stars,Date\n';
+/* ══════════════════════════════════════════
+   CSV EXPORT — clean format + ranked
+══════════════════════════════════════════ */
+function exportRankedCSV(){
+  // Sheet 1 style: User, Email, Photo ID, Dataset, Stars — then ranked summary
+  let csv='RATED PHOTOS — ALL USERS\n';
+  csv+='User Name,User Email,Dataset,Photo ID,Stars Given\n';
+
+  // Collect all individual ratings
+  const rows=[];
   for(const email in allRatings){
     const name=(allUsers[email]||{}).name||email;
     DS.forEach(ds=>{
       const dr=((allRatings[email]||{})[ds.id]||{}).ratings||{};
       for(let ci=0;ci<20;ci++){
-        for(let pi=1;pi<=5;pi++){
-          const idx=ci*5+(pi-1);
+        for(let pi=0;pi<5;pi++){
+          const idx=ci*5+pi;
           const r=dr[idx];
-          if(r) csv+='"'+name+'","'+email+'","'+ds.member+'","'+ds.id+'","cele'+(ci+1)+'",'+pi+','+r.stars+',"'+new Date(r.at).toISOString()+'"\n';
+          if(r) rows.push({name,email,ds:ds.member,photoId:'Photo_'+(ci+1)+'_'+(pi+1),stars:r.stars,at:r.at});
         }
       }
     });
   }
-  dl(csv,'pixelrate_all_ratings.csv');
-}
+  rows.forEach(r=>{ csv+='"'+r.name+'","'+r.email+'","'+r.ds+'","'+r.photoId+'",'+r.stars+'\n'; });
 
-function exportUsersCSV(){
-  let csv='Name,Email,Tanvir,Alvi,Provat,Mim,Nadim,Total\n';
-  Object.values(allUsers).forEach(u=>{
-    const r=allRatings[u.email]||{};
-    const counts=DS.map(ds=>Object.keys((r[ds.id]||{}).ratings||{}).length);
-    csv+='"'+u.name+'","'+u.email+'",'+counts.join(',')+','+counts.reduce((a,b)=>a+b,0)+'\n';
+  csv+='\n\nPHOTO RANKINGS — HIGHEST TO LOWEST AVERAGE RATING\n';
+  csv+='Rank,Dataset,Photo ID,Average Rating,Total Ratings\n';
+  const ranked=buildPhotoScores();
+  ranked.forEach((item,i)=>{
+    csv+=(i+1)+',"'+item.ds.member+'","Photo_'+(item.ci+1)+'_'+(item.pi+1)+'",'+item.avg.toFixed(2)+','+item.count+'\n';
   });
-  dl(csv,'pixelrate_users.csv');
+
+  dl(csv,'pixelrate_ranked_ratings.csv');
 }
 
 function dl(csv,name){
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
   a.download=name; a.click();
+}
+
+/* ══════════════════════════════════════════
+   PHOTO MANAGER
+══════════════════════════════════════════ */
+let activeDsId='tanvir';
+window._adminPhotos={};
+
+async function openPhotoMgr(){
+  // Build tabs
+  const tabs=document.getElementById('dsTabs');
+  tabs.innerHTML=DS.map(ds=>
+    '<button class="ds-tab'+(ds.id===activeDsId?' active':'')+'" onclick="switchDsTab(\''+ds.id+'\',this)" style="'+(ds.id===activeDsId?'border-color:'+ds.color+';color:'+ds.color:'')+'">'+ds.member+'</button>'
+  ).join('');
+  document.getElementById('photoModal').classList.add('show');
+  await loadDsPhotos(activeDsId);
+}
+function closePhotoMgr(){
+  document.getElementById('photoModal').classList.remove('show');
+}
+document.getElementById('photoModal').addEventListener('click',function(e){ if(e.target===this) closePhotoMgr(); });
+
+async function switchDsTab(dsId,el){
+  activeDsId=dsId;
+  document.querySelectorAll('.ds-tab').forEach(t=>{ t.classList.remove('active'); t.style.borderColor=''; t.style.color=''; });
+  const ds=DS.find(d=>d.id===dsId);
+  el.classList.add('active'); el.style.borderColor=ds.color; el.style.color=ds.color;
+  await loadDsPhotos(dsId);
+}
+
+async function loadDsPhotos(dsId){
+  document.getElementById('pmMsg').style.display='none';
+  document.getElementById('photoMgrGrid').innerHTML='<div style="color:var(--muted);font-family:Roboto Mono,monospace;font-size:0.75rem;padding:16px">Loading...</div>';
+  // Load from Firebase
+  const data=await FB.get('/photos/'+dsId);
+  window._adminPhotos[dsId]=data||{};
+  renderPhotoGrid(dsId);
+}
+
+function renderPhotoGrid(dsId){
+  const photos=window._adminPhotos[dsId]||{};
+  const keys=Object.keys(photos);
+  const grid=document.getElementById('photoMgrGrid');
+  document.getElementById('pmCount').textContent=keys.length+' photo'+(keys.length!==1?'s':'')+' in '+DS.find(d=>d.id===dsId).member+"'s dataset";
+  if(!keys.length){
+    grid.innerHTML='<div style="color:var(--muted);font-family:Roboto Mono,monospace;font-size:0.75rem;padding:16px;grid-column:1/-1">No photos uploaded yet. Upload photos above.</div>';
+    return;
+  }
+  grid.innerHTML='';
+  keys.sort().forEach(key=>{
+    const src=photos[key];
+    const card=document.createElement('div'); card.className='pm-card';
+    card.innerHTML='<img src="'+src+'" loading="lazy"/>'+
+      '<div class="pm-info"><div class="pm-name">'+key+'</div></div>'+
+      '<button class="pm-del" onclick="deletePhoto(\''+dsId+'\',\''+key+'\')">✕ Delete</button>';
+    grid.appendChild(card);
+  });
+}
+
+function showPmMsg(msg,type){
+  const el=document.getElementById('pmMsg');
+  el.textContent=msg; el.className='pm-msg '+(type||'ok'); el.style.display='block';
+  setTimeout(()=>el.style.display='none',3000);
+}
+
+async function handleFiles(files){
+  if(!files||!files.length) return;
+  showPmMsg('Uploading '+files.length+' photo'+(files.length>1?'s':'')+'...','ok');
+  let uploaded=0;
+  for(const file of files){
+    const b64=await toBase64(file);
+    // key: filename without extension, sanitized
+    const key=file.name.replace(/\.[^.]+$/,'').replace(/[^a-zA-Z0-9_-]/g,'_').substring(0,40);
+    const uniqueKey=key+'_'+Date.now();
+    await FB.set('/photos/'+activeDsId+'/'+uniqueKey, b64);
+    if(!window._adminPhotos[activeDsId]) window._adminPhotos[activeDsId]={};
+    window._adminPhotos[activeDsId][uniqueKey]=b64;
+    uploaded++;
+  }
+  renderPhotoGrid(activeDsId);
+  showPmMsg('✓ '+uploaded+' photo'+(uploaded>1?'s':'')+' uploaded successfully!','ok');
+}
+
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag');
+  handleFiles(e.dataTransfer.files);
+}
+
+async function deletePhoto(dsId,key){
+  if(!confirm('Delete this photo? This cannot be undone.')) return;
+  await FB.del('/photos/'+dsId+'/'+key);
+  delete window._adminPhotos[dsId][key];
+  renderPhotoGrid(dsId);
+  showPmMsg('Photo deleted.','ok');
+}
+
+function toBase64(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result);
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
 }
 
 /* ---- Boot ---- */
