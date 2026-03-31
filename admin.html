@@ -218,9 +218,24 @@ const DS = [
 
 const FB = {
   url(p){ return FIREBASE_URL + p + '.json'; },
+  lastError:'',
   async get(p){ try{ const r=await fetch(this.url(p)); return await r.json(); }catch(e){ return null; } },
-  async set(p,data){ try{ const r=await fetch(this.url(p),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); return r.ok; }catch(e){ return false; } },
-  async del(p){ try{ const r=await fetch(this.url(p),{method:'DELETE'}); return r.ok; }catch(e){ return false; } }
+  async set(p,data){
+    this.lastError='';
+    try{
+      const r=await fetch(this.url(p),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      if(!r.ok){ const t=await r.text(); this.lastError='HTTP '+r.status+': '+t; return false; }
+      return true;
+    }catch(e){ this.lastError=e.message; return false; }
+  },
+  async del(p){
+    this.lastError='';
+    try{
+      const r=await fetch(this.url(p),{method:'DELETE'});
+      if(!r.ok){ const t=await r.text(); this.lastError='HTTP '+r.status+': '+t; return false; }
+      return true;
+    }catch(e){ this.lastError=e.message; return false; }
+  }
 };
 
 /* ---- Auth ---- */
@@ -465,6 +480,13 @@ async function openPhotoMgr(){
     'onclick="switchDsTab(\''+ds.id+'\',this,\''+ds.color+'\')">'+ds.member+'</button>'
   ).join('');
   document.getElementById('photoModal').classList.add('show');
+  // Test Firebase write access
+  const testOk=await FB.set('/photos/_test','ok');
+  if(testOk){
+    await FB.del('/photos/_test');
+  } else {
+    showPmMsg('⚠ Firebase write access denied: '+FB.lastError+'. Go to Firebase Console → Realtime Database → Rules → set read/write to true.','err');
+  }
   await loadDsPhotos(activeDsId);
 }
 
@@ -555,11 +577,10 @@ async function handleSlotFiles(files){
   if(!files||!files.length) return;
   const {dsId,slotKey,remaining}=_activeSlot;
   const toUpload=Array.from(files).slice(0,remaining);
-  showPmMsg('Uploading '+toUpload.length+' photo'+(toUpload.length>1?'s':'')+'...','ok');
+  showPmMsg('Compressing & uploading '+toUpload.length+' photo'+(toUpload.length>1?'s':'')+'...','ok');
   let uploaded=0;
   for(const file of toUpload){
     const b64=await toBase64(file);
-    // Use original filename (sanitized) as key
     const fname=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').substring(0,60);
     const ok=await FB.set('/photos/'+dsId+'/'+slotKey+'/'+fname, b64);
     if(ok){
@@ -567,13 +588,13 @@ async function handleSlotFiles(files){
       if(!_dsPhotos[dsId][slotKey]) _dsPhotos[dsId][slotKey]={};
       _dsPhotos[dsId][slotKey][fname]=b64;
       uploaded++;
+    } else {
+      showPmMsg('✕ Upload failed: '+FB.lastError,'err');
     }
   }
   renderSlotGrid(dsId);
   if(uploaded===toUpload.length){
     showPmMsg('✓ Uploaded '+uploaded+' photo'+(uploaded>1?'s':'')+'! Slot now has '+Object.keys((_dsPhotos[dsId][slotKey]||{})).length+'/5 photos.','ok');
-  } else {
-    showPmMsg('⚠ '+uploaded+'/'+toUpload.length+' uploaded. Some failed — try smaller images.','err');
   }
 }
 
@@ -595,11 +616,10 @@ function toBase64(file){
   return new Promise((res,rej)=>{
     const reader=new FileReader();
     reader.onload=()=>{
-      // Compress image using canvas to keep Firebase payload small
       const img=new Image();
       img.onload=()=>{
         const canvas=document.createElement('canvas');
-        const MAX=800;
+        const MAX=400;
         let w=img.width, h=img.height;
         if(w>MAX||h>MAX){
           if(w>h){ h=Math.round(h*MAX/w); w=MAX; }
@@ -607,12 +627,12 @@ function toBase64(file){
         }
         canvas.width=w; canvas.height=h;
         canvas.getContext('2d').drawImage(img,0,0,w,h);
-        res(canvas.toDataURL('image/jpeg',0.7));
+        res(canvas.toDataURL('image/jpeg',0.5));
       };
-      img.onerror=rej;
+      img.onerror=()=>rej(new Error('Failed to load image'));
       img.src=reader.result;
     };
-    reader.onerror=rej;
+    reader.onerror=()=>rej(new Error('Failed to read file'));
     reader.readAsDataURL(file);
   });
 }
