@@ -26,7 +26,7 @@ A cloud-synced photo rating web application built with vanilla JavaScript and Fi
 ## Project Structure
 
 ```
-your-repo/
+photo-rating-system/
 ├── index.html      ← Main app (login, dashboard, rating, results)
 ├── admin.html      ← Admin panel (stats, photo manager, CSV export)
 └── README.md       ← This file
